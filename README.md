@@ -1,2 +1,2 @@
 # Bachelor
-Repositor for bachelor work
+Monorepository for bachelor work
