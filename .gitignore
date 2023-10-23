@@ -18,3 +18,10 @@ BachelorThesis.pdf
 
 # Mac specific
 .DS_Store
+
+# Eclipse specific 
+.settings
+
+# Build
+Debug
+*.launch
