@@ -16,12 +16,15 @@
 *.xmpi
 BachelorThesis.pdf
 
-# Mac specific
+# Mac misc.
 .DS_Store
 
-# Eclipse specific 
+# Eclipse misc.
 .settings
 
 # Build
 Debug
 *.launch
+
+# CMake misc.
+CMakeLists.txt.user
