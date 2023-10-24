@@ -16,15 +16,16 @@
 #include "clock_config.h"
 #include "MK66F18.h"
 #include "fsl_debug_console.h"
-/* TODO: insert other include files here. */
+#include "enet/Enet.h"
 
-/* TODO: insert other definitions and declarations here. */
+
+Enet enet;
+const char msg[] = "Hello world from enet";
 
 /*
  * @brief   Application entry point.
  */
 int main(void) {
-
     /* Init board hardware. */
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
@@ -33,7 +34,7 @@ int main(void) {
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
 #endif
-
+    enet.Init(1024, 8080);
     PRINTF("Hello World\r\n");
 
     /* Force the counter to be placed into memory. */
@@ -43,7 +44,7 @@ int main(void) {
         i++ ;
         /* 'Dummy' NOP to allow source level single stepping of
             tight while() loop */
-        __asm volatile ("nop");
+        enet.Send(msg, sizeof(msg));
     }
     return 0 ;
 }
