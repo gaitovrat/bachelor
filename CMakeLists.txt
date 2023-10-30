@@ -9,8 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
 
 set(PROJECT_FOLDER carui)
 set(PROJECT_SOURCES
@@ -18,14 +18,16 @@ set(PROJECT_SOURCES
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        udpclient.h
+        udpclient.cpp
 )
 list(TRANSFORM PROJECT_SOURCES PREPEND ${PROJECT_FOLDER}/)
 
 qt_add_executable(carui
     MANUAL_FINALIZATION
-    ${PROJECT_SOURCES}
+    ${PROJECT_SOURCES}  
 )
-target_link_libraries(carui PRIVATE Qt6::Widgets)
+target_link_libraries(carui PRIVATE Qt6::Widgets Qt6::Network)
 
 set_target_properties(carui PROPERTIES
     ${BUNDLE_ID_OPTION}
