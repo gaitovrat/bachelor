@@ -29,6 +29,17 @@ static constexpr u8_t scNetmask[4] = { 255, 255, 255, 0 };
 static constexpr u8_t scGateway[4] = { 192, 168, 99, 100 };
 static constexpr u8_t scPcIp[4] = {192, 168, 99, 255 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+void SysTick_Handler(void)
+{
+    time_isr();
+}
+#ifdef __cplusplus
+}
+#endif
+
 static constexpr void MakeIp4Address(ip4_addr_t& address, const u8_t parts[4])
 {
 	IP4_ADDR(&address, parts[0], parts[1], parts[2], parts[3]);
