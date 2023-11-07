@@ -4,33 +4,35 @@
 #include "lwip/udp.h"
 #include <cstdint>
 
-static constexpr uint32_t BUF_N = 4;
-static constexpr size_t BUF_LEN = 2048;
-
 class Enet {
+private:
+	static constexpr uint32_t BUFFER_NUMBER = 4;
+
+	static constexpr size_t MAX_BUFFER_SIZE = 2048;
+
 public:
 	Enet();
 
 	virtual ~Enet() = default;
 
-	void Init(uint32_t data_len_limit, uint16_t port);
+	void Init(uint32_t bufferSize, uint16_t port);
 
-	void Send(const void *ptr_data, uint32_t len);
+	void Send(const void *pData, uint32_t len);
 
 	bool Check();
 
 private:
-	bool m_initialized;
+	bool mInitialized;
 
-    struct netif m_netif;
-    ip4_addr_t m_ipaddr, m_netmask, m_gateway, m_pc_ipaddr;
+    struct netif mNetif;
+    ip4_addr_t mMcuIp, mNetmask, mGateway, mPcIp;
 
-    pbuf *m_pbuffer[BUF_N];
-    uint8_t m_data[BUF_N][BUF_LEN];
+    pbuf *mPbuffer[Enet::BUFFER_NUMBER];
+    uint8_t mData[Enet::BUFFER_NUMBER][Enet::MAX_BUFFER_SIZE];
 
-    udp_pcb *m_pcb;
-    uint16_t m_port;
-    uint32_t m_data_len;
-    uint32_t m_data_i;
+    udp_pcb *mPcb;
+    uint16_t mPort;
+    uint32_t mDataLen;
+    uint32_t miData;
 };
 #endif /* ENET_ENET_H_ */
