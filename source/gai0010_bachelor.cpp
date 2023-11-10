@@ -1,14 +1,3 @@
-/*
- * Copyright 2016-2023 NXP
- * All rights reserved.
- *
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-/**
- * @file    gai0010_bachelor.cpp
- * @brief   Application entry point.
- */
 #include <stdio.h>
 #include "board.h"
 #include "peripherals.h"
@@ -16,35 +5,29 @@
 #include "clock_config.h"
 #include "MK66F18.h"
 #include "fsl_debug_console.h"
-#include "enet/Enet.h"
-
-
+#ifdef USE_ENET
+#include "Enet.h"
 Enet enet;
-const char msg[] = "Hello world from enet";
+#endif
 
-/*
- * @brief   Application entry point.
- */
+#define PRINTLN(X) (PRINTF(X "\r\n"))
+
 int main(void) {
     /* Init board hardware. */
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
 #ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
-    /* Init FSL debug console. */
+    // Init debug console
     BOARD_InitDebugConsole();
 #endif
+#ifdef USE_ENET
     enet.Init(1024, 8080);
-    PRINTF("Hello World\r\n");
+#endif
 
-    /* Force the counter to be placed into memory. */
-    volatile static int i = 0 ;
-    /* Enter an infinite loop, just incrementing a counter. */
     while(1) {
-        i++ ;
-        /* 'Dummy' NOP to allow source level single stepping of
-            tight while() loop */
-        enet.Send(msg, sizeof(msg));
+        PRINTLN("Hello world");
     }
+
     return 0 ;
 }

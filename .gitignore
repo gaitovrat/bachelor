@@ -30,3 +30,4 @@ Debug
 # CMake misc.
 CMakeLists.txt.user
 build
+/Debug Enet/

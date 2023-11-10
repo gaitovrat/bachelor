@@ -5,7 +5,7 @@
  *      Author: Ratmir Gaitov
  */
 
-#include "enet/Enet.h"
+#include "Enet.h"
 
 #include "lwip/opt.h"
 #include "lwip/init.h"
