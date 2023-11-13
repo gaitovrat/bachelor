@@ -21,7 +21,7 @@ public:
 
 	virtual ~FXOS8700CQ() = default;
 
-	void Init();
+	void Init() override;
 
 	uint8_t WhoAmIRegister() const override;
 

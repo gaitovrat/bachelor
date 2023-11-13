@@ -18,6 +18,9 @@ FXOS8700CQ::FXOS8700CQ() : ASensor(I2C0),
 void FXOS8700CQ::Init()
 {
 	BOARD_InitACCEL_I2CPins();
+
+	ASensor::Init();
+
 	FindSlaveAddress();
 }
 
