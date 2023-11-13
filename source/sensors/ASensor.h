@@ -19,6 +19,8 @@ public:
 
 	virtual ~ASensor() = default;
 
+	virtual void Init();
+
 	void FindSlaveAddress();
 
 	uint8_t SlaveAddress() const;
