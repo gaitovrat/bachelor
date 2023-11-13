@@ -5,6 +5,8 @@
 #include "clock_config.h"
 #include "MK66F18.h"
 #include "fsl_debug_console.h"
+
+#include "sensors/FXOS8700CQ.h"
 #ifdef USE_ENET
 #include "Enet.h"
 Enet enet;
@@ -24,6 +26,9 @@ int main(void) {
 #ifdef USE_ENET
     enet.Init(1024, 8080);
 #endif
+
+    FXOS8700CQ accel;
+    accel.Init();
 
     while(1) {
         PRINTLN("Hello world");
