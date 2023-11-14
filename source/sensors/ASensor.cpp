@@ -16,7 +16,7 @@
 static constexpr uint32_t sBaudrate = 100000;
 static const uint32_t sClockFreq = CLOCK_GetFreq(I2C0_CLK_SRC);
 
-ASensor::ASensor(I2C_Type *pBase) : mpBase(pBase), mSlaveAddress(0x00)
+ASensor::ASensor(I2C_Type *pBase) : mpBase(pBase), mDeviceAddress(0x00)
 {}
 
 void ASensor::Init()
@@ -29,9 +29,9 @@ void ASensor::Init()
 	I2C_MasterInit(mpBase, &masterConfig, sourceClock);
 }
 
-void ASensor::FindSlaveAddress()
+void ASensor::FindDeviceAddress()
 {
-	const std::vector<uint8_t> &addresses = SlaveAddresses();
+	const std::vector<uint8_t> &addresses = DeviceAddresses();
 	uint8_t whoAmIRegister = WhoAmIRegister();
 	uint8_t whoAmIValue = 0x00;
 	status_t status = kStatus_Fail;
@@ -54,7 +54,7 @@ void ASensor::FindSlaveAddress()
 
 		if (status == kStatus_Success)
 		{
-			mSlaveAddress = masterXfer.slaveAddress;
+			mDeviceAddress = masterXfer.slaveAddress;
 			break;
 		}
 	}
@@ -75,7 +75,43 @@ void ASensor::FindSlaveAddress()
 	PRINTF("Found sensor value: 0x%X\r\n", whoAmIValue);
 }
 
-uint8_t ASensor::SlaveAddress() const
+uint8_t ASensor::DeviceAddress() const
 {
-	return mSlaveAddress;
+	return mDeviceAddress;
+}
+
+status_t ASensor::ReadRegister(uint8_t registerAddress, uint8_t *pBuffer, size_t bufferSize) const
+{
+	const uint8_t deviceAddress = DeviceAddress();
+
+	i2c_master_transfer_t masterXfer;
+	memset(&masterXfer, 0, sizeof(masterXfer));
+
+	masterXfer.slaveAddress = deviceAddress;
+	masterXfer.direction = kI2C_Read;
+	masterXfer.subaddress = registerAddress;
+	masterXfer.subaddressSize = sizeof(registerAddress);
+	masterXfer.data = pBuffer;
+	masterXfer.dataSize = bufferSize;
+	masterXfer.flags = kI2C_TransferDefaultFlag;
+
+	return I2C_MasterTransferBlocking(mpBase, &masterXfer);
+}
+
+status_t ASensor::WriteRegister(uint8_t registerAddress, uint8_t *pBuffer, size_t bufferSize)
+{
+	const uint8_t deviceAddress = DeviceAddress();
+
+	i2c_master_transfer_t masterXfer;
+	memset(&masterXfer, 0, sizeof(masterXfer));
+
+	masterXfer.slaveAddress = deviceAddress;
+	masterXfer.direction = kI2C_Write;
+	masterXfer.subaddress = registerAddress;
+	masterXfer.subaddressSize = sizeof(registerAddress);
+	masterXfer.data = pBuffer;
+	masterXfer.dataSize = bufferSize;
+	masterXfer.flags = kI2C_TransferDefaultFlag;
+
+	return I2C_MasterTransferBlocking(mpBase, &masterXfer);
 }

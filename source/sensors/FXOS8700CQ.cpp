@@ -21,7 +21,7 @@ void FXOS8700CQ::Init()
 
 	ASensor::Init();
 
-	FindSlaveAddress();
+	FindDeviceAddress();
 }
 
 uint8_t FXOS8700CQ::WhoAmIRegister() const
@@ -29,7 +29,7 @@ uint8_t FXOS8700CQ::WhoAmIRegister() const
 	return sWhoAmI;
 }
 
-const std::vector<uint8_t>& FXOS8700CQ::SlaveAddresses() const
+const std::vector<uint8_t>& FXOS8700CQ::DeviceAddresses() const
 {
 	return mAddresses;
 }

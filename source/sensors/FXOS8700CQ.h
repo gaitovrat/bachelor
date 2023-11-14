@@ -25,7 +25,7 @@ public:
 
 	uint8_t WhoAmIRegister() const override;
 
-	const std::vector<uint8_t>& SlaveAddresses() const override;
+	const std::vector<uint8_t>& DeviceAddresses() const override;
 
 private:
 	std::vector<uint8_t> mAddresses;
