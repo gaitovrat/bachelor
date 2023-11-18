@@ -22,17 +22,17 @@ public:
 	bool Check();
 
 private:
-	bool mInitialized;
+	bool m_Initialized;
 
-    struct netif mNetif;
-    ip4_addr_t mMcuIp, mNetmask, mGateway, mPcIp;
+    struct netif m_Netif;
+    ip4_addr_t m_McuIp, m_Netmask, m_Gateway, m_PcIp;
 
-    pbuf *mPbuffer[Enet::BUFFER_NUMBER];
-    uint8_t mData[Enet::BUFFER_NUMBER][Enet::MAX_BUFFER_SIZE];
+    pbuf *m_Pbuffer[Enet::BUFFER_NUMBER];
+    uint8_t m_Data[Enet::BUFFER_NUMBER][Enet::MAX_BUFFER_SIZE];
 
-    udp_pcb *mPcb;
-    uint16_t mPort;
-    uint32_t mDataLen;
-    uint32_t miData;
+    udp_pcb *m_Pcb;
+    uint16_t m_Port;
+    uint32_t m_DataLen;
+    uint32_t mi_Data;
 };
 #endif /* ENET_ENET_H_ */
