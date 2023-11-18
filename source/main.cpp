@@ -5,14 +5,13 @@
 #include "clock_config.h"
 #include "MK66F18.h"
 #include "fsl_debug_console.h"
+#include "assert.h"
 
 #include "sensors/FXOS8700CQ.h"
 #ifdef USE_ENET
 #include "Enet.h"
 Enet enet;
 #endif
-
-#define PRINTLN(X) (PRINTF(X "\r\n"))
 
 int main(void) {
     /* Init board hardware. */
@@ -27,11 +26,13 @@ int main(void) {
     enet.Init(1024, 8080);
 #endif
 
-    FXOS8700CQ accel;
+    FXOS8700CQ accel(FXOS8700CQ::Range::G_4);
     accel.Init();
 
     while(1) {
-        PRINTLN("Hello world");
+    	FXOS8700CQ::Data data = accel.Read();
+		PRINTF("Accel: %5d %5d %5d\r\n", data.Accel.X, data.Accel.Y, data.Accel.Z);
+		PRINTF("Mag: %5d %5d %5d\r\n", data.Mag.X, data.Mag.Y, data.Mag.Z);
     }
 
     return 0 ;

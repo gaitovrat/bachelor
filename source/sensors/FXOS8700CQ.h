@@ -8,27 +8,38 @@
 #ifndef SENSORS_FXOS8700CQ_H_
 #define SENSORS_FXOS8700CQ_H_
 
-#include "sensors/ASensor.h"
-
 #include <vector>
 #include <cstdint>
 
-class FXOS8700CQ : public ASensor
-{
-public:
+#include "Vec.h"
+#include "sensors/ASensor.h"
 
-	FXOS8700CQ();
+class FXOS8700CQ : public ASensor {
+public:
+	enum Range {
+		G_2 = 0b00,
+		G_4 = 0b01,
+		G_8 = 0b10
+	};
+
+	struct Data {
+		Vec3 Accel;
+		Vec3 Mag;
+	};
+
+	FXOS8700CQ(FXOS8700CQ::Range range);
 
 	virtual ~FXOS8700CQ() = default;
 
 	void Init() override;
 
-	uint8_t WhoAmIRegister() const override;
+	uint8_t DeviceAddress() const override;
 
-	const std::vector<uint8_t>& DeviceAddresses() const override;
+	FXOS8700CQ::Data Read() const;
 
 private:
-	std::vector<uint8_t> mAddresses;
+	uint8_t m_DeviceAddress;
+	Range m_Range;
 };
 
 #endif /* SENSORS_FXOS8700CQ_H_ */
