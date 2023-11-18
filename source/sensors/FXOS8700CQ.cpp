@@ -88,16 +88,19 @@ void FXOS8700CQ::Init() {
 FXOS8700CQ::Data FXOS8700CQ::Read() const {
 	FXOS8700CQ::Data data;
 	uint8_t buffer[7] = { 0 };
+	status_t status = 0;
 
-	ReadRegister(STATUS, buffer, sizeof(buffer));
+	status = ReadRegister(STATUS, buffer, sizeof(buffer));
+	assert(status == kStatus_Success);
 	for (size_t i = 1; i < sizeof(buffer); i += 2) {
-		int index = i / 2;
+		size_t index = i / 2;
 		data.Accel.Values[index] = ((int16_t)(((buffer[i] << 8U) | buffer[i + 1]))) >> 2U;
 	}
 
-	ReadRegister(M_STATUS, buffer, sizeof(buffer));
+	status = ReadRegister(M_STATUS, buffer, sizeof(buffer));
+	assert(status == kStatus_Success);
 	for (size_t i = 1; i < sizeof(buffer); i += 2) {
-		int index = i / 2;
+		size_t index = i / 2;
 		data.Mag.Values[index] = ((int16_t)(((buffer[i] << 8U) | buffer[i + 1])));
 	}
 

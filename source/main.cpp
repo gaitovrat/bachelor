@@ -8,10 +8,13 @@
 #include "assert.h"
 
 #include "sensors/FXOS8700CQ.h"
+#include "sensors/FXAS21002.h"
 #ifdef USE_ENET
 #include "Enet.h"
 Enet enet;
 #endif
+FXOS8700CQ accel(FXOS8700CQ::Range::G_4);
+FXAS21002 gyro(FXAS21002::Range::DPS_1000);
 
 int main(void) {
     /* Init board hardware. */
@@ -26,13 +29,16 @@ int main(void) {
     enet.Init(1024, 8080);
 #endif
 
-    FXOS8700CQ accel(FXOS8700CQ::Range::G_4);
     accel.Init();
+    gyro.Init();
 
     while(1) {
-    	FXOS8700CQ::Data data = accel.Read();
-		PRINTF("Accel: %5d %5d %5d\r\n", data.Accel.X, data.Accel.Y, data.Accel.Z);
-		PRINTF("Mag: %5d %5d %5d\r\n", data.Mag.X, data.Mag.Y, data.Mag.Z);
+    	FXOS8700CQ::Data accelData = accel.Read();
+    	Vec3 gyroData = gyro.Read();
+
+		PRINTF("Accel: %5d %5d %5d\r\n", accelData.Accel.X, accelData.Accel.Y, accelData.Accel.Z);
+		PRINTF("Mag: %5d %5d %5d\r\n", accelData.Mag.X, accelData.Mag.Y, accelData.Mag.Z);
+		PRINTF("Gyro: %5d %5d %5d\r\n", gyroData.X, gyroData.Y, gyroData.Z);
     }
 
     return 0 ;
