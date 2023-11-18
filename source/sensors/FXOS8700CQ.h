@@ -17,9 +17,9 @@
 class FXOS8700CQ : public ASensor {
 public:
 	enum Range {
-		G_2 = 0b00,
-		G_4 = 0b01,
-		G_8 = 0b10
+		G_2 = 0,
+		G_4,
+		G_8
 	};
 
 	struct Data {
