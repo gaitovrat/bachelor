@@ -13,19 +13,26 @@
 #include <fsl_i2c.h>
 #include <fsl_debug_console.h>
 
-static constexpr uint32_t sBaudrate = 100000;
-static const uint32_t sClockFreq = CLOCK_GetFreq(I2C0_CLK_SRC);
+static constexpr uint32_t s_Baudrate = 100000;
+static bool s_Initialized = false;
+
 
 ASensor::ASensor(I2C_Type *pBase) : mp_Base(pBase) {
 }
 
 void ASensor::Init() {
+	if (s_Initialized) {
+		return;
+	}
+
 	i2c_master_config_t masterConfig;
-	uint32_t sourceClock = sClockFreq;
+	uint32_t sourceClock = CLOCK_GetFreq(I2C0_CLK_SRC);
 
 	I2C_MasterGetDefaultConfig(&masterConfig);
-	masterConfig.baudRate_Bps = sBaudrate;
+	masterConfig.baudRate_Bps = s_Baudrate;
 	I2C_MasterInit(mp_Base, &masterConfig, sourceClock);
+
+	s_Initialized = true;
 }
 
 status_t ASensor::ReadRegister(uint8_t registerAddress, uint8_t *pBuffer, size_t bufferSize) const {
