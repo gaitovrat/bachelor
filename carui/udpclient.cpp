@@ -1,10 +1,9 @@
 #include "udpclient.h"
 
 UDPClient::UDPClient(const QHostAddress& address, int port, QObject *parent)
-    : QObject(parent),  mPort(port), mUdpSocket(parent), mHostAddress(address)
+    : port(port), socket(parent), address(address), BaseClient(&this->socket, &QUdpSocket::readyRead, parent)
 {
-    mUdpSocket.bind(address, port, QUdpSocket::ShareAddress);
-    connect(&mUdpSocket, &QUdpSocket::readyRead, this, &UDPClient::Read);
+    this->socket.bind(this->address, this->port, QUdpSocket::ShareAddress);
 }
 
 UDPClient::UDPClient(const QString& address, int port, QObject *parent) : UDPClient(QHostAddress(address), port, parent)
@@ -13,14 +12,14 @@ UDPClient::UDPClient(const QString& address, int port, QObject *parent) : UDPCli
 UDPClient::UDPClient(int port, QObject* parent) : UDPClient(QHostAddress::Any, port, parent)
 {}
 
-void UDPClient::Read()
+void UDPClient::emitData()
 {
     QByteArray buffer;
     QHostAddress sender;
     quint16 senderPort;
 
-    buffer.resize(mUdpSocket.pendingDatagramSize());
-    mUdpSocket.readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+    buffer.resize(this->socket.pendingDatagramSize());
+    this->socket.readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
 
     qDebug() << buffer.size() << ' ' << buffer.data();
 }
