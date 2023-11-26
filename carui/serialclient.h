@@ -1,8 +1,7 @@
 #ifndef SERIALCLIENT_H
 #define SERIALCLIENT_H
 
-class SerialClient
-{
+class SerialClient {
 public:
     SerialClient();
 };

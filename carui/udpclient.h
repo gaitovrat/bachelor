@@ -8,8 +8,7 @@
 
 #include "baseclient.h"
 
-class UDPClient : public BaseClient
-{
+class UDPClient : public BaseClient {
     Q_OBJECT
 
     uint32_t port;
