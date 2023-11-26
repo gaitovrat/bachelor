@@ -1,17 +1,17 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
-static constexpr int scPort = 8080;
+#include "udpclient.h"
+
+static constexpr int PORT = 8080;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow), mUdpClient(scPort, parent)
+    , ui(new Ui::MainWindow), client(std::make_unique<UDPClient>(PORT, parent))
 {
-    ui->setupUi(this);
+    this->ui->setupUi(this);
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
+MainWindow::~MainWindow() {
+    delete this->ui;
 }
-

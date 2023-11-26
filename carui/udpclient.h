@@ -1,12 +1,20 @@
 #ifndef UDPCLIENT_H
 #define UDPCLIENT_H
 
+#include <cstdint>
+
 #include <QObject>
 #include <QUdpSocket>
 
-class UDPClient : public QObject
+#include "baseclient.h"
+
+class UDPClient : public BaseClient
 {
     Q_OBJECT
+
+    uint32_t port;
+    QUdpSocket socket;
+    QHostAddress address;
 
 public:
     UDPClient(const QHostAddress& address, int port, QObject *parent);
@@ -17,13 +25,7 @@ public:
 
     virtual ~UDPClient() = default;
 
-public slots:
-    void Read();
-
-private:
-    uint32_t mPort;
-    QUdpSocket mUdpSocket;
-    QHostAddress mHostAddress;
+    void emitData() override;
 };
 
 #endif // UDPCLIENT_H

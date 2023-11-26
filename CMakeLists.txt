@@ -12,20 +12,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
 
-set(PROJECT_FOLDER carui)
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-        udpclient.h
-        udpclient.cpp
+        carui/main.cpp
+        carui/mainwindow.cpp
+        carui/mainwindow.h
+        carui/mainwindow.ui
+        carui/udpclient.h
+        carui/udpclient.cpp
+        carui/baseclient.h
+        carui/baseclient.cpp
+        carui/serialclient.h
+        carui/serialclient.cpp
 )
-list(TRANSFORM PROJECT_SOURCES PREPEND ${PROJECT_FOLDER}/)
+
+include_directories(common)
 
 qt_add_executable(carui
     MANUAL_FINALIZATION
-    ${PROJECT_SOURCES}  
+    ${PROJECT_SOURCES}
 )
 target_link_libraries(carui PRIVATE Qt6::Widgets Qt6::Network)
 

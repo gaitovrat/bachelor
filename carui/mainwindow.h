@@ -1,9 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <memory>
+
 #include <QMainWindow>
 
-#include "udpclient.h"
+#include "baseclient.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -13,12 +15,12 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    Ui::MainWindow *ui;
+    std::unique_ptr<BaseClient> client;
+
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
 
-private:
-    Ui::MainWindow *ui;
-    UDPClient mUdpClient;
+    virtual ~MainWindow();
 };
 #endif // MAINWINDOW_H
