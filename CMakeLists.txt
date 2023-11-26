@@ -9,8 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network SerialPort)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network SerialPort)
 
 set(PROJECT_SOURCES
         carui/main.cpp
@@ -31,7 +31,7 @@ qt_add_executable(carui
     MANUAL_FINALIZATION
     ${PROJECT_SOURCES}
 )
-target_link_libraries(carui PRIVATE Qt6::Widgets Qt6::Network)
+target_link_libraries(carui PRIVATE Qt6::Widgets Qt6::Network Qt6::SerialPort)
 
 set_target_properties(carui PROPERTIES
     ${BUNDLE_ID_OPTION}
