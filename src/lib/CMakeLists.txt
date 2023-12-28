@@ -1,0 +1,1 @@
+set(lib_Include ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
