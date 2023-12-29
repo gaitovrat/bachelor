@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 3.28)
 
 project(Car VERSION 0.1 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD_REQUIRED 17)
+include(ProcessorCount)
+ProcessorCount(NCPU)
 
+if (${NCPU} EQUAL 0)
+    set(NCPU 1)
+endif()
+
+set(CMAKE_CXX_STANDARD_REQUIRED 17)
+set(CMAKE_BUILD_PARALLEL_LEVEL ${NCPU})
+
+add_subdirectory(deps)
 add_subdirectory(src)

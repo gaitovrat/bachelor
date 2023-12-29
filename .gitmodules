@@ -1,0 +1,4 @@
+[submodule "deps/qt"]
+	path = deps/qt
+	url = https://code.qt.io/qt/qt5.git
+	branch = 6.6.1
