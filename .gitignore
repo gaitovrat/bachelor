@@ -6,3 +6,10 @@ build
 
 # Clang misc.
 .cache
+
+# MCUxpresso misc.
+.metadata
+.mcuxpressoide_packages_support
+Debug
+doc
+.settings

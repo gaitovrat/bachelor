@@ -10,12 +10,13 @@
 
 #include <cstdint>
 
-
 union Vec3 {
 	struct {
 		int16_t X, Y, Z;
 	};
 	int16_t Values[3];
+
+	bool operator==(const Vec3& other) const;
 };
 
 #endif /* VEC_H_ */
