@@ -19,7 +19,11 @@ qt_add_qml_module(carui
     QML_FILES assets/main.qml
 )
 
-target_link_libraries(carui PRIVATE Qt6::Network Qt6::SerialPort Qt6::Quick)
+target_include_directories(carui PRIVATE ${lib_Include})
+target_link_libraries(carui 
+    PRIVATE 
+    ${lib_Link}
+    Qt6::Network Qt6::SerialPort Qt6::Quick)
 set_target_properties(carui PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
