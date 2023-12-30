@@ -1,23 +1,23 @@
 #ifndef BASECLIENT_H
 #define BASECLIENT_H
 
-#include <QObject>
 #include <QIODevice>
+#include <QObject>
 
 class BaseClient : public QObject {
     Q_OBJECT
 
-    using Signal = void (QIODevice::*)();
-    using Sender = const typename QtPrivate::FunctionPointer<Signal>::Object;
+    using IOSignal = void (QIODevice::*)();
 
-public:
-    BaseClient(Sender *sender, Signal signal, QObject *parent = nullptr);
+   public:
+    BaseClient(const QIODevice *sender, IOSignal signal,
+               QObject *parent = nullptr);
 
     virtual ~BaseClient() = default;
 
     virtual void emitData() = 0;
 
-public slots:
+   public slots:
     void read();
 };
 

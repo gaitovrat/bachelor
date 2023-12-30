@@ -13,5 +13,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED 17)
 set(CMAKE_BUILD_PARALLEL_LEVEL ${NCPU})
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_subdirectory(deps)
 add_subdirectory(src)

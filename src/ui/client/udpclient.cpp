@@ -1,4 +1,4 @@
-#include "udpclient.h"
+#include "UdpClient.h"
 
 UDPClient::UDPClient(const QHostAddress& address, const int port, QObject *parent)
     : port(port),

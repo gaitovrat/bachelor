@@ -3,14 +3,11 @@
 
 #include <cstdint>
 
-#include <QObject>
 #include <QUdpSocket>
 
-#include "baseclient.h"
+#include "BaseClient.h"
 
 class UDPClient : public BaseClient {
-    Q_OBJECT
-
     uint32_t port;
     QUdpSocket socket;
     QHostAddress address;

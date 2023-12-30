@@ -1,9 +1,9 @@
-#include "baseclient.h"
+#include "BaseClient.h"
 
-BaseClient::BaseClient(Sender *sender, Signal signal, QObject *parent) : QObject(parent) {
+BaseClient::BaseClient(const QIODevice *sender, IOSignal signal,
+                       QObject *parent)
+    : QObject(parent) {
     connect(sender, signal, this, &BaseClient::read);
 }
 
-void BaseClient::read() {
-    this->emitData();
-}
+void BaseClient::read() { this->emitData(); }

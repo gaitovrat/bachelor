@@ -1,4 +1,4 @@
-#include "serialclient.h"
+#include "SerialClient.h"
 
 #include <QDebug>
 

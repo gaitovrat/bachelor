@@ -1,7 +1,7 @@
-#include <iostream>
+#include "App.h"
 
-int main(int argc, char *argv[]) {
-    std::cout << argc << std::endl;
+int main(int argc, char **argv) {
+    App app(argc, argv);
 
-    return 0;
+    return app.exec();
 }

@@ -3,11 +3,9 @@
 
 #include <QSerialPort>
 
-#include "baseclient.h"
+#include "BaseClient.h"
 
 class SerialClient : public BaseClient {
-    Q_OBJECT
-
     QSerialPort port;
 
 public:
