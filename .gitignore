@@ -1,33 +1,15 @@
-# Latex misc.
-*.synctex.gz
-*.log
-*.fls
-*.fdb_latexmk
-*.aux
-*.bbl
-*.bcf
-*.blg
-*.lof
-*.lot
-*.run.xml
-*.out
-*.tocs
-*.toc
-*.xmpi
-BachelorThesis.pdf
+# CMake misc.
+build
 
 # Mac misc.
 .DS_Store
 
-# Eclipse misc.
-.settings
-doc
+# Clang misc.
+.cache
 
-# Build
+# MCUxpresso misc.
+.metadata
+.mcuxpressoide_packages_support
 Debug
-*.launch
-
-# CMake misc.
-CMakeLists.txt.user
-build
-/Debug Enet/
+doc
+.settings
