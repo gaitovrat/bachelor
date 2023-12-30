@@ -17,8 +17,8 @@ text
 # Setup
 ## UI
 ### Dependencies
-1. Cmake
-2. Qt 6.x.x
+1. Cmake == 3.28
+2. Qt >= 6.4
 
 ### Build
 ```sh
@@ -31,4 +31,4 @@ cmake --build build --parallel
 1. MCUxpresso IDE
 
 ### Build
-TODO
+Import all eclipse projects from src folder and build it.
