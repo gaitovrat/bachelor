@@ -1,4 +1,8 @@
+# CMake misc.
 build
 
 # Mac misc.
 .DS_Store
+
+# Clang misc.
+.cache
