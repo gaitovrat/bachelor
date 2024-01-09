@@ -1,32 +1,46 @@
-find_package(Qt6 6.4 REQUIRED COMPONENTS Network SerialPort Quick)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
-qt_policy(SET QTP0001 NEW)
-qt_standard_project_setup()
+set(QT_COMPONENTS
+    Network
+    SerialPort
+    Widgets
+)
 
-qt_add_executable(carui
+find_package(Qt6 REQUIRED COMPONENTS ${QT_COMPONENTS})
+
+add_executable(carui
     main.cpp
-    App.cpp
-    App.h
+    window/MainWindow.cpp
+    window/MainWindow.h
+    window/MainWindow.ui
     client/BaseClient.cpp
     client/BaseClient.h
     client/SerialClient.cpp
     client/SerialClient.h
     client/UdpClient.cpp
-    client/UdpClient.h)
-qt_add_qml_module(carui
-    URI carui
-    VERSION 1.0
-    QML_FILES assets/main.qml
+    client/UdpClient.h
 )
 
+list(TRANSFORM QT_COMPONENTS PREPEND Qt6::)
+
 target_include_directories(carui PRIVATE ${lib_Include})
-target_link_libraries(carui 
+target_link_libraries(carui
     PRIVATE 
     ${lib_Link}
-    Qt6::Network Qt6::SerialPort Qt6::Quick)
+    ${QT_COMPONENTS})
+
 set_target_properties(carui PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
+include(GNUInstallDirs)
+install(TARGETS carui
+    BUNDLE DESTINATION .
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+qt_finalize_executable(carui)
