@@ -5,34 +5,31 @@
 #include <cstdint>
 
 class Enet {
-private:
-	static constexpr uint32_t BUFFER_NUMBER = 4;
+	static constexpr uint32_t BUFFER_COUNT = 4;
+	static constexpr size_t BUFFER_SIZE = 2048;
 
-	static constexpr size_t MAX_BUFFER_SIZE = 2048;
+	bool initialized;
+
+	struct netif netif;
+	ip4_addr_t mcuIp, netmask, gateway, pcIp;
+
+	pbuf *pBuffer[Enet::BUFFER_COUNT];
+	uint8_t data[Enet::BUFFER_COUNT][Enet::BUFFER_SIZE];
+
+	udp_pcb *pcb;
+	uint16_t port;
+	uint32_t dataLen;
+	uint32_t dataIndex;
 
 public:
 	Enet();
 
 	virtual ~Enet() = default;
 
-	void Init(uint32_t bufferSize, uint16_t port);
+	void init(uint32_t bufferSize, uint16_t port);
 
-	void Send(const void *pData, uint32_t len);
+	void send(const void *pData, uint32_t len);
 
-	bool Check();
-
-private:
-	bool m_Initialized;
-
-    struct netif m_Netif;
-    ip4_addr_t m_McuIp, m_Netmask, m_Gateway, m_PcIp;
-
-    pbuf *m_Pbuffer[Enet::BUFFER_NUMBER];
-    uint8_t m_Data[Enet::BUFFER_NUMBER][Enet::MAX_BUFFER_SIZE];
-
-    udp_pcb *m_Pcb;
-    uint16_t m_Port;
-    uint32_t m_DataLen;
-    uint32_t mi_Data;
+	bool check();
 };
 #endif /* ENET_ENET_H_ */

@@ -12,9 +12,9 @@
 
 union Vec3 {
 	struct {
-		int16_t X, Y, Z;
+		int16_t x, y, z;
 	};
-	int16_t Values[3];
+	int16_t values[3];
 
 	bool operator==(const Vec3& other) const;
 };

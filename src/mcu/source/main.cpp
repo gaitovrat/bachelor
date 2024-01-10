@@ -26,19 +26,24 @@ int main(void) {
     BOARD_InitDebugConsole();
 #endif
 #ifdef USE_ENET
-    enet.Init(1024, 8080);
+    enet.init(1024, 8080);
 #endif
 
-    accel.Init();
-    gyro.Init();
+    accel.init();
+    gyro.init();
 
     while(1) {
-    	FXOS8700CQ::Data accelData = accel.Read();
-    	Vec3 gyroData = gyro.Read();
+    	std::optional<FXOS8700CQ::Data> accelData = accel.read();
+    	std::optional<Vec3> gyroData = gyro.read();
 
-		PRINTF("Accel: %5d %5d %5d\r\n", accelData.Accel.X, accelData.Accel.Y, accelData.Accel.Z);
-		PRINTF("Mag: %5d %5d %5d\r\n", accelData.Mag.X, accelData.Mag.Y, accelData.Mag.Z);
-		PRINTF("Gyro: %5d %5d %5d\r\n", gyroData.X, gyroData.Y, gyroData.Z);
+    	if (accelData.has_value()) {
+			PRINTF("Accel: %5d %5d %5d\r\n", accelData->accel.x, accelData->accel.y, accelData->accel.z);
+			PRINTF("Mag: %5d %5d %5d\r\n", accelData->mag.x, accelData->mag.y, accelData->mag.z);
+    	}
+
+    	if (gyroData.has_value()) {
+    		PRINTF("Gyro: %5d %5d %5d\r\n", gyroData->x, gyroData->y, gyroData->z);
+    	}
     }
 
     return 0 ;

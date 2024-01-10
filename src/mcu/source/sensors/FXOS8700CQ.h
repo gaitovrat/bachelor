@@ -8,7 +8,7 @@
 #ifndef SENSORS_FXOS8700CQ_H_
 #define SENSORS_FXOS8700CQ_H_
 
-#include <vector>
+#include <optional>
 #include <cstdint>
 
 #include "Vec.h"
@@ -23,23 +23,24 @@ public:
 	};
 
 	struct Data {
-		Vec3 Accel;
-		Vec3 Mag;
+		Vec3 accel;
+		Vec3 mag;
 	};
 
+private:
+	uint8_t deviceAddress;
+	Range range;
+
+public:
 	FXOS8700CQ(FXOS8700CQ::Range range);
 
 	virtual ~FXOS8700CQ() = default;
 
-	void Init() override;
+	status_t init() override;
 
-	uint8_t DeviceAddress() const override;
+	uint8_t getDeviceAddress() const override;
 
-	FXOS8700CQ::Data Read() const;
-
-private:
-	uint8_t m_DeviceAddress;
-	Range m_Range;
+	std::optional<FXOS8700CQ::Data> read() const;
 };
 
 #endif /* SENSORS_FXOS8700CQ_H_ */

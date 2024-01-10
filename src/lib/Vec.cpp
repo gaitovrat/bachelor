@@ -8,5 +8,5 @@
 #include "Vec.h"
 
 bool Vec3::operator==(const Vec3& other) const {
-    return this->X == other.X && this->Y == other.Y && this->Z == other.Z;
+    return this->x == other.x && this->y == other.y && this->z == other.z;
 }

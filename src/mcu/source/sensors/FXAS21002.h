@@ -8,6 +8,8 @@
 #ifndef SENSORS_FXAS21002_H_
 #define SENSORS_FXAS21002_H_
 
+#include <optional>
+
 #include "ASensor.h"
 #include "Vec.h"
 
@@ -19,19 +21,22 @@ public:
 		DPS_500,
 		DPS_250
 	};
+
+private:
+	uint8_t deviceAddress;
+	FXAS21002::Range range;
+
+public:
+
 	FXAS21002(FXAS21002::Range range);
 
 	virtual ~FXAS21002() = default;
 
-	void Init() override;
+	status_t init() override;
 
-	uint8_t DeviceAddress() const override;
+	uint8_t getDeviceAddress() const override;
 
-	Vec3 Read() const;
-
-private:
-	uint8_t m_DeviceAddress;
-	FXAS21002::Range m_Range;
+	std::optional<Vec3> read() const;
 };
 
 #endif /* SENSORS_FXAS21002_H_ */
