@@ -32,7 +32,7 @@ private:
 	Range range;
 
 public:
-	FXOS8700CQ(FXOS8700CQ::Range range);
+	FXOS8700CQ(FXOS8700CQ::Range range = Range::G_4);
 
 	virtual ~FXOS8700CQ() = default;
 

@@ -28,7 +28,7 @@ private:
 
 public:
 
-	FXAS21002(FXAS21002::Range range);
+	FXAS21002(FXAS21002::Range range = Range::DPS_1000);
 
 	virtual ~FXAS21002() = default;
 
