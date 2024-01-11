@@ -15,7 +15,7 @@ static constexpr uint8_t CTRL_REG3 = 0x15U;
 static constexpr uint8_t F_SETUP = 0x09U;
 static constexpr uint8_t STATUS = 0x00U;
 
-FXAS21002::FXAS21002(FXAS21002::Range range) : ASensor(I2C0),
+FXAS21002::FXAS21002(FXAS21002::Range range) : BaseSensor(I2C0),
 		deviceAddress(0x21), range(range) {
 }
 
@@ -25,7 +25,7 @@ status_t FXAS21002::init() {
 	uint8_t active = 0x03U;
 
 	BOARD_InitGYRO_I2CPins();
-	ASensor::init();
+	BaseSensor::init();
 
 	// Set stand by mode
 	status = readRegister(CTRL_REG1, &value, sizeof(value));
@@ -34,32 +34,28 @@ status_t FXAS21002::init() {
 	}
 
 	value &= ~active;
-	status = writeRegister(CTRL_REG1, &value, sizeof(value));
-	if (status != kStatus_Success) {
-		return status;
-	}
-	status = readRegister(CTRL_REG1, &value, sizeof(value));
+	status = writeRegister(CTRL_REG1, &value);
 	if (status != kStatus_Success) {
 		return status;
 	}
 
 	// Disable FIFO
 	value = 0;
-	status = writeRegister(F_SETUP, &value, sizeof(value));
+	status = writeRegister(F_SETUP, &value);
 	if (status != kStatus_Success) {
 		return status;
 	}
 
 	// Configure auto-increment
 	value = 0x8U;
-	status = writeRegister(CTRL_REG3, &value, sizeof(value));
+	status = writeRegister(CTRL_REG3, &value);
 	if (status != kStatus_Success) {
 		return status;
 	}
 
 	// Configure range
 	value = range;
-	status = writeRegister(CTRL_REG0, &value, sizeof(value));
+	status = writeRegister(CTRL_REG0, &value);
 	if (status != kStatus_Success) {
 		return status;
 	}
@@ -67,12 +63,7 @@ status_t FXAS21002::init() {
 	// Set Active mode
 	uint8_t dr = 0x04U;
 	value = dr | active;
-	status = writeRegister(CTRL_REG1, &value, sizeof(value));
-	if (status != kStatus_Success) {
-		return status;
-	}
-
-	status = readRegister(CTRL_REG1, &value, sizeof(value));
+	status = writeRegister(CTRL_REG1, &value);
 	if (status != kStatus_Success) {
 		return status;
 	}

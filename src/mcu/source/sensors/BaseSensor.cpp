@@ -5,23 +5,21 @@
  *      Author: ratmirgaitov
  */
 
-#include <sensors/ASensor.h>
-
 #include <string.h>
 #include <assert.h>
 
 #include <fsl_i2c.h>
 #include <fsl_debug_console.h>
+#include <sensors/BaseSensor.h>
 
 static constexpr uint32_t BAUDRATE = 100000;
 
-bool ASensor::initialized = false;
+bool BaseSensor::initialized = false;
 
-ASensor::ASensor(I2C_Type *base) : base(base) {
-}
+BaseSensor::BaseSensor(I2C_Type *base) : base(base) {}
 
-status_t ASensor::init() {
-	if (ASensor::initialized) {
+status_t BaseSensor::init() {
+	if (BaseSensor::initialized) {
 		return kStatus_Success;
 	}
 
@@ -32,12 +30,12 @@ status_t ASensor::init() {
 	masterConfig.baudRate_Bps = BAUDRATE;
 	I2C_MasterInit(this->base, &masterConfig, sourceClock);
 
-	ASensor::initialized = true;
+	BaseSensor::initialized = true;
 
 	return kStatus_Success;
 }
 
-status_t ASensor::readRegister(uint8_t registerAddress, uint8_t *buffer, size_t bufferSize) const {
+status_t BaseSensor::readRegister(uint8_t registerAddress, uint8_t *buffer, size_t bufferSize) const {
 	const uint8_t deviceAddress = this->getDeviceAddress();
 
 	i2c_master_transfer_t masterXfer;
@@ -46,7 +44,7 @@ status_t ASensor::readRegister(uint8_t registerAddress, uint8_t *buffer, size_t 
 	masterXfer.slaveAddress = deviceAddress;
 	masterXfer.direction = kI2C_Read;
 	masterXfer.subaddress = registerAddress;
-	masterXfer.subaddressSize = sizeof(registerAddress);
+	masterXfer.subaddressSize = 1;
 	masterXfer.data = buffer;
 	masterXfer.dataSize = bufferSize;
 	masterXfer.flags = kI2C_TransferDefaultFlag;
@@ -54,7 +52,7 @@ status_t ASensor::readRegister(uint8_t registerAddress, uint8_t *buffer, size_t 
 	return I2C_MasterTransferBlocking(this->base, &masterXfer);
 }
 
-status_t ASensor::writeRegister(uint8_t registerAddress, uint8_t *buffer, size_t bufferSize) {
+status_t BaseSensor::writeRegister(uint8_t registerAddress, uint8_t *buffer) {
 	const uint8_t deviceAddress = this->getDeviceAddress();
 
 	i2c_master_transfer_t masterXfer;
@@ -63,9 +61,9 @@ status_t ASensor::writeRegister(uint8_t registerAddress, uint8_t *buffer, size_t
 	masterXfer.slaveAddress = deviceAddress;
 	masterXfer.direction = kI2C_Write;
 	masterXfer.subaddress = registerAddress;
-	masterXfer.subaddressSize = sizeof(registerAddress);
+	masterXfer.subaddressSize = 1;
 	masterXfer.data = buffer;
-	masterXfer.dataSize = bufferSize;
+	masterXfer.dataSize = 1;
 	masterXfer.flags = kI2C_TransferDefaultFlag;
 
 	return I2C_MasterTransferBlocking(this->base, &masterXfer);

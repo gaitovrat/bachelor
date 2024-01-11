@@ -5,23 +5,22 @@
  *      Author: ratmirgaitov
  */
 
-#ifndef SENSORS_ASENSOR_H_
-#define SENSORS_ASENSOR_H_
+#ifndef SENSORS_BASESENSOR_H_
+#define SENSORS_BASESENSOR_H_
 
 #include <vector>
 #include <cstdint>
 
 #include <fsl_i2c.h>
 
-class ASensor {
+class BaseSensor {
 	static bool initialized;
-
 	I2C_Type *base;
 
 public:
-	ASensor(I2C_Type *base);
+	BaseSensor(I2C_Type *base);
 
-	virtual ~ASensor() = default;
+	virtual ~BaseSensor() = default;
 
 	virtual status_t init();
 
@@ -29,7 +28,7 @@ public:
 
 	status_t readRegister(uint8_t registerAddress, uint8_t *buffer, size_t bufferSize) const;
 
-	status_t writeRegister(uint8_t registerAddress, uint8_t *buffer, size_t bufferSize);
+	status_t writeRegister(uint8_t registerAddress, uint8_t *buffer);
 };
 
-#endif /* SENSORS_ASENSOR_H_ */
+#endif /* SENSORS_BASESENSOR_H_ */

@@ -8,12 +8,12 @@
 #ifndef SENSORS_FXAS21002_H_
 #define SENSORS_FXAS21002_H_
 
+#include <sensors/BaseSensor.h>
 #include <optional>
 
-#include "ASensor.h"
 #include "Vec.h"
 
-class FXAS21002 : public ASensor {
+class FXAS21002 : public BaseSensor {
 public:
 	enum Range {
 		DPS_2000 = 0,

@@ -8,13 +8,13 @@
 #ifndef SENSORS_FXOS8700CQ_H_
 #define SENSORS_FXOS8700CQ_H_
 
+#include <sensors/BaseSensor.h>
 #include <optional>
 #include <cstdint>
 
 #include "Vec.h"
-#include "sensors/ASensor.h"
 
-class FXOS8700CQ : public ASensor {
+class FXOS8700CQ : public BaseSensor {
 public:
 	enum Range {
 		G_2 = 0,
