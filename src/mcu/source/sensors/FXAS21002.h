@@ -8,10 +8,10 @@
 #ifndef SENSORS_FXAS21002_H_
 #define SENSORS_FXAS21002_H_
 
-#include <sensors/BaseSensor.h>
 #include <optional>
 
 #include "Vec.h"
+#include "sensors/BaseSensor.h"
 
 class FXAS21002 : public BaseSensor {
 public:
@@ -27,7 +27,6 @@ private:
 	FXAS21002::Range range;
 
 public:
-
 	FXAS21002(FXAS21002::Range range = Range::DPS_1000);
 
 	virtual ~FXAS21002() = default;

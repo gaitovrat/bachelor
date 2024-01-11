@@ -8,7 +8,6 @@
 #ifndef SENSORS_BASESENSOR_H_
 #define SENSORS_BASESENSOR_H_
 
-#include <vector>
 #include <cstdint>
 
 #include <fsl_i2c.h>

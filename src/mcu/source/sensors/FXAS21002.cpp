@@ -5,7 +5,7 @@
  *      Author: ratmirgaitov
  */
 
-#include <sensors/FXAS21002.h>
+#include "sensors/FXAS21002.h"
 
 #include "pin_mux.h"
 

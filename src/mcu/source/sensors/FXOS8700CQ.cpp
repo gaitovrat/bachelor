@@ -5,7 +5,7 @@
  *      Author: ratmirgaitov
  */
 
-#include <sensors/FXOS8700CQ.h>
+#include "sensors/FXOS8700CQ.h"
 
 #include <pin_mux.h>
 

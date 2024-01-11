@@ -5,12 +5,9 @@
  *      Author: ratmirgaitov
  */
 
-#include <string.h>
-#include <assert.h>
+#include "sensors/BaseSensor.h"
 
-#include <fsl_i2c.h>
-#include <fsl_debug_console.h>
-#include <sensors/BaseSensor.h>
+#include <cstring>
 
 static constexpr uint32_t BAUDRATE = 100000;
 

@@ -8,10 +8,10 @@
 #ifndef SENSORS_FXOS8700CQ_H_
 #define SENSORS_FXOS8700CQ_H_
 
-#include <sensors/BaseSensor.h>
 #include <optional>
 #include <cstdint>
 
+#include "sensors/BaseSensor.h"
 #include "Vec.h"
 
 class FXOS8700CQ : public BaseSensor {
