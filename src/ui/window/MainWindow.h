@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <memory>
 
+#include "client/SerialClient.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -14,6 +16,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
     Ui::MainWindow* ui;
+    SerialClient client;
 
    public:
     MainWindow(QWidget* parent = nullptr);

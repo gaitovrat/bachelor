@@ -10,8 +10,9 @@ class BaseClient : public QObject {
     using IOSignal = void (QIODevice::*)();
 
    public:
-    BaseClient(const QIODevice *sender, IOSignal signal,
-               QObject *parent = nullptr);
+    BaseClient(QObject *parent);
+
+    void connect(const QIODevice *sender, IOSignal signal);
 
     virtual ~BaseClient() = default;
 

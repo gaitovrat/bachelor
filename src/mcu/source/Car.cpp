@@ -10,7 +10,16 @@
 #include <fsl_debug_console.h>
 
 void Car::run() {
-	PRINTF("run\r\n");
+	std::optional<FXOS8700CQ::Data> fxosData = this->fxos.read();
+	if (fxosData.has_value()) {
+		this->data.accel = fxosData->accel;
+		this->data.mag = fxosData->mag;
+	}
+
+	std::optional<Vec3> fxasData = this->fxas.read();
+	if (fxasData.has_value()) {
+		this->data.gyro = *fxasData;
+	}
 }
 
 void Car::init() {

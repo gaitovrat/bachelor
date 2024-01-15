@@ -2,8 +2,10 @@
 
 #include "./ui_mainwindow.h"
 
+#define PORT_NAME "/dev/cu.usbmodem0006210000001"
+
 MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow) {
+    : QMainWindow(parent), ui(new Ui::MainWindow), client(PORT_NAME, this) {
     this->ui->setupUi(this);
 
     this->ui->accelerometer_x->setText(QString::number(.0f));

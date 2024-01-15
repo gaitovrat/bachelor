@@ -25,7 +25,7 @@ add_executable(carui
 
 list(TRANSFORM QT_COMPONENTS PREPEND Qt6::)
 
-target_include_directories(carui PRIVATE ${lib_Include})
+target_include_directories(carui PRIVATE ${lib_Include} ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(carui
     PRIVATE 
     ${lib_Link}

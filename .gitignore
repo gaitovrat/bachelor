@@ -1,5 +1,6 @@
 # CMake misc.
 build
+*.user
 
 # Mac misc.
 .DS_Store
@@ -13,3 +14,4 @@ build
 Debug
 doc
 .settings
+*.launch
