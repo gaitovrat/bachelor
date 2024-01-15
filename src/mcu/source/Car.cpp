@@ -9,6 +9,10 @@
 
 #include <fsl_debug_console.h>
 
+extern "C" {
+	int DbgConsole_SendData(uint8_t *ch, size_t size);
+}
+
 void Car::run() {
 	std::optional<FXOS8700CQ::Data> fxosData = this->fxos.read();
 	if (fxosData.has_value()) {
@@ -20,6 +24,7 @@ void Car::run() {
 	if (fxasData.has_value()) {
 		this->data.gyro = *fxasData;
 	}
+	DbgConsole_SendData((uint8_t *)&this->data, sizeof(this->data));
 }
 
 void Car::init() {
