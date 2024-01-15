@@ -35,9 +35,11 @@ SerialClient::SerialClient(const QString &portName,
 }
 
 void SerialClient::emitData() {
-    const QByteArray &buffer = this->port.readAll();
-    const Data *data = (const Data *)buffer.data();
+    if (this->port.bytesAvailable() < sizeof(Data)) {
+        return;
+    }
 
-    qDebug() << buffer.size() << data->accel.x << data->accel.y
-             << data->accel.z;
+    const QByteArray &buffer = this->port.read(sizeof(Data));
+    const Data *data = (const Data *)buffer.data();
+    qDebug() << data->accel.x << data->accel.y << data->accel.z;
 }
