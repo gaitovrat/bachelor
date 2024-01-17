@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "client/BaseClient.h"
-#include "client/SerialClient.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
