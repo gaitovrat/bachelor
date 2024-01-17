@@ -2,14 +2,27 @@
 
 #include "./ui_mainwindow.h"
 #include "client/BaseClient.h"
+#ifdef USE_UDP
+#include "client/UdpClient.h"
+#else
+#include "client/SerialClient.h"
+#endif
 
 #define PORT_NAME "/dev/cu.usbmodem0006210000001"
 
 MainWindow::MainWindow(QWidget* parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), client(PORT_NAME, this) {
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow),
+#ifdef USE_UDP
+      client(new UDPClient(8080, this))
+#else
+      client(new SerialClient(PORT_NAME, this))
+#endif
+{
     this->ui->setupUi(this);
 
-    connect(&this->client, &BaseClient::dataReady, this, &MainWindow::update);
+    connect(this->client.get(), &BaseClient::dataReady, this,
+            &MainWindow::update);
 }
 
 MainWindow::~MainWindow() { delete this->ui; }

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <memory>
 
+#include "client/BaseClient.h"
 #include "client/SerialClient.h"
 
 QT_BEGIN_NAMESPACE
@@ -16,7 +17,7 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 
     Ui::MainWindow* ui;
-    SerialClient client;
+    std::unique_ptr<BaseClient> client;
 
    public:
     MainWindow(QWidget* parent = nullptr);
