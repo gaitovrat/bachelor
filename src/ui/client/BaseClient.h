@@ -25,7 +25,7 @@ class BaseClient : public QObject {
     void read();
 
    signals:
-    void emitData(const Data &data);
+    void dataReady(const Data &data);
 };
 
 #endif

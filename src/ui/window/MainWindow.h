@@ -22,5 +22,8 @@ class MainWindow : public QMainWindow {
     MainWindow(QWidget* parent = nullptr);
 
     virtual ~MainWindow();
+
+   public slots:
+    void update(const Data& data);
 };
 #endif  // MAINWINDOW_H

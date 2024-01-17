@@ -12,6 +12,6 @@ void BaseClient::read() {
     std::optional<Data> data = this->getData();
 
     if (data.has_value()) {
-        this->emitData(*data);
+        this->dataReady(*data);
     }
 }
