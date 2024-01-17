@@ -5,6 +5,7 @@
 
 #include <QUdpSocket>
 #include <cstdint>
+#include <optional>
 
 #include "BaseClient.h"
 
@@ -24,7 +25,7 @@ class UDPClient : public BaseClient {
 
     virtual ~UDPClient() = default;
 
-    void emitData() override;
+    std::optional<Data> getData() override;
 };
 
 #endif  // UDPCLIENT_H

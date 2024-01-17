@@ -21,7 +21,7 @@ class SerialClient : public BaseClient {
 
     virtual ~SerialClient() = default;
 
-    void emitData() override;
+    std::optional<Data> getData() override;
 };
 
 #endif  // SERIALCLIENT_H

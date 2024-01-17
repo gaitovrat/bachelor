@@ -3,6 +3,8 @@
 #include <QtSerialPort/qserialport.h>
 
 #include <QDebug>
+#include <cstring>
+#include <optional>
 
 #include "BaseClient.h"
 #include "Data.h"
@@ -34,12 +36,15 @@ SerialClient::SerialClient(const QString &portName,
     }
 }
 
-void SerialClient::emitData() {
+std::optional<Data> SerialClient::getData() {
+    Data data;
+
     if (this->port.bytesAvailable() < sizeof(Data)) {
-        return;
+        return std::nullopt;
     }
 
     const QByteArray &buffer = this->port.read(sizeof(Data));
-    const Data *data = (const Data *)buffer.data();
-    qDebug() << data->accel.x << data->accel.y << data->accel.z;
+    std::memcpy(&data, buffer.data(), sizeof(Data));
+
+    return data;
 }

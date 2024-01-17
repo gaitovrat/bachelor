@@ -3,6 +3,9 @@
 
 #include <QIODevice>
 #include <QObject>
+#include <optional>
+
+#include "Data.h"
 
 class BaseClient : public QObject {
     Q_OBJECT
@@ -16,10 +19,13 @@ class BaseClient : public QObject {
 
     virtual ~BaseClient() = default;
 
-    virtual void emitData() = 0;
+    virtual std::optional<Data> getData() = 0;
 
    public slots:
     void read();
+
+   signals:
+    void emitData(const Data &data);
 };
 
 #endif
