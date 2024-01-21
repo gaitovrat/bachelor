@@ -12,16 +12,20 @@ find_package(Qt6 REQUIRED COMPONENTS ${QT_COMPONENTS})
 
 add_executable(carui
     main.cpp
+    Settings.cpp
+    Settings.h
     window/MainWindow.cpp
     window/MainWindow.h
     window/MainWindow.ui
+    window/SettingsWindow.h 
+    window/SettingsWindow.cpp 
+    window/SettingsWindow.ui
     client/BaseClient.cpp
     client/BaseClient.h
+    client/UdpClient.h
+    client/UdpClient.cpp
     client/SerialClient.cpp
     client/SerialClient.h
-    client/UdpClient.cpp
-    client/UdpClient.h
-    window/SettingsWindow.h window/SettingsWindow.cpp window/SettingsWindow.ui
 )
 
 list(TRANSFORM QT_COMPONENTS PREPEND Qt6::)

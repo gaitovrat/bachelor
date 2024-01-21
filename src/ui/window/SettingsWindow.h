@@ -16,7 +16,6 @@ class SettingsWindow : public QDialog {
     static constexpr const char *FILENAME = "settings.json";
 
     Ui::SettingsWindow *ui;
-    Settings settings;
 
    public:
     explicit SettingsWindow(QWidget *parent = nullptr);
@@ -26,11 +25,7 @@ class SettingsWindow : public QDialog {
     std::optional<Settings> execute();
 
    private:
-    void load();
-
-    void save();
-
-    void update();
+    Settings getSettings();
 };
 
 #endif  // SETTINGSWINDOW_H
