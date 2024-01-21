@@ -25,11 +25,15 @@ add_executable(carui
 
 list(TRANSFORM QT_COMPONENTS PREPEND Qt6::)
 
-target_include_directories(carui PRIVATE ${lib_Include} ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(carui PRIVATE 
+    ${lib_Include} 
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${jsoncpp_SOURCE_DIR}/include)
 target_link_libraries(carui
     PRIVATE 
     ${lib_Link}
-    ${QT_COMPONENTS})
+    ${QT_COMPONENTS}
+    jsoncpp_lib)
 
 set_target_properties(carui PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
