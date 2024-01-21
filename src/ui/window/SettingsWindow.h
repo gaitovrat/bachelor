@@ -3,7 +3,8 @@
 
 #include <QDialog>
 #include <optional>
-#include <string>
+
+#include "Settings.h"
 
 namespace Ui {
 class SettingsWindow;
@@ -12,14 +13,24 @@ class SettingsWindow;
 class SettingsWindow : public QDialog {
     Q_OBJECT
 
-    Ui::SettingsWindow *ui;
+    static constexpr const char *FILENAME = "settings.json";
 
-public:
+    Ui::SettingsWindow *ui;
+    Settings settings;
+
+   public:
     explicit SettingsWindow(QWidget *parent = nullptr);
 
     ~SettingsWindow();
 
-    std::optional<std::string> execute();
+    std::optional<Settings> execute();
+
+   private:
+    void load();
+
+    void save();
+
+    void update();
 };
 
-#endif // SETTINGSWINDOW_H
+#endif  // SETTINGSWINDOW_H

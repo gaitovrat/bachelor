@@ -7,6 +7,7 @@
 #else
 #include "client/SerialClient.h"
 #endif
+#include "Settings.h"
 #include "window/SettingsWindow.h"
 
 #define PORT_NAME "/dev/cu.usbmodem0006210000001"
@@ -24,7 +25,8 @@ MainWindow::MainWindow(QWidget* parent)
 
     connect(this->client.get(), &BaseClient::dataReady, this,
             &MainWindow::update);
-    connect(this->ui->actionPreferences, &QAction::triggered, this, &MainWindow::openPreferences);
+    connect(this->ui->actionPreferences, &QAction::triggered, this,
+            &MainWindow::openPreferences);
 }
 
 MainWindow::~MainWindow() { delete this->ui; }
@@ -44,11 +46,11 @@ void MainWindow::update(const Data& data) {
 }
 
 void MainWindow::openPreferences() {
-    SettingsWindow settings(this);
-    std::optional<std::string> status = settings.execute();
+    SettingsWindow settingsWindow(this);
+    std::optional<Settings> settings = settingsWindow.execute();
 
-    if (status.has_value()) {
-        qInfo() << *status;
+    if (settings.has_value()) {
+        qInfo() << settings->portName;
     } else {
         qInfo() << "None";
     }
