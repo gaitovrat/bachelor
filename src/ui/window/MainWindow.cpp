@@ -7,6 +7,7 @@
 #else
 #include "client/SerialClient.h"
 #endif
+#include "window/SettingsWindow.h"
 
 #define PORT_NAME "/dev/cu.usbmodem0006210000001"
 
@@ -23,6 +24,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     connect(this->client.get(), &BaseClient::dataReady, this,
             &MainWindow::update);
+    connect(this->ui->actionPreferences, &QAction::triggered, this, &MainWindow::openPreferences);
 }
 
 MainWindow::~MainWindow() { delete this->ui; }
@@ -39,4 +41,15 @@ void MainWindow::update(const Data& data) {
     this->ui->magnetometer_x->setText(QString::number(data.mag.x));
     this->ui->magnetometer_y->setText(QString::number(data.mag.y));
     this->ui->magnetometer_z->setText(QString::number(data.mag.z));
+}
+
+void MainWindow::openPreferences() {
+    SettingsWindow settings(this);
+    std::optional<std::string> status = settings.execute();
+
+    if (status.has_value()) {
+        qInfo() << *status;
+    } else {
+        qInfo() << "None";
+    }
 }

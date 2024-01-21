@@ -25,5 +25,6 @@ class MainWindow : public QMainWindow {
 
    public slots:
     void update(const Data& data);
+    void openPreferences();
 };
 #endif  // MAINWINDOW_H

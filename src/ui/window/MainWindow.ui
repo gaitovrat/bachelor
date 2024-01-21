@@ -294,11 +294,23 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>36</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menucarui">
+    <property name="title">
+     <string>carui</string>
+    </property>
+    <addaction name="actionPreferences"/>
+   </widget>
+   <addaction name="menucarui"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>Preferences</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
