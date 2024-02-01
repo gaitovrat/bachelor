@@ -19,7 +19,7 @@ class MainWindow : public QMainWindow {
     std::unique_ptr<BaseClient> client;
 
    public:
-    MainWindow(QWidget* parent = nullptr);
+    MainWindow(const QString& name, QWidget* parent = nullptr);
 
     virtual ~MainWindow();
 

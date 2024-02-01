@@ -2,6 +2,8 @@
 
 #include "./ui_mainwindow.h"
 #include "client/BaseClient.h"
+#include <QtGui/qaction.h>
+#include <QtWidgets/qmenu.h>
 #ifdef USE_UDP
 #include "client/UdpClient.h"
 #else
@@ -12,7 +14,7 @@
 
 #define PORT_NAME "/dev/cu.usbmodem0006210000001"
 
-MainWindow::MainWindow(QWidget* parent)
+MainWindow::MainWindow(const QString& name, QWidget* parent)
     : QMainWindow(parent),
       ui(new Ui::MainWindow),
 #ifdef USE_UDP
@@ -21,11 +23,21 @@ MainWindow::MainWindow(QWidget* parent)
       client(new SerialClient(PORT_NAME, this))
 #endif
 {
+#ifdef __APPLE__
+    QMenu *fileMenu = new QMenu(name, this);
+#else
+    QMenu *fileMenu = new QMenu("File", this);
+#endif
+    QAction *preferenceAction = new QAction("Preferences", this);
+
     this->ui->setupUi(this);
+
+    fileMenu->addAction(preferenceAction);
+    this->ui->menubar->addMenu(fileMenu);
 
     connect(this->client.get(), &BaseClient::dataReady, this,
             &MainWindow::update);
-    connect(this->ui->actionPreferences, &QAction::triggered, this,
+    connect(preferenceAction, &QAction::triggered, this,
             &MainWindow::openPreferences);
 }
 
