@@ -17,7 +17,7 @@ SettingsWindow::SettingsWindow(QWidget *parent)
         return;
     }
 
-    this->ui->portNameLineEdit->setText(settings->portName);
+    // this->ui->portNameLineEdit->setText(settings->portName);
 }
 
 SettingsWindow::~SettingsWindow() { delete ui; }
@@ -36,7 +36,7 @@ std::optional<Settings> SettingsWindow::execute() {
 
 Settings SettingsWindow::getSettings() {
     Settings settings;
-    settings.portName = this->ui->portNameLineEdit->text();
+    // settings.portName = this->ui->portNameLineEdit->text();
 
     return settings;
 }

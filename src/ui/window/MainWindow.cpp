@@ -62,7 +62,7 @@ void MainWindow::openPreferences() {
     std::optional<Settings> settings = settingsWindow.execute();
 
     if (settings.has_value()) {
-        qInfo() << settings->portName;
+        qInfo() << "Ok";
     } else {
         qInfo() << "None";
     }
