@@ -1,17 +1,20 @@
-# CMake misc.
+# CMake
 build
 *.user
 
-# Mac misc.
+# Mac
 .DS_Store
 
-# Clang misc.
+# Clang
 .cache
 
-# MCUxpresso misc.
+# MCUxpresso
 .metadata
 .mcuxpressoide_packages_support
 Debug
 doc
 .settings
 *.launch
+
+# UI app
+settings.json

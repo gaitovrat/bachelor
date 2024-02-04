@@ -39,17 +39,3 @@ target_link_libraries(carui
     ${lib_Link}
     ${QT_COMPONENTS}
     jsoncpp_lib)
-
-set_target_properties(carui PROPERTIES
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
-)
-include(GNUInstallDirs)
-install(TARGETS carui
-    BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-qt_finalize_executable(carui)
