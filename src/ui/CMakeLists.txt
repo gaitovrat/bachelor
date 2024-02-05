@@ -38,4 +38,4 @@ target_link_libraries(carui
     PRIVATE 
     ${lib_Link}
     ${QT_COMPONENTS}
-    jsoncpp_lib)
+    jsoncpp_static)

@@ -5,7 +5,6 @@
 #include <QSerialPort>
 
 #include <QtSerialPort/qserialport.h>
-#include <_types/_uint32_t.h>
 #include <optional>
 
 
