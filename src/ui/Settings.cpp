@@ -15,7 +15,7 @@ Settings::Serial::Serial() :
     stopBits(QSerialPort::StopBits::OneStop)
 {}
 
-Settings::Network::Network() : address(QHostAddress::Any), port(0u) {}
+Settings::Network::Network() : address(QHostAddress::Any), port(8080u) {}
 
 Settings::Settings() :
     mode(Mode::Serial),

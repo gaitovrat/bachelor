@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "client/BaseClient.h"
+#include "Settings.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -26,5 +27,8 @@ class MainWindow : public QMainWindow {
    public slots:
     void update(const Data& data);
     void openPreferences();
+
+private:
+    void updateClient(const Settings& settings);
 };
 #endif  // MAINWINDOW_H

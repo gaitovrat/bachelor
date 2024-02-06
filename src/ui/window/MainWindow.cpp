@@ -26,21 +26,7 @@ MainWindow::MainWindow(const QString& name, QWidget* parent)
     this->ui->menubar->addMenu(fileMenu);
 
     std::optional<Settings> settings = Settings::load(SettingsWindow::FILENAME);
-    Settings::Mode mode = Settings::Mode::Serial;
-    if (settings.has_value()) {
-        mode = settings->mode;
-    }
-
-    switch (mode) {
-    case Settings::Mode::Network:
-        this->client = std::make_unique<UDPClient>(settings->network, this);
-        break;
-    case Settings::Mode::Serial:
-        this->client = std::make_unique<SerialClient>(settings->serial, this);
-        break;
-    default:
-        break;
-    }
+    this->updateClient(settings.value_or(Settings()));
 
     connect(this->client.get(), &BaseClient::dataReady, this,
             &MainWindow::update);
@@ -68,9 +54,22 @@ void MainWindow::openPreferences() {
     SettingsWindow settingsWindow(this);
     std::optional<Settings> settings = settingsWindow.execute();
 
-    if (settings.has_value()) {
-        qInfo() << "Ok";
-    } else {
-        qInfo() << "None";
+    if (!settings.has_value()) {
+        return;
+    }
+
+    this->updateClient(settings.value());
+}
+
+ void MainWindow::updateClient(const Settings& settings) {
+    switch (settings.mode) {
+    case Settings::Mode::Network:
+        this->client = std::make_unique<UDPClient>(settings.network, this);
+        break;
+    case Settings::Mode::Serial:
+        this->client = std::make_unique<SerialClient>(settings.serial, this);
+        break;
+    default:
+        break;
     }
 }
