@@ -1,39 +1,36 @@
 #ifndef SETTINGS_H_
 #define SETTINGS_H_
 
-#include <QtCore/qstring.h>
-#include <QSerialPort>
-
-#include <QtSerialPort/qserialport.h>
 #include <optional>
 
-
-enum ModeSettings {
-    Serial = 0,
-    Netork
-};
-
-struct SerialSettings {
-    QString portName;
-    QSerialPort::BaudRate baudRate;
-    QSerialPort::DataBits dataBits;
-    QSerialPort::Parity parity;
-    QSerialPort::StopBits stopBits;
-
-    SerialSettings();
-};
-
-struct NetworkSettings {
-    QString address;
-    uint32_t port;
-
-    NetworkSettings();
-};
+#include <QSerialPort>
 
 struct Settings {
-    ModeSettings mode;
-    SerialSettings serial;
-    NetworkSettings network;
+    enum Mode {
+        Serial = 0,
+        Network
+    };
+
+    struct Serial {
+        QString portName;
+        QSerialPort::BaudRate baudRate;
+        QSerialPort::DataBits dataBits;
+        QSerialPort::Parity parity;
+        QSerialPort::StopBits stopBits;
+
+        Serial();
+    };
+
+    struct Network {
+        QString address;
+        uint32_t port;
+
+        Network();
+    };
+
+    Mode mode;
+    struct Serial serial;
+    struct Network network;
     QString recordDestination;
 
     Settings();
@@ -41,6 +38,9 @@ struct Settings {
     void save(const char *filename);
 
     static std::optional<Settings> load(const char *filename);
+
+    static const char *modeToString(Mode mode);
+    static Mode stringToMode(const QString& value);
 };
 
 

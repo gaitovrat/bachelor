@@ -26,6 +26,8 @@ add_executable(carui
     client/UdpClient.cpp
     client/SerialClient.cpp
     client/SerialClient.h
+    Utils.h
+    Utils.cpp
 )
 
 list(TRANSFORM QT_COMPONENTS PREPEND Qt6::)

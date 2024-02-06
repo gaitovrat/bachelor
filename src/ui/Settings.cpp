@@ -1,39 +1,13 @@
 #include "Settings.h"
 
-#include "json/value.h"
-#include <QtCore/qdebug.h>
-#include <QtCore/qlogging.h>
-#include <QtSerialPort/qserialport.h>
-#include <json/json.h>
-
 #include <fstream>
 #include <optional>
 
-template<typename T>
-T get(Json::Value root, const char *key, T keyDefault) {
-    if (root.isMember(key))
-        return static_cast<T>(root[key].asInt());
+#include <json/json.h>
 
-    return keyDefault;
-}
+#include "Utils.h"
 
-template<>
-Json::Value get<Json::Value>(Json::Value root, const char *key, Json::Value keyDefault) {
-    if (root.isMember(key))
-        root[key];
-
-    return keyDefault;
-}
-
-template<>
-const char *get<const char *>(Json::Value root, const char *key, const char *keyDefault) {
-    if (root.isMember(key))
-        return root[key].asCString();
-
-    return keyDefault;
-}
-
-SerialSettings::SerialSettings() : 
+Settings::Serial::Serial() :
     portName(""),
     baudRate(QSerialPort::BaudRate::Baud115200),
     dataBits(QSerialPort::DataBits::Data8),
@@ -41,9 +15,13 @@ SerialSettings::SerialSettings() :
     stopBits(QSerialPort::StopBits::OneStop)
 {}
 
-NetworkSettings::NetworkSettings() : address(""), port(0u) {}
+Settings::Network::Network() : address(""), port(0u) {}
 
-Settings::Settings() : mode(ModeSettings::Serial), serial(), network(), recordDestination("") {}
+Settings::Settings() :
+    mode(Mode::Serial),
+    serial(),
+    network(),
+    recordDestination("") {}
 
 void Settings::save(const char *filename) {
     Json::Value root, serial, network;
@@ -77,8 +55,8 @@ std::optional<Settings> Settings::load(const char *filename) {
     Json::Reader reader;
     Json::Value root;
     Settings settings;
-    SerialSettings serialSettings;
-    NetworkSettings networkSettings;
+    struct Serial serialSettings;
+    struct Network networkSettings;
 
     if (!fin.is_open()) {
         qWarning() << "Unable to open" << filename;
@@ -90,21 +68,38 @@ std::optional<Settings> Settings::load(const char *filename) {
         return std::nullopt;
     }
 
-    Json::Value serial = get(root, "serial", Json::Value());
-    serialSettings.portName = get(serial, "portName", "");
-    serialSettings.baudRate = get(serial, "baudRate", QSerialPort::BaudRate::Baud115200);
-    serialSettings.dataBits = get(serial, "dataBits", QSerialPort::DataBits::Data8);
-    serialSettings.parity = get(serial, "parity", QSerialPort::Parity::NoParity);
-    serialSettings.stopBits = get(serial, "stopBits", QSerialPort::StopBits::OneStop);
+    Json::Value serial = Utils::jsonGetKey(root, "serial", Json::Value());
+    serialSettings.portName = QString::fromStdString(Utils::jsonGetKey<std::string>(serial, "portName", ""));
+    serialSettings.baudRate = Utils::jsonGetKey(serial, "baudRate", QSerialPort::BaudRate::Baud115200);
+    serialSettings.dataBits = Utils::jsonGetKey(serial, "dataBits", QSerialPort::DataBits::Data8);
+    serialSettings.parity = Utils::jsonGetKey(serial, "parity", QSerialPort::Parity::NoParity);
+    serialSettings.stopBits = Utils::jsonGetKey(serial, "stopBits", QSerialPort::StopBits::OneStop);
 
-    Json::Value network = get(root, "network", Json::Value());
-    networkSettings.address = get(network, "address", "");
-    networkSettings.port = get<uint32_t>(network, "port", 0u);
+    Json::Value network = Utils::jsonGetKey(root, "network", Json::Value());
+    networkSettings.address = QString::fromStdString(Utils::jsonGetKey<std::string>(network, "address", ""));
+    networkSettings.port = Utils::jsonGetKey<uint32_t>(network, "port", 0u);
 
-    settings.mode = get(root, "mode", ModeSettings::Serial);
-    settings.recordDestination = get(root, "recordDestination", "");
+    settings.mode = Utils::jsonGetKey(root, "mode", Mode::Serial);
+    settings.recordDestination = QString::fromStdString(Utils::jsonGetKey<std::string>(root, "recordDestination", ""));
     settings.serial = serialSettings;
     settings.network = networkSettings;
 
     return settings;
+}
+
+const char *Settings::modeToString(Mode mode) {
+    switch (mode) {
+    case Mode::Network:
+        return "Network";
+    case Mode::Serial:
+        return "Serial";
+    default:
+        return "";
+    }
+}
+
+Settings::Mode Settings::stringToMode(const QString& value) {
+    if (value == "Network")
+        return Mode::Network;
+    return Mode::Serial;
 }
