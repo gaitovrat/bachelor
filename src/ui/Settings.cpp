@@ -15,7 +15,7 @@ Settings::Serial::Serial() :
     stopBits(QSerialPort::StopBits::OneStop)
 {}
 
-Settings::Network::Network() : address(""), port(0u) {}
+Settings::Network::Network() : address(QHostAddress::Any), port(0u) {}
 
 Settings::Settings() :
     mode(Mode::Serial),
@@ -39,7 +39,7 @@ void Settings::save(const char *filename) {
     serial["parity"] = this->serial.parity;
     serial["stopBits"] = this->serial.stopBits;
 
-    network["address"] = this->network.address.toUtf8().constData();
+    network["address"] = this->network.address.toString().toUtf8().constData();
     network["port"] = this->network.port;
 
     root["mode"] = this->mode;
@@ -76,7 +76,8 @@ std::optional<Settings> Settings::load(const char *filename) {
     serialSettings.stopBits = Utils::jsonGetKey(serial, "stopBits", QSerialPort::StopBits::OneStop);
 
     Json::Value network = Utils::jsonGetKey(root, "network", Json::Value());
-    networkSettings.address = QString::fromStdString(Utils::jsonGetKey<std::string>(network, "address", ""));
+    QHostAddress address(QString::fromStdString(Utils::jsonGetKey<std::string>(network, "address", "")));
+    networkSettings.address = address;
     networkSettings.port = Utils::jsonGetKey<uint32_t>(network, "port", 0u);
 
     settings.mode = Utils::jsonGetKey(root, "mode", Mode::Serial);

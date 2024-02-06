@@ -4,25 +4,15 @@
 #include "client/BaseClient.h"
 #include <QtGui/qaction.h>
 #include <QtWidgets/qmenu.h>
-#ifdef USE_UDP
 #include "client/UdpClient.h"
-#else
 #include "client/SerialClient.h"
-#endif
 #include "Settings.h"
 #include "window/SettingsWindow.h"
 
-#define PORT_NAME "/dev/cu.usbmodem0006210000001"
-
 MainWindow::MainWindow(const QString& name, QWidget* parent)
     : QMainWindow(parent),
-      ui(new Ui::MainWindow),
-#ifdef USE_UDP
-      client(new UDPClient(8080, this))
-#else
-      client(new SerialClient(PORT_NAME, this))
-#endif
-{
+      client(nullptr),
+      ui(new Ui::MainWindow) {
 #ifdef __APPLE__
     QMenu *fileMenu = new QMenu(name, this);
 #else
@@ -34,6 +24,23 @@ MainWindow::MainWindow(const QString& name, QWidget* parent)
 
     fileMenu->addAction(preferenceAction);
     this->ui->menubar->addMenu(fileMenu);
+
+    std::optional<Settings> settings = Settings::load(SettingsWindow::FILENAME);
+    Settings::Mode mode = Settings::Mode::Serial;
+    if (settings.has_value()) {
+        mode = settings->mode;
+    }
+
+    switch (mode) {
+    case Settings::Mode::Network:
+        this->client = std::make_unique<UDPClient>(settings->network, this);
+        break;
+    case Settings::Mode::Serial:
+        this->client = std::make_unique<SerialClient>(settings->serial, this);
+        break;
+    default:
+        break;
+    }
 
     connect(this->client.get(), &BaseClient::dataReady, this,
             &MainWindow::update);

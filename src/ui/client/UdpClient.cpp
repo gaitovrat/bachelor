@@ -5,18 +5,11 @@
 
 #include "Data.h"
 
-UDPClient::UDPClient(const QHostAddress& address, const int port,
-                     QObject* parent)
-    : port(port), socket(parent), address(address), BaseClient(parent) {
+UDPClient::UDPClient(const struct Settings::Network& settings, QObject* parent)
+    : port(settings.port), socket(parent), address(settings.address), BaseClient(parent) {
     this->connect(&this->socket, &QUdpSocket::readyRead);
     this->socket.bind(this->address, this->port, QUdpSocket::ShareAddress);
 }
-
-UDPClient::UDPClient(const QString& address, const int port, QObject* parent)
-    : UDPClient(QHostAddress(address), port, parent) {}
-
-UDPClient::UDPClient(const int port, QObject* parent)
-    : UDPClient(QHostAddress::Any, port, parent) {}
 
 std::optional<Data> UDPClient::getData() {
     Data data;

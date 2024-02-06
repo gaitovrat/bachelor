@@ -11,28 +11,19 @@
 
 static constexpr int BUFFER_SIZE = 1024;
 
-SerialClient::SerialClient(const QString &portName, QObject *parent)
-    : SerialClient(portName, QSerialPort::BaudRate::Baud115200,
-                   QSerialPort::DataBits::Data8, QSerialPort::Parity::NoParity,
-                   QSerialPort::StopBits::OneStop, parent) {}
-
-SerialClient::SerialClient(const QString &portName,
-                           QSerialPort::BaudRate baudRate,
-                           QSerialPort::DataBits dataBits,
-                           QSerialPort::Parity parity,
-                           QSerialPort::StopBits stopBits, QObject *parent)
-    : BaseClient(parent), port(portName, parent) {
+SerialClient::SerialClient(const struct Settings::Serial& settings, QObject *parent)
+    : BaseClient(parent), port(settings.portName, parent) {
     this->connect(&this->port, &QSerialPort::readyRead);
 
-    this->port.setBaudRate(baudRate);
-    this->port.setDataBits(dataBits);
-    this->port.setParity(parity);
-    this->port.setStopBits(stopBits);
+    this->port.setBaudRate(settings.baudRate);
+    this->port.setDataBits(settings.dataBits);
+    this->port.setParity(settings.parity);
+    this->port.setStopBits(settings.stopBits);
 
     if (this->port.open(QSerialPort::ReadWrite)) {
-        qDebug() << "Connected to" << portName;
+        qDebug() << "Connected to" << settings.portName;
     } else {
-        qDebug() << "Unnable to connect to" << portName;
+        qDebug() << "Unnable to connect to" << settings.portName;
     }
 }
 

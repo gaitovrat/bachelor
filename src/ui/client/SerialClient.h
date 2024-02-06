@@ -6,6 +6,7 @@
 #include <QSerialPort>
 
 #include "BaseClient.h"
+#include "Settings.h"
 
 class SerialClient : public BaseClient {
     Q_OBJECT
@@ -13,11 +14,7 @@ class SerialClient : public BaseClient {
     QSerialPort port;
 
    public:
-    SerialClient(const QString &portName, QObject *parent);
-
-    SerialClient(const QString &portName, QSerialPort::BaudRate baudRate,
-                 QSerialPort::DataBits dataBits, QSerialPort::Parity parity,
-                 QSerialPort::StopBits stopBits, QObject *parent);
+    SerialClient(const struct Settings::Serial& settings, QObject *parent);
 
     virtual ~SerialClient() = default;
 

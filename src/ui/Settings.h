@@ -4,6 +4,7 @@
 #include <optional>
 
 #include <QSerialPort>
+#include <QUdpSocket>
 
 struct Settings {
     enum Mode {
@@ -22,7 +23,7 @@ struct Settings {
     };
 
     struct Network {
-        QString address;
+        QHostAddress address;
         uint32_t port;
 
         Network();

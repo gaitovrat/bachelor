@@ -31,7 +31,7 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     else
         Utils::setComboBox(*this->ui->cbStopBits, QString::number(settings->serial.stopBits));
 
-    this->ui->leNetworkAddress->setText(settings->network.address);
+    this->ui->leNetworkAddress->setText(settings->network.address.toString());
     this->ui->leNetworkPort->setText(QString::number(settings->network.port));
 
     this->ui->leDestination->setText(settings->recordDestination);
@@ -69,7 +69,7 @@ Settings SettingsWindow::getSettings() {
     else
         settings.serial.stopBits = static_cast<QSerialPort::StopBits>(stopBits);
 
-    settings.network.address = this->ui->leNetworkAddress->text();
+    settings.network.address = QHostAddress(this->ui->leNetworkAddress->text());
     settings.network.port = this->ui->leNetworkPort->text().toUInt();
 
     settings.recordDestination = this->ui->leDestination->text();

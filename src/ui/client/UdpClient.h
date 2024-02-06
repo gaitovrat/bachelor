@@ -8,6 +8,7 @@
 #include <optional>
 
 #include "BaseClient.h"
+#include "Settings.h"
 
 class UDPClient : public BaseClient {
     Q_OBJECT
@@ -17,11 +18,7 @@ class UDPClient : public BaseClient {
     QHostAddress address;
 
    public:
-    UDPClient(const QHostAddress &address, int port, QObject *parent);
-
-    UDPClient(const QString &address, int port, QObject *parent);
-
-    UDPClient(int port, QObject *parent);
+    UDPClient(const struct Settings::Network& settings, QObject *parent);
 
     virtual ~UDPClient() = default;
 

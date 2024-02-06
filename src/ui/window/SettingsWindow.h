@@ -13,11 +13,11 @@ class SettingsWindow;
 class SettingsWindow : public QDialog {
     Q_OBJECT
 
-    static constexpr const char *FILENAME = "settings.json";
-
     Ui::SettingsWindow *ui;
 
    public:
+    static constexpr const char *FILENAME = "settings.json";
+
     explicit SettingsWindow(QWidget *parent = nullptr);
 
     ~SettingsWindow();
