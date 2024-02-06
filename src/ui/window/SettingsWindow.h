@@ -24,6 +24,9 @@ class SettingsWindow : public QDialog {
 
     std::optional<Settings> execute();
 
+  public slots:
+    void selectRecordDirectory();
+
    private:
     Settings getSettings();
 };

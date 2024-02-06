@@ -2,6 +2,8 @@
 
 #include <QMetaEnum>
 #include <QSerialPort>
+#include <QFileDialog>
+#include <QPushButton>
 
 #include "Utils.h"
 #include "Settings.h"
@@ -33,6 +35,8 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     this->ui->leNetworkPort->setText(QString::number(settings->network.port));
 
     this->ui->leDestination->setText(settings->recordDestination);
+
+    connect(this->ui->bChoose, &QPushButton::clicked, this, &SettingsWindow::selectRecordDirectory);
 }
 
 SettingsWindow::~SettingsWindow() { delete ui; }
@@ -71,4 +75,16 @@ Settings SettingsWindow::getSettings() {
     settings.recordDestination = this->ui->leDestination->text();
 
     return settings;
+}
+
+void SettingsWindow::selectRecordDirectory() {
+    QFileDialog dialog(this);
+
+    dialog.setFileMode(QFileDialog::Directory);
+    dialog.setOption(QFileDialog::ShowDirsOnly);
+
+    QString selectedDirectory = dialog.getExistingDirectory(this, "Select Directory", QDir::homePath());
+    if (!selectedDirectory.isEmpty()) {
+        this->ui->leDestination->setText(selectedDirectory);
+    }
 }
