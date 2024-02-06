@@ -1,12 +1,10 @@
 #include "MainWindow.h"
 
 #include "./ui_mainwindow.h"
+#include "Settings.h"
 #include "client/BaseClient.h"
-#include <QtGui/qaction.h>
-#include <QtWidgets/qmenu.h>
 #include "client/UdpClient.h"
 #include "client/SerialClient.h"
-#include "Settings.h"
 #include "window/SettingsWindow.h"
 
 MainWindow::MainWindow(const QString& name, QWidget* parent)

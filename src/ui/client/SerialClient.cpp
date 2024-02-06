@@ -1,14 +1,5 @@
 #include "SerialClient.h"
 
-#include <QtSerialPort/qserialport.h>
-
-#include <QDebug>
-#include <cstring>
-#include <optional>
-
-#include "BaseClient.h"
-#include "Data.h"
-
 static constexpr int BUFFER_SIZE = 1024;
 
 SerialClient::SerialClient(const struct Settings::Serial& settings, QObject *parent)

@@ -1,10 +1,5 @@
 #include "UdpClient.h"
 
-#include <cstring>
-#include <optional>
-
-#include "Data.h"
-
 UDPClient::UDPClient(const struct Settings::Network& settings, QObject* parent)
     : port(settings.port), socket(parent), address(settings.address), BaseClient(parent) {
     this->connect(&this->socket, &QUdpSocket::readyRead);

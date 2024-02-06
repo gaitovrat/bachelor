@@ -1,11 +1,10 @@
 #ifndef UDPCLIENT_H
 #define UDPCLIENT_H
 
-#include <QtCore/qtmetamacros.h>
-
-#include <QUdpSocket>
 #include <cstdint>
 #include <optional>
+
+#include <QUdpSocket>
 
 #include "BaseClient.h"
 #include "Settings.h"

@@ -1,8 +1,6 @@
 #ifndef SERIALCLIENT_H
 #define SERIALCLIENT_H
 
-#include <QtSerialPort/qserialport.h>
-
 #include <QSerialPort>
 
 #include "BaseClient.h"

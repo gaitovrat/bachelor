@@ -1,8 +1,9 @@
 #ifndef SETTINGSWINDOW_H
 #define SETTINGSWINDOW_H
 
-#include <QDialog>
 #include <optional>
+
+#include <QDialog>
 
 #include "Settings.h"
 
