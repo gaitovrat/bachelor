@@ -31,6 +31,8 @@ class BaseClient : public QObject {
 
    signals:
     void dataReady(const Data &data);
+
+    void dataReceived(qint64 size);
 };
 
 #endif

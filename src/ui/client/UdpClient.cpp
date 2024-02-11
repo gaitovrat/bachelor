@@ -11,11 +11,15 @@ std::optional<Data> UDPClient::getData() {
     QHostAddress sender;
     quint16 senderPort;
 
-    buffer.resize(this->socket.pendingDatagramSize());
+    qint64 size = this->socket.pendingDatagramSize();
+    emit this->dataReceived(size);
+    buffer.resize(size);
+
     this->socket.readDatagram(buffer.data(), buffer.size(), &sender,
                               &senderPort);
 
     std::memcpy(&data, buffer.data(), sizeof(Data));
+
 
     return data;
 }

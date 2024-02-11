@@ -28,6 +28,8 @@ class MainWindow : public QMainWindow {
    public slots:
     void update(const Data& data);
 
+    void receivedSize(qint64 size);
+
     void openPreferences();
 
     void reconnect();

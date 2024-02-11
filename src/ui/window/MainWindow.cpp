@@ -26,9 +26,12 @@ MainWindow::MainWindow(const QString& name, QWidget* parent)
 
     std::optional<Settings> settings = Settings::load(SettingsWindow::FILENAME);
     this->updateClient(settings.value_or(Settings()));
+    this->updateConnected();
 
     connect(this->client.get(), &BaseClient::dataReady, this,
             &MainWindow::update);
+    connect(this->client.get(), &BaseClient::dataReceived, this, 
+            &MainWindow::receivedSize);
     connect(preferenceAction, &QAction::triggered, this,
             &MainWindow::openPreferences);
     connect(this->ui->aReconnect, &QAction::triggered, this, 
@@ -86,4 +89,9 @@ void MainWindow::updateConnected() {
 void MainWindow::reconnect() {
     this->client->connect();
     this->updateConnected();
+}
+
+void MainWindow::receivedSize(const qint64 size) {
+    QString text = QString::number(size) + "B";
+    this->ui->lLastDataBytes->setText(text);
 }

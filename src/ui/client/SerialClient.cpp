@@ -1,4 +1,5 @@
 #include "SerialClient.h"
+#include <QtCore/qtypes.h>
 
 static constexpr int BUFFER_SIZE = 1024;
 
@@ -14,8 +15,10 @@ SerialClient::SerialClient(const struct Settings::Serial& settings, QObject *par
 
 std::optional<Data> SerialClient::getData() {
     Data data;
+    qint64 size = this->port.bytesAvailable();
+    emit this->dataReceived(size);
 
-    if (this->port.bytesAvailable() < sizeof(Data)) {
+    if (size < sizeof(Data)) {
         return std::nullopt;
     }
 
