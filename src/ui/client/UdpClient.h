@@ -22,6 +22,10 @@ class UDPClient : public BaseClient {
     virtual ~UDPClient() = default;
 
     std::optional<Data> getData() override;
+
+    bool connected() const override;
+
+    void connect() override;
 };
 
 #endif  // UDPCLIENT_H

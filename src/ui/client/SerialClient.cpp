@@ -4,18 +4,14 @@ static constexpr int BUFFER_SIZE = 1024;
 
 SerialClient::SerialClient(const struct Settings::Serial& settings, QObject *parent)
     : BaseClient(parent), port(settings.portName, parent) {
-    this->connect(&this->port, &QSerialPort::readyRead);
+    this->bind(&this->port, &QSerialPort::readyRead);
 
     this->port.setBaudRate(settings.baudRate);
     this->port.setDataBits(settings.dataBits);
     this->port.setParity(settings.parity);
     this->port.setStopBits(settings.stopBits);
 
-    if (this->port.open(QSerialPort::ReadWrite)) {
-        qDebug() << "Connected to" << settings.portName;
-    } else {
-        qDebug() << "Unnable to connect to" << settings.portName;
-    }
+    this->connect();
 }
 
 std::optional<Data> SerialClient::getData() {
@@ -29,4 +25,12 @@ std::optional<Data> SerialClient::getData() {
     std::memcpy(&data, buffer.data(), sizeof(Data));
 
     return data;
+}
+
+bool SerialClient::connected() const {
+    return this->port.isOpen();
+}
+
+void SerialClient::connect() {
+    this->port.open(QSerialPort::ReadWrite);
 }

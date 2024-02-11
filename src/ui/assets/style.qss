@@ -1,0 +1,7 @@
+QLabel.Connected {
+    color: green;
+}
+
+QLabel.Disconnected {
+    color: red;
+}

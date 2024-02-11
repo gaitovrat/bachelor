@@ -28,6 +28,7 @@ add_executable(carui
     client/SerialClient.h
     Utils.h
     Utils.cpp
+    assets.qrc
 )
 
 list(TRANSFORM QT_COMPONENTS PREPEND Qt6::)

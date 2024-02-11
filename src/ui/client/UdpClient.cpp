@@ -2,8 +2,8 @@
 
 UDPClient::UDPClient(const struct Settings::Network& settings, QObject* parent)
     : port(settings.port), socket(parent), address(settings.address), BaseClient(parent) {
-    this->connect(&this->socket, &QUdpSocket::readyRead);
-    this->socket.bind(this->address, this->port, QUdpSocket::ShareAddress);
+    this->bind(&this->socket, &QUdpSocket::readyRead);
+    this->connect();
 }
 
 std::optional<Data> UDPClient::getData() {
@@ -19,4 +19,12 @@ std::optional<Data> UDPClient::getData() {
     std::memcpy(&data, buffer.data(), sizeof(Data));
 
     return data;
+}
+
+bool UDPClient::connected() const {
+    return this->socket.state() == QAbstractSocket::BoundState;
+}
+
+void UDPClient::connect() {
+    this->socket.bind(this->address, this->port, QUdpSocket::ShareAddress);
 }

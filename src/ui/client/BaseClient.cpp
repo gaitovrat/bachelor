@@ -4,7 +4,7 @@
 
 BaseClient::BaseClient(QObject *parent) : QObject(parent) {}
 
-void BaseClient::connect(const QIODevice *sender, IOSignal signal) {
+void BaseClient::bind(const QIODevice *sender, IOSignal signal) {
     QObject::connect(sender, signal, this, &BaseClient::read);
 }
 

@@ -287,6 +287,45 @@
      <string>0.0</string>
     </property>
    </widget>
+   <widget class="QLabel" name="lConnected">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>0</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Connected</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>20</y>
+      <width>58</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Last data:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lLastDataBytes">
+    <property name="geometry">
+     <rect>
+      <x>770</x>
+      <y>20</y>
+      <width>21</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>0B</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -294,14 +333,26 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>36</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuClient">
+    <property name="title">
+     <string>Client</string>
+    </property>
+    <addaction name="aReconnect"/>
+   </widget>
+   <addaction name="menuClient"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionPreferences">
    <property name="text">
     <string>Preferences</string>
+   </property>
+  </action>
+  <action name="aReconnect">
+   <property name="text">
+    <string>Connect</string>
    </property>
   </action>
  </widget>

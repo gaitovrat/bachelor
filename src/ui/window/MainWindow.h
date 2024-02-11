@@ -27,9 +27,14 @@ class MainWindow : public QMainWindow {
 
    public slots:
     void update(const Data& data);
+
     void openPreferences();
+
+    void reconnect();
 
 private:
     void updateClient(const Settings& settings);
+
+    void updateConnected();
 };
 #endif  // MAINWINDOW_H

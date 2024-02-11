@@ -17,6 +17,10 @@ class SerialClient : public BaseClient {
     virtual ~SerialClient() = default;
 
     std::optional<Data> getData() override;
+
+    bool connected() const override;
+
+    void connect() override;
 };
 
 #endif  // SERIALCLIENT_H

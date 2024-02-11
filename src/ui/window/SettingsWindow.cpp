@@ -53,7 +53,7 @@ std::optional<Settings> SettingsWindow::execute() {
     return settings;
 }
 
-Settings SettingsWindow::getSettings() {
+Settings SettingsWindow::getSettings() const {
     Settings settings;
     settings.mode = Settings::stringToMode(this->ui->cbMode->currentText());
 

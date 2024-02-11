@@ -6,6 +6,7 @@
 #include "client/UdpClient.h"
 #include "client/SerialClient.h"
 #include "window/SettingsWindow.h"
+#include <QtGui/qaction.h>
 
 MainWindow::MainWindow(const QString& name, QWidget* parent)
     : QMainWindow(parent),
@@ -30,6 +31,8 @@ MainWindow::MainWindow(const QString& name, QWidget* parent)
             &MainWindow::update);
     connect(preferenceAction, &QAction::triggered, this,
             &MainWindow::openPreferences);
+    connect(this->ui->aReconnect, &QAction::triggered, this, 
+            &MainWindow::reconnect);
 }
 
 MainWindow::~MainWindow() { delete this->ui; }
@@ -63,11 +66,26 @@ void MainWindow::openPreferences() {
     switch (settings.mode) {
     case Settings::Mode::Network:
         this->client = std::make_unique<UDPClient>(settings.network, this);
+        this->updateConnected();
         break;
     case Settings::Mode::Serial:
         this->client = std::make_unique<SerialClient>(settings.serial, this);
+        this->updateConnected();
         break;
     default:
         break;
     }
+}
+
+void MainWindow::updateConnected() {
+    bool connected = this->client->connected();
+    QString value = connected ? "Connected" : "Disconnected";
+
+    this->ui->lConnected->setProperty("class", value);
+    this->ui->lConnected->setText(value);
+}
+
+void MainWindow::reconnect() {
+    this->client->connect();
+    this->updateConnected();
 }

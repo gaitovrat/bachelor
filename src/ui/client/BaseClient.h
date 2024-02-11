@@ -16,11 +16,15 @@ class BaseClient : public QObject {
    public:
     BaseClient(QObject *parent);
 
-    void connect(const QIODevice *sender, IOSignal signal);
+    void bind(const QIODevice *sender, IOSignal signal);
 
     virtual ~BaseClient() = default;
 
     virtual std::optional<Data> getData() = 0;
+
+    virtual bool connected() const = 0;
+
+    virtual void connect() = 0;
 
    public slots:
     void read();

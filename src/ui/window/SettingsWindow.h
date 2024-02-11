@@ -29,7 +29,7 @@ class SettingsWindow : public QDialog {
     void selectRecordDirectory();
 
    private:
-    Settings getSettings();
+    Settings getSettings() const;
 };
 
 #endif  // SETTINGSWINDOW_H
