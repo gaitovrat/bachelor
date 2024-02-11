@@ -3,7 +3,6 @@
 UDPClient::UDPClient(const struct Settings::Network& settings, QObject* parent)
     : port(settings.port), socket(parent), address(settings.address), BaseClient(parent) {
     this->bind(&this->socket, &QUdpSocket::readyRead);
-    this->connect();
 }
 
 std::optional<Data> UDPClient::getData() {

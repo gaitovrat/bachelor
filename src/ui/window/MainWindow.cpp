@@ -66,11 +66,9 @@ void MainWindow::openPreferences() {
     switch (settings.mode) {
     case Settings::Mode::Network:
         this->client = std::make_unique<UDPClient>(settings.network, this);
-        this->updateConnected();
         break;
     case Settings::Mode::Serial:
         this->client = std::make_unique<SerialClient>(settings.serial, this);
-        this->updateConnected();
         break;
     default:
         break;

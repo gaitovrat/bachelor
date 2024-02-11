@@ -10,8 +10,6 @@ SerialClient::SerialClient(const struct Settings::Serial& settings, QObject *par
     this->port.setDataBits(settings.dataBits);
     this->port.setParity(settings.parity);
     this->port.setStopBits(settings.stopBits);
-
-    this->connect();
 }
 
 std::optional<Data> SerialClient::getData() {
