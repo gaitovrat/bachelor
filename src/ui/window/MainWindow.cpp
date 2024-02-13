@@ -45,7 +45,10 @@ MainWindow::MainWindow(const QString& name, QWidget* parent)
             &MainWindow::reconnect);
 }
 
-MainWindow::~MainWindow() { delete this->ui; }
+MainWindow::~MainWindow() {
+    for (QLabel* label : this->labels) delete label;
+    delete this->ui;
+}
 
 void MainWindow::update(const Data& data) {
     this->ui->accelerometer_x->setText(QString::number(data.accel.x));
