@@ -1,10 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QtWidgets/qlabel.h>
 #include <memory>
 
 #include <QMainWindow>
-
+#include <QLabel>
 #include "client/BaseClient.h"
 #include "Settings.h"
 
@@ -17,7 +18,18 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
+    static constexpr const char *LABEL_BYTES_FORMAT = "%dB";
+
     Ui::MainWindow* ui;
+    union {
+        struct {
+            QLabel *labelConnected;
+            QLabel *labelTXBytes;
+            QLabel *labelRXBytes;
+        };
+        QLabel *labels[3];
+    };
+
     std::unique_ptr<BaseClient> client;
 
    public:
