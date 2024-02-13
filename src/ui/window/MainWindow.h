@@ -18,7 +18,7 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
-    static constexpr const char *LABEL_BYTES_FORMAT = "%dB";
+    static constexpr const char *LABEL_BYTES_FORMAT = "%lldB";
 
     Ui::MainWindow* ui;
     union {
