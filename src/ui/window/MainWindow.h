@@ -18,7 +18,8 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
-    static constexpr const char *LABEL_BYTES_FORMAT = "%lldB";
+    static constexpr const char *LABEL_TX_FORMAT = "TX: %lldB";
+    static constexpr const char *LABEL_RX_FORMAT = "RX: %lldB";
 
     Ui::MainWindow* ui;
     union {
@@ -32,7 +33,7 @@ class MainWindow : public QMainWindow {
 
     std::unique_ptr<BaseClient> client;
 
-   public:
+public:
     MainWindow(const QString& name, QWidget* parent = nullptr);
 
     virtual ~MainWindow();

@@ -16,9 +16,9 @@ MainWindow::MainWindow(const QString& name, QWidget* parent)
       client(nullptr),
       labelConnected(new QLabel("Connected", this)),
       labelTXBytes(new QLabel(
-          QString::asprintf(MainWindow::LABEL_BYTES_FORMAT, 0ll), this)),
+          QString::asprintf(MainWindow::LABEL_TX_FORMAT, 0ll), this)),
       labelRXBytes(new QLabel(
-          QString::asprintf(MainWindow::LABEL_BYTES_FORMAT, 0ll), this)) {
+          QString::asprintf(MainWindow::LABEL_RX_FORMAT, 0ll), this)) {
     this->ui->setupUi(this);
 #ifdef __APPLE__
     QMenu* fileMenu = new QMenu(name, this);
@@ -104,5 +104,5 @@ void MainWindow::reconnect() {
 
 void MainWindow::receivedSize(const qint64 size) {
     this->labelRXBytes->setText(
-        QString::asprintf(MainWindow::LABEL_BYTES_FORMAT, size));
+        QString::asprintf(MainWindow::LABEL_RX_FORMAT, size));
 }
