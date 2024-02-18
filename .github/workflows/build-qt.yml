@@ -12,6 +12,7 @@ jobs:
 
     - name: Install Qt dev tools
       run: |
+        sudo apt-get install libxcb-icccm4
         wget https://download.qt.io/official_releases/online_installers/qt-unified-linux-x64-online.run
         chmod +x qt-unified-linux-x64-online.run
         ./qt-unified-linux-x64-online.run --verbose --script tools/qt-installer-noninteractive.qssudo apt-get update
