@@ -22,3 +22,6 @@ settings.json
 # VS code
 .vscode
 *.code-workspace
+
+# Emacs
+*~

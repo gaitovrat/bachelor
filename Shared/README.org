@@ -1,0 +1,4 @@
+#+title: Shared
+#+author: Ratmir Gaitov
+
+This folder contains shared code between MCU and Qt app.

@@ -1,0 +1,5 @@
+#+title: Text
+#+author: Ratmir Gaitov
+
+This folder contains bachelor work itself written in LaTex.
+

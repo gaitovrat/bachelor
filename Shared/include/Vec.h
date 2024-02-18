@@ -15,8 +15,6 @@ union Vec3 {
         int16_t x, y, z;
     };
     int16_t values[3];
-
-    bool operator==(const Vec3& other) const;
 };
 
 #endif /* VEC_H_ */
