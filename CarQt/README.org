@@ -1,4 +1,4 @@
 #+title: CarQt
 #+author: Ratmir Gaitov
 
-This fodler contains qt app code for car monitoring and controlling.
+This folder contains qt app code for car monitoring and controlling.
