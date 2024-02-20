@@ -23,5 +23,9 @@ settings.json
 .vscode
 *.code-workspace
 
+# VS
+out
+.vs
+
 # Emacs
 *~

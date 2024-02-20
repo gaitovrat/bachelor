@@ -1,4 +1,0 @@
-#+title: Externals
-#+author: Ratmir Gaitov
-
-This folder contains minor dependencies.
