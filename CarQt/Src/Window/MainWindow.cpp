@@ -3,12 +3,12 @@
 #include <QtGui/qaction.h>
 #include <QtWidgets/qlineedit.h>
 
-#include "./ui_mainwindow.h"
+#include "./ui_MainWindow.h"
 #include "Settings.h"
-#include "client/BaseClient.h"
-#include "client/SerialClient.h"
-#include "client/UdpClient.h"
-#include "window/SettingsWindow.h"
+#include "Client/BaseClient.h"
+#include "Client/SerialClient.h"
+#include "Client/UdpClient.h"
+#include "Window/SettingsWindow.h"
 
 MainWindow::MainWindow(const QString& name, QWidget* parent)
     : QMainWindow(parent),

@@ -6,7 +6,7 @@
 
 #include <QMainWindow>
 #include <QLabel>
-#include "client/BaseClient.h"
+#include "Client/BaseClient.h"
 #include "Settings.h"
 
 QT_BEGIN_NAMESPACE

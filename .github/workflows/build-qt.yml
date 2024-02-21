@@ -1,0 +1,45 @@
+name: Build Text
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: Main
+    container: 
+        image: ghcr.io/gaitovrat/bachelor-tex:latest
+        credentials:
+         username: ${{ github.actor }}
+         password: ${{ secrets.container_token }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Build
+      run: cd Text && pdflatex BachelorThesis.tex
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: pdf
+        path: Text/BachelorThesis.pdf
+
+  publish:
+     needs: build
+     runs-on: ubuntu-latest
+     environment: Main
+     if: github.ref == 'refs/heads/main'
+     
+     steps:
+       - uses: actions/download-artifact@v2
+         with:
+           name: pdf
+           path: Text/BachelorThesis.pdf
+
+       - uses: ncipollo/release-action@v1
+         with:
+           artifacts: "Text/BachelorThesis.pdf"
+           token: ${{ secrets.container_token }}
