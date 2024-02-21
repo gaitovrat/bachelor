@@ -25,23 +25,24 @@ MainWindow::MainWindow(const QString& name, QWidget* parent)
 #else
     QMenu* fileMenu = new QMenu("File", this);
 #endif
+    QMenu* clientMenu = new QMenu("Client", this);
     QAction* preferenceAction = new QAction("Preferences", this);
+    QAction* reconnectAction = new QAction("Reconnect", this);
 
     fileMenu->addAction(preferenceAction);
+    clientMenu->addAction(reconnectAction);
     this->ui->menubar->addMenu(fileMenu);
+    this->ui->menubar->addMenu(clientMenu);
+
     for (QLabel* label : this->labels) this->ui->statusbar->addWidget(label);
 
     std::optional<Settings> settings = Settings::load(SettingsWindow::FILENAME);
     this->updateClient(settings.value_or(Settings()));
     this->updateConnected();
 
-    connect(this->client.get(), &BaseClient::dataReady, this,
-            &MainWindow::update);
-    connect(this->client.get(), &BaseClient::dataReceived, this,
-            &MainWindow::receivedSize);
     connect(preferenceAction, &QAction::triggered, this,
             &MainWindow::openPreferences);
-    connect(this->ui->aReconnect, &QAction::triggered, this,
+    connect(reconnectAction, &QAction::triggered, this,
             &MainWindow::reconnect);
 }
 
@@ -87,6 +88,10 @@ void MainWindow::updateClient(const Settings& settings) {
         default:
             break;
     }
+    connect(this->client.get(), &BaseClient::dataReady, this,
+        &MainWindow::update);
+    connect(this->client.get(), &BaseClient::dataReceived, this,
+        &MainWindow::receivedSize);
 }
 
 void MainWindow::updateConnected() {
