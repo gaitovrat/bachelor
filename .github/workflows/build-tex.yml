@@ -48,3 +48,4 @@ jobs:
            artifacts: "Text/BachelorThesis.pdf"
            token: ${{ secrets.container_token }}
            tag: "Thesis"
+           allowUpdates: true
