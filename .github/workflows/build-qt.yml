@@ -1,0 +1,19 @@
+name: Build CarQt
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu
+    container: ghcr.io/gaitovrat/bachelor:latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Configure CMake
+      run: cmake -S . -B build -G Ninja
+
+    - name: Build
+      run: cmake --build build --parallel

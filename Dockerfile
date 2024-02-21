@@ -7,8 +7,9 @@ RUN dnf install -y qt6-qtbase-devel qt6-qtserialport-devel ninja-build cmake gcc
 RUN dnf install -y texlive-scheme-basic
 
 # Install MCUX
-ARG MCUX_NAME="mcuxpressoide-10.1.1_606.x86_64"
-COPY ${MCUX_BIN}.deb.bin ${MCUX_BIN}.deb.bin
-RUN sh ${MCUX_BIN}.deb.bin --noexec --target /mcux
+ARG MCUX_NAME="mcuxpressoide-11.9.0_2144.x86_64"
+
 RUN dnf install -y dpkg
-RUN cd /mcux && dpkg-deb -x ${MCUX_BIN}.deb ./
+COPY ${MCUX_NAME}.deb.bin ${MCUX_NAME}.deb.bin
+RUN sh ${MCUX_NAME}.deb.bin --noexec --target /mcux
+RUN cd /mcux && dpkg-deb -x ${MCUX_NAME}.deb ./
