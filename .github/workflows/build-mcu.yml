@@ -24,11 +24,10 @@ jobs:
 
     - name: Build
       run: |
-          project_path=$PWD
-          cd mcux && ./usr/local/mcuxpressoide-11.9.0_2144/ide/mcuxpressoide \
+          ./mcux/usr/local/mcuxpressoide-11.9.0_2144/ide/mcuxpressoide \
             -nosplash \
             -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
-            -importAll $project_path \
+            -importAll $PWD \
             -build all \
             -cleanBuild all \
             -data /tmp/workspace
