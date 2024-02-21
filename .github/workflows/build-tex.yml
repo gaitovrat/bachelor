@@ -43,4 +43,4 @@ jobs:
          with:
            artifacts: "Text/BachelorThesis.pdf"
            token: ${{ secrets.container_token }}
-           tag: ${{ github.ref }}
+           tag: "Thesis"
