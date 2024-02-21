@@ -28,9 +28,13 @@ void Car::run() {
 }
 
 void Car::init() {
+	this->tfs.InitAll();
+	this->tfs.setLEDs(0b0001);
 	this->fxas.init();
 	this->fxos.init();
 #ifdef CAR_ENET
 	this->enet.init(1024, 8080);
 #endif
+
+	this->tfs.setLEDs(0b1111);
 }
