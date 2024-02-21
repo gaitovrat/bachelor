@@ -8,6 +8,7 @@
 #include <QLabel>
 #include "Client/BaseClient.h"
 #include "Settings.h"
+#include "Recording.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -30,6 +31,8 @@ class MainWindow : public QMainWindow {
         };
         QLabel *labels[3];
     };
+    std::optional<Recording> recording;
+    QString recordingPath;
 
     std::unique_ptr<BaseClient> client;
 
@@ -46,6 +49,8 @@ public:
     void openPreferences();
 
     void reconnect();
+
+    void record();
 
 private:
     void updateClient(const Settings& settings);

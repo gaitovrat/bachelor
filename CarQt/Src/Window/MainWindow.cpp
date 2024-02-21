@@ -18,7 +18,8 @@ MainWindow::MainWindow(const QString& name, QWidget* parent)
       labelTXBytes(new QLabel(
           QString::asprintf(MainWindow::LABEL_TX_FORMAT, 0ll), this)),
       labelRXBytes(new QLabel(
-          QString::asprintf(MainWindow::LABEL_RX_FORMAT, 0ll), this)) {
+          QString::asprintf(MainWindow::LABEL_RX_FORMAT, 0ll), this)),
+      recording(std::nullopt) {
     this->ui->setupUi(this);
 #ifdef __APPLE__
     QMenu* fileMenu = new QMenu(name, this);
@@ -36,14 +37,16 @@ MainWindow::MainWindow(const QString& name, QWidget* parent)
 
     for (QLabel* label : this->labels) this->ui->statusbar->addWidget(label);
 
-    std::optional<Settings> settings = Settings::load(SettingsWindow::FILENAME);
-    this->updateClient(settings.value_or(Settings()));
+    Settings settings = Settings::load(SettingsWindow::FILENAME).value_or(Settings());
+    this->recordingPath = settings.recordDestination;
+    this->updateClient(settings);
     this->updateConnected();
 
     connect(preferenceAction, &QAction::triggered, this,
             &MainWindow::openPreferences);
     connect(reconnectAction, &QAction::triggered, this,
             &MainWindow::reconnect);
+    connect(this->ui->bRecord, &QPushButton::clicked, this, &MainWindow::record);
 }
 
 MainWindow::~MainWindow() {
@@ -63,6 +66,10 @@ void MainWindow::update(const Data& data) {
     this->ui->magnetometer_x->setText(QString::number(data.mag.x));
     this->ui->magnetometer_y->setText(QString::number(data.mag.y));
     this->ui->magnetometer_z->setText(QString::number(data.mag.z));
+
+    if (this->recording.has_value()) {
+		this->recording->add(data);
+	}
 }
 
 void MainWindow::openPreferences() {
@@ -74,6 +81,7 @@ void MainWindow::openPreferences() {
     }
 
     this->updateClient(settings.value());
+    this->recordingPath = settings->recordDestination;
 }
 
 void MainWindow::updateClient(const Settings& settings) {
@@ -92,6 +100,7 @@ void MainWindow::updateClient(const Settings& settings) {
         &MainWindow::update);
     connect(this->client.get(), &BaseClient::dataReceived, this,
         &MainWindow::receivedSize);
+    this->reconnect();
 }
 
 void MainWindow::updateConnected() {
@@ -105,6 +114,17 @@ void MainWindow::updateConnected() {
 void MainWindow::reconnect() {
     this->client->connect();
     this->updateConnected();
+}
+
+void MainWindow::record() {
+    if (this->recording.has_value()) {
+        this->recording->save(this->recordingPath);
+        this->recording = std::nullopt;
+		this->ui->bRecord->setText("Start Recording");
+	} else {
+		this->recording = std::make_optional<Recording>();
+		this->ui->bRecord->setText("Stop Recording");
+	}
 }
 
 void MainWindow::receivedSize(const qint64 size) {

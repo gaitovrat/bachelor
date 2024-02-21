@@ -21,7 +21,7 @@ Settings::Settings() :
     mode(Mode::Serial),
     serial(),
     network(),
-    recordDestination("") {}
+    recordDestination(".") {}
 
 void Settings::save(const char *filename) {
     Json::Value root, serial, network;
