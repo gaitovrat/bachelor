@@ -19,12 +19,12 @@ jobs:
 
     - name: Install MCUXpresso IDE
       run: |
-          sh mcuxpressoide-11.9.0_2144.x86_64.deb.bin --noexec --target /mcux
-          cd /mcux && dpkg-deb -x mcuxpressoide-11.9.0_2144.x86_64.deb ./
+          sh /mcuxpressoide-11.9.0_2144.x86_64.deb.bin --noexec --target ./mcux
+          dpkg-deb -x ./mcux/mcuxpressoide-11.9.0_2144.x86_64.deb ./mcux
 
     - name: Build
       run: |
-          /mcux/usr/local/mcuxpressoide-11.9.0_2144/ide/mcuxpressoide \
+          ./mcux/usr/local/mcuxpressoide-11.9.0_2144/ide/mcuxpressoide \
             -nosplash \
             -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
             -importAll $PWD \
