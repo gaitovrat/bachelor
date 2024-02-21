@@ -3,8 +3,12 @@ name: Build Text
 on:
   pull_request:
     branches: [ "main" ]
+    paths: 
+       - 'Text/**'
   push:
-    branches: [ "main" ]    
+    branches: [ "main" ] 
+    #paths:
+       #- 'Text/**'
 
 jobs:
   build:
@@ -37,7 +41,7 @@ jobs:
        - uses: actions/download-artifact@v2
          with:
            name: pdf
-           path: Text/BachelorThesis.pdf
+           path: Text
 
        - uses: ncipollo/release-action@v1
          with:

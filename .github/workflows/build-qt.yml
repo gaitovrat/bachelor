@@ -3,6 +3,9 @@ name: Build CarQt
 on:
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'CarQt/**'
+      - 'Shared/**'
 
 jobs:
   build:
