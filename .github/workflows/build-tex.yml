@@ -7,8 +7,8 @@ on:
        - 'Text/**'
   push:
     branches: [ "main" ] 
-    #paths:
-       #- 'Text/**'
+    paths:
+       - 'Text/**'
 
 jobs:
   build:
