@@ -31,3 +31,4 @@ jobs:
             -build all \
             -cleanBuild all \
             -data /tmp/workspace
+           cat /tmp/workspace/.metadata/.log
