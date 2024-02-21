@@ -3,7 +3,7 @@
 #include <QtGui/qaction.h>
 #include <QtWidgets/qlineedit.h>
 
-#include "./ui_mainwindow.h"
+#include "./ui_MainWindow.h"
 #include "Settings.h"
 #include "client/BaseClient.h"
 #include "client/SerialClient.h"
