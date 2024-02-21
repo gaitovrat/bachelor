@@ -28,7 +28,7 @@ jobs:
             -nosplash \
             -application org.eclipse.cdt.managedbuilder.core.headlessbuild \
             -importAll $PWD \
-            -build all \
-            -cleanBuild all \
+            -build Car_FRDMK66F \
+            -cleanBuild Car_FRDMK66F \
             -data /tmp/workspace
            cat /tmp/workspace/.metadata/.log
