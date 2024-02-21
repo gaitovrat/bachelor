@@ -27,6 +27,7 @@ settings.json
 # VS
 out
 .vs
+*.json
 
 # Emacs
 *~
@@ -41,3 +42,5 @@ Text/BachelorThesis.pdf
 *.toc
 *.deb.bin
 *.lot
+*.out
+*.xmpi

@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu
-    container: ghcr.io/gaitovrat/bachelor:latest
+    container: ghcr.io/gaitovrat/bachelor-qt:latest
 
     steps:
     - uses: actions/checkout@v3
