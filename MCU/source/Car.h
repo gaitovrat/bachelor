@@ -12,10 +12,12 @@
 #include "sensors/FXAS21002.h"
 #include "Enet.h"
 #include "Data.h"
+#include "tfc.h"
 
 class Car {
 	Data data;
 
+	TFC tfs;
 	FXAS21002 fxas;
 	FXOS8700CQ fxos;
 #ifdef CAR_ENET
