@@ -35,7 +35,7 @@ list(TRANSFORM QT_COMPONENTS PREPEND Qt6::)
 
 target_include_directories(carqt PRIVATE
     ${Shared_Include}
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/Src
     ${jsoncpp_SOURCE_DIR}/include)
 target_link_libraries(carqt
     PRIVATE 
