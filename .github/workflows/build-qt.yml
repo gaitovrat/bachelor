@@ -16,8 +16,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-      with:
-        submodules: 'recursive'
+
+    - name: Init submodules
+      run: git submodule update --init --recursive
 
     - name: Configure CMake
       run: cmake -S . -B build -G Ninja
