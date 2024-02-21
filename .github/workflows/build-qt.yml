@@ -7,7 +7,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/gaitovrat/bachelor-qt:latest
+    container: 
+        image: ghcr.io/gaitovrat/bachelor-qt:latest
+        credentials:
+         username: ${{ github.actor }}
+         password: ${{ secrets.container_token }}
 
     steps:
     - uses: actions/checkout@v3
