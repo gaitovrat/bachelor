@@ -12,6 +12,7 @@ build
 .metadata
 .mcuxpressoide_packages_support
 Debug
+Release
 doc
 .settings
 *.launch
@@ -29,3 +30,14 @@ out
 
 # Emacs
 *~
+
+# Latex
+*.aux
+*.bcf
+*.lof
+*.log
+Text/BachelorThesis.pdf
+*.run.xml
+*.toc
+*.deb.bin
+*.lot
