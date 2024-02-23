@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PIDWindow</class>
+ <widget class="QWidget" name="PIDWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>637</width>
+    <height>466</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QVBoxLayout" name="steerLayout">
+     <item>
+      <layout class="QHBoxLayout" name="pSteerLayout">
+       <item>
+        <widget class="QLabel" name="pSteerLabel">
+         <property name="text">
+          <string>P</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="ui_pSteerLineEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="iSteerLayout">
+       <item>
+        <widget class="QLabel" name="iSteerLabel">
+         <property name="text">
+          <string>I</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="ui_iSteerLineEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="dSteerLayout">
+       <item>
+        <widget class="QLabel" name="dSteerLabel">
+         <property name="text">
+          <string>D</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="ui_dSteerLineEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QChartView" name="ui_steerPIDView"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="ui_steerOutput">
+       <property name="text">
+        <string>0.0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="motorLayout">
+     <item>
+      <layout class="QHBoxLayout" name="pMotorLayout">
+       <item>
+        <widget class="QLabel" name="pMotorLabel">
+         <property name="text">
+          <string>P</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="ui_pMotorLineEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="iMotorLayout">
+       <item>
+        <widget class="QLabel" name="iMotorLabel">
+         <property name="text">
+          <string>I</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="ui_iMotorLineEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="dMotorLayout">
+       <item>
+        <widget class="QLabel" name="dMotorLabel">
+         <property name="text">
+          <string>D</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="ui_dMotorLineEdit"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QChartView" name="ui_motorChartView"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="ui_motorOutput">
+       <property name="text">
+        <string>0.0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QChartView</class>
+   <extends>QGraphicsView</extends>
+   <header>QTCharts</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
