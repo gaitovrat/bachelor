@@ -13,6 +13,10 @@ struct PIDData {
     double Input;
     double Output;
     double SetPoint;
+
+    PIDData(double p, double i, double d);
+
+    PIDData();
 };
 
 #endif //UDPSEND_PIDDATA_H

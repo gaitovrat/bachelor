@@ -13,9 +13,11 @@
 #include <algorithm>
 
 template<class T>
-T median(std::vector<T> v) {
+inline T Median(std::vector<T> v)
+{
 	size_t n = v.size() / 2;
 	std::nth_element(v.begin(), v.begin() + n, v.end());
+
 	int vn = v[n];
 	if (v.size() % 2 == 1) {
 		return vn;

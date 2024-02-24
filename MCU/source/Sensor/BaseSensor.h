@@ -13,21 +13,21 @@
 #include <fsl_i2c.h>
 
 class BaseSensor {
-	static bool initialized;
-	I2C_Type *base;
-
 public:
 	BaseSensor(I2C_Type *base);
 
 	virtual ~BaseSensor() = default;
 
-	virtual status_t init();
+	virtual status_t Init();
 
-	virtual uint8_t getDeviceAddress() const = 0;
+	virtual uint8_t DeviceAddress() const = 0;
 
-	status_t readRegister(uint8_t registerAddress, uint8_t *buffer, size_t bufferSize) const;
+	status_t ReadRegister(uint8_t registerAddress, uint8_t *buffer, size_t bufferSize) const;
 
-	status_t writeRegister(uint8_t registerAddress, uint8_t *buffer);
+	status_t WriteRegister(uint8_t registerAddress, uint8_t *buffer);
+private:
+	static bool s_initialized;
+	I2C_Type *m_base;
 };
 
 #endif /* SENSORS_BASESENSOR_H_ */

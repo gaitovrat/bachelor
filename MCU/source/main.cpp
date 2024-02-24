@@ -3,7 +3,9 @@
 #include "pin_mux.h"
 #include "clock_config.h"
 
-#include "Car.h"
+#include "Core.h"
+
+Core core;
 
 int main(void) {
     BOARD_InitBootPins();
@@ -11,11 +13,10 @@ int main(void) {
     BOARD_InitBootPeripherals();
     BOARD_InitDebugConsole();
 
-    Car car;
-    car.init();
+    core.Init();
 
     while (1) {
-    	car.run();
+    	core.Drive();
     }
 
     return 0 ;

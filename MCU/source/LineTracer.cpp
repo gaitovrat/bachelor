@@ -4,8 +4,8 @@
 
 #include "fsl_debug_console.h"
 
-#include "Defines.h"
 #include "CarMath.h"
+#include "Utils.h"
 
 #define TOLERANCE 3
 
@@ -13,6 +13,8 @@
 #define REGION_SIZE_COEFICIENT 0.3
 #define REGION_COMPUTED_SIZE (REGION_STANDARD_SIZE*REGION_SIZE_COEFICIENT)
 #define REGION_DISTANCE 30
+#define PREV_LINE_SEARCH_REGION 5
+#define MAX_REGIONS_COUNT 25
 
 LineTracer::LineTracer(const uint32_t listSize) :
 		m_listSize { listSize }, m_blackRegionsCount { 0 }, m_whiteRegionsCount { 0 }, m_hasLeft {
@@ -43,9 +45,9 @@ Region LineTracer::Distances(const Image &image, bool hasPrevDistance,
 		m_whiteRegionsCount = 1;
 		m_blackRegionsCount = 0;
 
-		biggestWhiteRegion.color = COLOR_WHITE;
-		biggestWhiteRegion.left = 0;
-		biggestWhiteRegion.right = TFC_CAMERA_LINE_LENGTH;
+		biggestWhiteRegion.Color = Image::COLOR_WHITE;
+		biggestWhiteRegion.Left = 0;
+		biggestWhiteRegion.Right = Image::LINE_LENGTH;
 
 		m_currentRegions.emplace_back(biggestWhiteRegion);
 		return biggestWhiteRegion;
@@ -68,35 +70,35 @@ Region LineTracer::Distances(const Image &image, bool hasPrevDistance,
 	uint8_t searchRightIdx;
 
 	if (regionByPreviousIndexFound) {
-		searchLeftIdx = biggestWhiteRegion.left + 1;
-		searchRightIdx = biggestWhiteRegion.right - 1;
+		searchLeftIdx = biggestWhiteRegion.Left + 1;
+		searchRightIdx = biggestWhiteRegion.Right - 1;
 	} else {
-		searchLeftIdx = Region::minLeft;
-		searchRightIdx = Region::maxRight;
+		searchLeftIdx = Region::MIN_LEFT;
+		searchRightIdx = Region::MAX_RIGHT;
 	}
 
 	Regions(image, searchLeftIdx, searchRightIdx);
 	if (regionByPreviousIndexFound) {
-		m_currentRegions.at(m_currentRegions.size() - 1).right =
-				biggestWhiteRegion.right;
-		m_currentRegions.at(0).left = biggestWhiteRegion.left;
+		m_currentRegions.at(m_currentRegions.size() - 1).Right =
+				biggestWhiteRegion.Right;
+		m_currentRegions.at(0).Left = biggestWhiteRegion.Left;
 	} else {
-		m_currentRegions.at(m_currentRegions.size() - 1).right =
-		TFC_CAMERA_LINE_LENGTH - 1;
-		m_currentRegions.at(0).left = 0;
+		m_currentRegions.at(m_currentRegions.size() - 1).Right =
+		Image::LINE_LENGTH - 1;
+		m_currentRegions.at(0).Left = 0;
 
 	}
 	if (!regionByPreviousIndexFound) {
-		biggestWhiteRegion = { Region::minLeft, Region::minLeft, COLOR_WHITE };
+		biggestWhiteRegion = { Region::MIN_LEFT, Region::MIN_LEFT, Image::COLOR_WHITE };
 	}
 
 	m_whiteRegionsCount = 0;
 	m_blackRegionsCount = 0;
 
 	for (Region &r : m_currentRegions) {
-		if (r.isWhite()) {
+		if (r.IsWhite()) {
 			m_whiteRegionsCount++;
-			if ((r.getSize() > biggestWhiteRegion.getSize())) {
+			if ((r.Size() > biggestWhiteRegion.Size())) {
 				biggestWhiteRegion = r;
 			}
 		} else {
@@ -107,10 +109,10 @@ Region LineTracer::Distances(const Image &image, bool hasPrevDistance,
 	bool hasLeftLine = false;
 	bool hasRightLine = false;
 	for (Region &r : m_currentRegions) {
-		if (r.isBlack()) {
-			if (r.getCenter() < biggestWhiteRegion.left) {
+		if (r.IsBlack()) {
+			if (r.Center() < biggestWhiteRegion.Left) {
 				hasLeftLine = true;
-			} else if (r.getCenter() > biggestWhiteRegion.right) {
+			} else if (r.Center() > biggestWhiteRegion.Right) {
 				hasRightLine = true;
 			}
 		}
@@ -120,39 +122,24 @@ Region LineTracer::Distances(const Image &image, bool hasPrevDistance,
 	if (!(hasLeftLine && hasRightLine)) {
 		m_computedRegion = true;
 
-		if (biggestWhiteRegion.getCenter() > TFC_CAMERA_LINE_LENGTH / 2) {
-			biggestWhiteRegion.left = biggestWhiteRegion.right - REGION_DISTANCE
+		if (biggestWhiteRegion.Center() > Image::LINE_LENGTH / 2) {
+			biggestWhiteRegion.Left = biggestWhiteRegion.Right - REGION_DISTANCE
 					- REGION_COMPUTED_SIZE;
-			biggestWhiteRegion.right = biggestWhiteRegion.right;
+			biggestWhiteRegion.Right = biggestWhiteRegion.Right;
 		} else {
-			biggestWhiteRegion.left = biggestWhiteRegion.left;
-			biggestWhiteRegion.right = biggestWhiteRegion.left + REGION_DISTANCE
+			biggestWhiteRegion.Left = biggestWhiteRegion.Left;
+			biggestWhiteRegion.Right = biggestWhiteRegion.Left + REGION_DISTANCE
 					+ REGION_COMPUTED_SIZE;
 
 		}
 	}
 
-	PRINTF("Found region count: WHITE: %d BLACK: %d\r\n", m_whiteRegionsCount,
-			m_blackRegionsCount);
+	left = static_cast<uint8_t>(biggestWhiteRegion.Left);
+	right = static_cast<uint8_t>(biggestWhiteRegion.Right);
 
-	PRINTF(
-			"Highest white region: Left index: %d, Right index: %d, Middle %d, Size %d\r\n",
-			biggestWhiteRegion.left, biggestWhiteRegion.right,
-			biggestWhiteRegion.getCenter(), biggestWhiteRegion.getSize());
-
-	left = static_cast<uint8_t>(biggestWhiteRegion.left);
-	right = static_cast<uint8_t>(biggestWhiteRegion.right);
-
-	for (Region &region : m_currentRegions) {
-		PRINTF(
-				"Region: %s size: %03d, middle: %03d, left: %03d, right: %03d\r\n",
-				region.color == COLOR_BLACK ? "BLACK" : "WHITE",
-				region.getSize(), region.getCenter(), region.left,
-				region.right);
-	}
 	m_hasLeft = hasLeftLine;
 	m_hasRight = hasRightLine;
-	return {left, right, COLOR_WHITE};
+	return {left, right, Image::COLOR_WHITE};
 }
 
 unsigned int LineTracer::Right() {
@@ -161,8 +148,8 @@ unsigned int LineTracer::Right() {
 
 	unsigned int sum = 0;
 	for (auto idx : m_imageRegionList) {
-		rightLines.emplace_back(idx.right);
-		sum += idx.right;
+		rightLines.emplace_back(idx.Right);
+		sum += idx.Right;
 	}
 
 	std::sort(rightLines.begin(), rightLines.end());
@@ -183,8 +170,8 @@ unsigned int LineTracer::Left() {
 
 	unsigned int sum = 0;
 	for (auto idx : m_imageRegionList) {
-		leftLines.emplace_back(idx.left);
-		sum += idx.left;
+		leftLines.emplace_back(idx.Left);
+		sum += idx.Left;
 	}
 
 	std::sort(leftLines.begin(), leftLines.end());
@@ -200,7 +187,6 @@ unsigned int LineTracer::Left() {
 }
 
 bool LineTracer::FindByPreviousIndex(const Image &image, Region &r) {
-
 	uint8_t newLeftIndex = 0;
 	uint8_t newRightIndex = 0;
 	uint8_t status = 0b00000000;
@@ -208,18 +194,18 @@ bool LineTracer::FindByPreviousIndex(const Image &image, Region &r) {
 #define foundLeftBitIndex   5
 #define foundRightBitIndex  4
 
-#define isFoundLeft()       bitRead(status, foundLeftBitIndex)
-#define setFoundLeft(val)   bitWrite(status, foundLeftBitIndex ,val)
+#define isFoundLeft()       BitRead(status, foundLeftBitIndex)
+#define setFoundLeft(val)   BitWrite(status, foundLeftBitIndex ,val)
 
-#define isFoundRight()      bitRead(status, foundRightBitIndex)
-#define setFoundRight(val)  bitWrite(status, foundRightBitIndex ,val)
+#define isFoundRight()      BitRead(status, foundRightBitIndex)
+#define setFoundRight(val)  BitWrite(status, foundRightBitIndex ,val)
 
-#define outOfBounds(index)  (index <= BLACK_COUNT) || (index >= TFC_CAMERA_LINE_LENGTH - BLACK_COUNT - 1)
+#define outOfBounds(index)  (index <= Image::BLACK_COUNT) || (index >= Image::LINE_LENGTH - Image::BLACK_COUNT - 1)
 
 	Region previousRegion = m_imageRegionList.back();
 
-	uint8_t prevLeftIndex = previousRegion.left;
-	uint8_t prevRightIndex = previousRegion.right;
+	uint8_t prevLeftIndex = previousRegion.Left;
+	uint8_t prevRightIndex = previousRegion.Right;
 	uint8_t counter = 0;
 	int8_t i = 0;
 	while (std::abs(i) < static_cast<int32_t>(PREV_LINE_SEARCH_REGION)) {
@@ -229,8 +215,8 @@ bool LineTracer::FindByPreviousIndex(const Image &image, Region &r) {
 		}
 
 		if (isFoundLeft() && isFoundRight()) {
-			r.left = newLeftIndex;
-			r.right = newRightIndex;
+			r.Left = newLeftIndex;
+			r.Right = newRightIndex;
 			break;
 		}
 
@@ -250,7 +236,7 @@ bool LineTracer::FindByPreviousIndex(const Image &image, Region &r) {
 			uint8_t leftLeftColor = image.AtThresh(newLeftIndex);
 			uint8_t rightLeftColor = image.AtThresh(newLeftIndex + 1);
 
-			if (leftLeftColor == COLOR_BLACK && rightLeftColor == COLOR_WHITE) {
+			if (leftLeftColor == Image::COLOR_BLACK && rightLeftColor == Image::COLOR_WHITE) {
 				PRINTF("Found left index: %d\r\n", newLeftIndex);
 				setFoundLeft(true);
 			}
@@ -262,8 +248,8 @@ bool LineTracer::FindByPreviousIndex(const Image &image, Region &r) {
 
 			uint8_t rightRightColor = image.AtThresh(newRightIndex);
 
-			if (rightRightColor == COLOR_BLACK
-					&& leftRightColor == COLOR_WHITE) {
+			if (rightRightColor == Image::COLOR_BLACK
+					&& leftRightColor == Image::COLOR_WHITE) {
 				PRINTF("Found right index: %d\r\n", newRightIndex);
 				setFoundRight(true);
 			}
@@ -299,7 +285,7 @@ std::vector<Region> LineTracer::Regions(const Image &image,
 				PRINTF("Found high region count. End searching.\r\n");
 				break;
 			}
-			foundRegions.at(foundRegions.size() - 1).right = i;
+			foundRegions.at(foundRegions.size() - 1).Right = i;
 			foundRegions.emplace_back(Region( { i, i, image.AtThresh(i) }));
 		}
 		currentColor = static_cast<uint8_t>(image.AtThresh(i));
@@ -322,30 +308,30 @@ std::pair<uint8_t, uint8_t>& LineTracer::DistancesPair() {
 	rightDistances.reserve(m_imageRegionList.size());
 
 	for (auto idx : m_imageRegionList) {
-		leftDistances.emplace_back(idx.left);
-		rightDistances.emplace_back(idx.right);
+		leftDistances.emplace_back(idx.Left);
+		rightDistances.emplace_back(idx.Right);
 
-		sums.first += idx.left;
-		sums.second += idx.right;
+		sums.first += idx.Left;
+		sums.second += idx.Right;
 	}
 
 	m_currentAverage.first = sums.first / m_imageRegionList.size();
 	m_currentAverage.second = sums.second / m_imageRegionList.size();
 
-	m_currentMedian.first = median<uint8_t>(leftDistances);
-	m_currentMedian.second = median<uint8_t>(rightDistances);
+	m_currentMedian.first = Median<uint8_t>(leftDistances);
+	m_currentMedian.second = Median<uint8_t>(rightDistances);
 
-	m_unchangedLeft = ((m_imageRegionList.back().left
+	m_unchangedLeft = ((m_imageRegionList.back().Left
 			>= m_currentAverage.first - TOLERANCE)
-			&& (m_imageRegionList.back().left
+			&& (m_imageRegionList.back().Left
 					<= m_currentAverage.first + TOLERANCE));
-	m_unchangedRight = ((m_imageRegionList.back().right
+	m_unchangedRight = ((m_imageRegionList.back().Right
 			>= m_currentAverage.second - TOLERANCE)
-			&& (m_imageRegionList.back().right
+			&& (m_imageRegionList.back().Right
 					<= m_currentAverage.second + TOLERANCE));
 
-	currentDistances.first = m_imageRegionList.back().left;
-	currentDistances.second = m_imageRegionList.back().right;
+	currentDistances.first = m_imageRegionList.back().Left;
+	currentDistances.second = m_imageRegionList.back().Right;
 
 	PRINTF("Current distances: first %d, second %d\r\n", currentDistances.first,
 			currentDistances.second);

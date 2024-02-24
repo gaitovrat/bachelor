@@ -1,12 +1,21 @@
-#ifndef DATA_H_
-#define DATA_H_
+//
+// Created by ratmirgaitov on 6/14/23.
+//
 
-#include "Vec.h"
+#ifndef UDPSEND_UDPDATA_H
+#define UDPSEND_UDPDATA_H
+
+#include "CameraData.h"
+#include "SensorData.h"
+#include "MotorData.h"
+#include "SteerData.h"
 
 struct Data {
-	Vec3 accel;
-	Vec3 mag;
-	Vec3 gyro;
+	CameraData CarCameraData;
+	MotorData CarMotorData;
+	SteerData CarSteerData;
+    SensorData CarSensorData;
+    uint64_t Timestamp;
 };
 
-#endif
+#endif //UDPSEND_UDPDATA_H

@@ -10,11 +10,16 @@
 
 #include <cstdint>
 
+template <typename T>
 union Vec3 {
     struct {
-        int16_t x, y, z;
+        T X, Y, Z;
     };
-    int16_t values[3];
+    T Values[3];
+
+    Vec3(T x, T y, T z) : X(x), Y(y), Z(z) {}
+
+    Vec3() : Vec3(0, 0, 0) {}
 };
 
 #endif /* VEC_H_ */

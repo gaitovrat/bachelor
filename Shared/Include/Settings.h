@@ -5,46 +5,32 @@
 #ifndef _MODE_SETTING_H
 #define _MODE_SETTING_H
 
-#include "Mode.h"
-#include <cstdint>
+#include <stdint.h>
 
-#include "Defines.h"
 #include "PIDData.h"
+#include "Mode.h"
 
 struct Settings {
-	Settings(double P, double I, double D,
-			float diffCoef, uint16_t maxSpeed, ::Car::Mode mode) :
-			PIDdata{},
-			DiffCoef(diffCoef),
-			MaxSpeed(maxSpeed), Mode(mode) {
-		PIDdata.P = P;
-		PIDdata.I = I;
-		PIDdata.D = D;
-	}
+	static constexpr float DEFAULT_ERROR = 160.6f;
+	static constexpr float DEFAULT_DERIVATIVE = 8.3f;
+	static constexpr float DEFAULT_INTEGRAL = 0.5f;
+	static constexpr float DEFAULT_CONTROL_COEFICIENT = 1.28f;
+	static constexpr uint32_t DEFAULT_MAX_SPEED = 1000;
 
-	bool operator==(const Settings &rhs) const {
-		return this->PIDdata.P == rhs.PIDdata.P
-				&& this->PIDdata.I == rhs.PIDdata.I
-				&& this->PIDdata.D == rhs.PIDdata.D
-				&& this->DiffCoef == rhs.DiffCoef && this->Mode == rhs.Mode;
-	}
-
-	bool operator!=(const Settings &rhs) const {
-		return !(*this == rhs);
-	}
-
-	PIDData PIDdata;
+	PIDData PID;
 	float DiffCoef;
 	uint16_t MaxSpeed;
-	::Car::Mode Mode;
-};
+	Mode RideMode;
 
-static const Settings RideDefaultSettings(CONST_ERROR,             // PID error
-		CONST_INTEGRAL,          // PID integral
-		CONST_DERIVATIVE,        // PID Derivation
-		TURN_CONTROL_COEFICIENT, // DIFF coefficient
-		TFC_PWM_DEFAULT_MAX,     // PWM base speed
-		::Car::Mode::RideDefault);             // Ride mode
+	Settings(
+			double P = DEFAULT_ERROR,
+			double I = DEFAULT_INTEGRAL,
+			double D = DEFAULT_DERIVATIVE,
+			float diffCoef = DEFAULT_CONTROL_COEFICIENT,
+			uint16_t maxSpeed = DEFAULT_MAX_SPEED,
+			Mode rideMode = Mode::RideDefault
+	);
+};
 
 
 #endif //_MODE_SETTING_H

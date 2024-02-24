@@ -11,6 +11,7 @@
 #include <vector>
 #include <utility>
 #include <list>
+#include <stddef.h>
 
 #include "Region.h"
 #include "Image.h"
@@ -40,7 +41,7 @@ public:
 	bool FindByPreviousIndex(const Image &image, Region &foundRegion);
 
 	std::vector<Region> Regions(const Image &image, uint8_t leftIndex = 0,
-			uint8_t rightIndex = TFC_CAMERA_LINE_LENGTH - 1,
+			uint8_t rightIndex = Image::LINE_LENGTH - 1,
 			bool saveToClass = true);
 
 	void Reset();

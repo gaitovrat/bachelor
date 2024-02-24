@@ -3,53 +3,29 @@
 
 #include <cstdint>
 
-#include "Defines.h"
+#include "Image.h"
 
 struct Region {
-	uint8_t left;
-	uint8_t right;
-	uint8_t color;
+	static constexpr uint8_t MIN_LEFT = Image::BLACK_COUNT;
+	static constexpr uint8_t MAX_RIGHT = Image::LINE_LENGTH - Image::BLACK_COUNT - 1;
 
-	Region(uint8_t left = minLeft, uint8_t right = maxRight, uint8_t color =
-			COLOR_WHITE) {
-		if (left < minLeft) {
-			left = minLeft;
-		}
-		if (right > maxRight) {
-			right = maxRight;
-		}
+	uint8_t Left;
+	uint8_t Right;
+	uint8_t Color;
 
-		this->left = left;
-		this->right = right;
-		this->color = color;
-	}
+	Region(uint8_t left = MIN_LEFT, uint8_t right = MAX_RIGHT, uint8_t color = Image::COLOR_WHITE);
 
-	uint8_t getSize() const {
-		return right - left;
-	}
+	uint8_t Size() const;
 
-	uint8_t getCenter() const {
-		return static_cast<uint8_t>((right + left) / 2);
-	}
+	uint8_t Center() const;
 
-	bool isBlack() {
-		return color == COLOR_BLACK;
-	}
-	bool isWhite() {
-		return color == COLOR_WHITE;
-	}
+	bool IsBlack();
 
-	bool operator==(const Region &rhs) {
-		return this->left == rhs.left && this->right == rhs.right
-				&& this->color == rhs.color;
-	}
+	bool IsWhite();
 
-	bool operator!=(const Region &rhs) {
-		return !(*this == rhs);
-	}
+	bool operator==(const Region &rhs);
 
-	const static uint8_t minLeft = BLACK_COUNT;
-	const static uint8_t maxRight = TFC_CAMERA_LINE_LENGTH - BLACK_COUNT - 1;
+	bool operator!=(const Region &rhs);
 };
 
 #endif // _REGION_H

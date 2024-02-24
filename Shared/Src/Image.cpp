@@ -2,65 +2,52 @@
 #include <cstring>
 
 #include "Image.h"
-#include "Defines.h"
-#include "ImageType.h"
 #include "CarMath.h"
-
-#ifndef MIN
-#define MIN(a,b) (((a)<(b))?(a):(b))
-#endif
-#ifndef MAX
-#define MAX(a,b) (((a)>(b))?(a):(b))
-#endif
 
 Image::Image() :
 		m_thresholdedImage { 0 }, m_max { COLOR_BLACK }, m_min { COLOR_WHITE } {
 
 }
 
-void Image::ComputeMinMax(const uint16_t (&img)[TFC_CAMERA_LINE_LENGTH]) {
+void Image::ComputeMinMax(const uint16_t (&img)[LINE_LENGTH]) {
 	m_max = COLOR_BLACK;
-	//min_ = COLOR_WHITE;
 	m_min = COLOR_WHITE_ORIGINAL;
-	for (uint64_t i = BLACK_COUNT; i < TFC_CAMERA_LINE_LENGTH - BLACK_COUNT;
+
+	for (uint64_t i = BLACK_COUNT; i < LINE_LENGTH - BLACK_COUNT;
 			i++) {
 		uint16_t pixel = img[i];
 		if (pixel > m_max) {
 			m_max = pixel;
-			/*NXP_TRACEP("max_: %04d"
-			 NL, max_);*/
 		}
 
 		if (pixel < m_min) {
 			m_min = pixel;
-			/*NXP_TRACEP("min_: %04d"
-			 NL, min_);*/
 		}
 
-		if (m_max == COLOR_WHITE_ORIGINAL/*COLOR_WHITE*/&& m_min == COLOR_BLACK) {
+		if (m_max == COLOR_WHITE_ORIGINAL&& m_min == COLOR_BLACK) {
 			break;
 		}
 
 	}
 
-	m_diversity = MAX(m_max, m_min) - MIN(m_min, m_max);
+	m_diversity = std::max(m_max, m_min) - std::min(m_min, m_max);
 }
 
-void Image::Cut(uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH]) {
+void Image::Cut(uint16_t (&srcImg)[LINE_LENGTH]) {
 	for (uint64_t col = 0; col < BLACK_COUNT; col++) {
 		srcImg[col] = m_max;
 	}
 
-	for (uint64_t col = TFC_CAMERA_LINE_LENGTH - 1;
-			col > TFC_CAMERA_LINE_LENGTH - 1 - BLACK_COUNT; col--) {
+	for (uint64_t col = LINE_LENGTH - 1;
+			col > LINE_LENGTH - 1 - BLACK_COUNT; col--) {
 		srcImg[col] = m_max;
 	}
 
 }
 
-void Image::Normalize(const uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH],
-		uint16_t (&dstImg)[TFC_CAMERA_LINE_LENGTH]) {
-	for (int i = 0; i < TFC_CAMERA_LINE_LENGTH; i++) {
+void Image::Normalize(const uint16_t (&srcImg)[LINE_LENGTH],
+		uint16_t (&dstImg)[LINE_LENGTH]) {
+	for (int i = 0; i < LINE_LENGTH; i++) {
 		float pixel = static_cast<float>(srcImg[i]);
 		pixel -= m_min;
 		pixel *= COLOR_WHITE;
@@ -70,20 +57,20 @@ void Image::Normalize(const uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH],
 }
 
 uint16_t Image::AverageThreshold(
-		const uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH]) {
+		const uint16_t (&srcImg)[LINE_LENGTH]) {
 	long sum = 0;
-	for (uint64_t i = BLACK_COUNT; i < TFC_CAMERA_LINE_LENGTH - BLACK_COUNT;
+	for (uint64_t i = BLACK_COUNT; i < LINE_LENGTH - BLACK_COUNT;
 			i++) {
 		sum += srcImg[i];
 	}
-	auto avg = static_cast<uint16_t>(sum / TFC_CAMERA_LINE_LENGTH
+	auto avg = static_cast<uint16_t>(sum / LINE_LENGTH
 			- (2 * BLACK_COUNT));
 	return avg;
 }
 
-void Image::Threshold(const uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH],
-		uint16_t (&dstImg)[TFC_CAMERA_LINE_LENGTH]) {
-	for (int i = 0; i < TFC_CAMERA_LINE_LENGTH; i++) {
+void Image::Threshold(const uint16_t (&srcImg)[LINE_LENGTH],
+		uint16_t (&dstImg)[LINE_LENGTH]) {
+	for (int i = 0; i < LINE_LENGTH; i++) {
 		if (srcImg[i] < m_threshValue)
 			dstImg[i] = COLOR_BLACK;
 		else
@@ -91,34 +78,34 @@ void Image::Threshold(const uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH],
 	}
 }
 
-void Image::FastMedianBlur(uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH],
+void Image::FastMedianBlur(uint16_t (&srcImg)[LINE_LENGTH],
 		const int pixels) {
 
 	const int buffSize = pixels * 2 + 1;
 	std::vector<uint16_t> blurBuffer;
 
-	for (int i = pixels; i < TFC_CAMERA_LINE_LENGTH - pixels; i += buffSize) {
+	for (int i = pixels; i < LINE_LENGTH - pixels; i += buffSize) {
 		for (int j = -pixels; j <= pixels; j++) {
 			blurBuffer.emplace_back(srcImg[i + j]);
 		}
 
 		for (int j = -pixels; j <= pixels; j++) {
-			srcImg[i + j] = median(blurBuffer);
+			srcImg[i + j] = Median(blurBuffer);
 		}
 		blurBuffer.clear();
 	}
 
 }
 
-void Image::FastMedianBlur(const uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH],
-		uint16_t (&dstImg)[TFC_CAMERA_LINE_LENGTH], const int pixels) {
-	memcpy(dstImg, srcImg, TFC_CAMERA_LINE_LENGTH);
+void Image::FastMedianBlur(const uint16_t (&srcImg)[LINE_LENGTH],
+		uint16_t (&dstImg)[LINE_LENGTH], const int pixels) {
+	memcpy(dstImg, srcImg, LINE_LENGTH);
 
 	const int buffSize = pixels * 2 + 1;
 	std::vector<uint16_t> blurBuffer;
 
-	for (int i = ((TFC_CAMERA_LINE_LENGTH / 2) % pixels) + pixels;
-			i < TFC_CAMERA_LINE_LENGTH - pixels; i += buffSize) {
+	for (int i = ((LINE_LENGTH / 2) % pixels) + pixels;
+			i < LINE_LENGTH - pixels; i += buffSize) {
 		for (int j = -pixels; j <= pixels; j++) {
 			blurBuffer.emplace_back(srcImg[i + j]);
 		}
@@ -130,12 +117,12 @@ void Image::FastMedianBlur(const uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH],
 	}
 }
 
-void Image::SlowMedianBlur(const uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH],
-		uint16_t (&dstImg)[TFC_CAMERA_LINE_LENGTH], const int pixels) {
-	memcpy(dstImg, srcImg, TFC_CAMERA_LINE_LENGTH);
+void Image::SlowMedianBlur(const uint16_t (&srcImg)[LINE_LENGTH],
+		uint16_t (&dstImg)[LINE_LENGTH], const int pixels) {
+	memcpy(dstImg, srcImg, LINE_LENGTH);
 	std::vector<uint16_t> blurBuffer;
 
-	for (int i = pixels; i < TFC_CAMERA_LINE_LENGTH - pixels; i++) {
+	for (int i = pixels; i < LINE_LENGTH - pixels; i++) {
 		for (int j = -pixels; j <= pixels; j++) {
 			blurBuffer.emplace_back(srcImg[i - j]);
 		}
@@ -145,11 +132,11 @@ void Image::SlowMedianBlur(const uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH],
 	}
 }
 
-void Image::SlowMedianBlur(uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH],
+void Image::SlowMedianBlur(uint16_t (&srcImg)[LINE_LENGTH],
 		int pixels) {
 	std::deque<uint16_t> pixBuffer;
 
-	for (int i = /*0*/1; i < TFC_CAMERA_LINE_LENGTH; i++) {
+	for (int i = /*0*/1; i < LINE_LENGTH; i++) {
 		if (static_cast<int>(pixBuffer.size()) < pixels) {
 			pixBuffer.emplace_back(srcImg[i]);
 			continue;
@@ -157,7 +144,7 @@ void Image::SlowMedianBlur(uint16_t (&srcImg)[TFC_CAMERA_LINE_LENGTH],
 		pixBuffer.emplace_back(srcImg[i]);
 
 		for (int j = -pixels; j <= pixels; j++) {
-			srcImg[i + j] = median<uint16_t>(
+			srcImg[i + j] = Median<uint16_t>(
 					std::vector<uint16_t>(pixBuffer.begin(), pixBuffer.end()));
 		}
 		//blurBuffer.clear();
@@ -189,11 +176,11 @@ bool Image::IsLowDiversity() const {
 	return m_diversity < LOW_DIVERSITY;
 }
 
-Image::Image(uint16_t (&rawImage)[TFC_CAMERA_LINE_LENGTH]) :
+Image::Image(uint16_t (&rawImage)[LINE_LENGTH]) :
 		Image() {
 	ComputeMinMax(rawImage);
 	if (m_diversity < LOW_DIVERSITY) {
-		for (int i = 0; i < TFC_CAMERA_LINE_LENGTH; i++) {
+		for (int i = 0; i < LINE_LENGTH; i++) {
 			m_thresholdedImage[i] = COLOR_WHITE;
 			rawImage[i] = COLOR_WHITE_ORIGINAL;
 		}
@@ -208,12 +195,13 @@ Image::Image(uint16_t (&rawImage)[TFC_CAMERA_LINE_LENGTH]) :
 
 }
 
-uint16_t Image::At(uint8_t index, ImgType type) const {
-	if (index >= 128) {
+uint16_t Image::At(uint8_t index, Type type) const {
+	if (index >= LINE_LENGTH) {
 		return 0;
 	}
+
 	switch (type) {
-	case ImgType::Thresholded:
+	case Thresholded:
 		return m_thresholdedImage[index];
 	default:
 		return 0;

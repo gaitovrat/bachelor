@@ -2,7 +2,7 @@
 #include <Mode.h>
 
 #include "fsl_debug_console.h"
-#include "tfc/tfc_k6xf.h"
+#include "tfc_k6xf.h"
 
 #include "Image.h"
 #include <cstdint>
@@ -18,10 +18,9 @@
 
 
 Core::Core() :
-		m_settings(RideDefaultSettings), m_motorState(::Car::MotorState::Stop), m_tracer(
-		TRACER_HISTORY_SIZE), m_pid(&m_settings.PIDdata.Input,
-				&m_settings.PIDdata.Output, &m_settings.PIDdata.SetPoint, m_settings.PIDdata.P,
-				m_settings.PIDdata.I, m_settings.PIDdata.D,
+		m_settings(), m_motorState(MotorState::Stop), m_tracer(TRACER_HISTORY_SIZE), m_pid(&m_settings.PID.Input,
+				&m_settings.PID.Output, &m_settings.PID.SetPoint, m_settings.PID.P,
+				m_settings.PID.I, m_settings.PID.D,
 				P_ON_E, DIRECT) {
 
 }
@@ -29,8 +28,8 @@ Core::Core() :
 void Core::Init() {
 	m_tfc.InitAll();
 	m_enet.Init(sizeof(1024), 8080);
-	m_accelSensor.Init();
-	m_magSensor.Init();
+	m_fxos.Init();
+	m_fxas.Init();
 
 	m_tfc.setLEDs(0b1111);
 
@@ -132,10 +131,10 @@ void Core::Drive() {
 	m_enet.Check();
 
 	if (m_tfc.getPushButton(0) == 1) {
-		if (m_motorState == ::Car::MotorState::Start) {
-			m_motorState = ::Car::MotorState::Stop;
+		if (m_motorState == MotorState::Start) {
+			m_motorState = MotorState::Stop;
 		} else {
-			m_motorState = ::Car::MotorState::Start;
+			m_motorState = MotorState::Start;
 		}
 	}
 
@@ -153,25 +152,25 @@ void Core::Drive() {
 void Core::Update() {
 	PrintCurrentState();
 
-	if (m_motorState == ::Car::MotorState::Start) {
+	if (m_motorState == MotorState::Start) {
 		m_tfc.setLEDs(0b1001);
 	} else {
 		m_tfc.setLEDs(0b0000);
 	}
 
-	uint16_t line[TFC_CAMERA_LINE_LENGTH];
-	m_tfc.getImage(0, line, TFC_CAMERA_LINE_LENGTH);
-	memcpy(m_data.Line, line, TFC_CAMERA_LINE_LENGTH);
+	uint16_t line[Image::LINE_LENGTH];
+	m_tfc.getImage(0, line, Image::LINE_LENGTH);
+	memcpy(m_data.CarCameraData.Line, line, Image::LINE_LENGTH);
 	Image image(line);
 	m_tracer.AddImage(image);
-	m_data.RegionsCount = m_tracer.Regions(image, 0, TFC_CAMERA_LINE_LENGTH - 1, false).size();
+	m_data.CarCameraData.RegionsCount = m_tracer.Regions(image, 0, Image::LINE_LENGTH - 1, false).size();
 
 	auto &distances = m_tracer.DistancesPair();
-	m_data.LeftDistance = distances.first;
-	m_data.RightDistance = distances.second;
+	m_data.CarCameraData.LeftDistance = distances.first;
+	m_data.CarCameraData.RightDistance = distances.second;
 
-	const int leftDistance = m_data.LeftDistance;
-	const int rightDistance = TFC_CAMERA_LINE_LENGTH - m_data.RightDistance;
+	const int leftDistance = m_data.CarCameraData.LeftDistance;
+	const int rightDistance = Image::LINE_LENGTH - m_data.CarCameraData.RightDistance;
 
 	const float leftRatio = static_cast<float>(leftDistance)
 			/ static_cast<float>(rightDistance);
@@ -180,25 +179,25 @@ void Core::Update() {
 
 	float ratioDiff = rightRatio - leftRatio;
 
-	if (m_motorState != ::Car::MotorState::Stop) {
-		m_steerRegulatorInput = ratioDiff;
+	if (m_motorState != MotorState::Stop) {
+		m_settings.PID.Input = ratioDiff;
 		m_pid.Compute();
-		m_steerSetting = static_cast<float>(m_steerRegulatorOutput);
+		m_steerSetting = static_cast<float>(m_settings.PID.Output);
 	} else {
 		m_steerSetting = 0.f;
 	}
 
 	switch (m_motorState) {
-	case ::Car::MotorState::Start: {
-		m_speed = SPEED;
-		m_tfc.setPWMMax(CONTROL_PWM_MAX);
+	case MotorState::Start: {
+		m_speed = 100;
+		m_tfc.setPWMMax(m_settings.MaxSpeed);
 
 		m_pid.SetMode(AUTOMATIC);
 		m_servoPosition = static_cast<int16_t>(m_steerSetting);
 
 		break;
 	}
-	case ::Car::MotorState::Stop:
+	case MotorState::Stop:
 	default: {
 		m_speed = 0;
 		m_pid.SetMode(MANUAL);
@@ -216,10 +215,10 @@ void Core::PrintCurrentState() {
 	const char *state = nullptr;
 
 	switch (m_motorState) {
-	case ::Car::MotorState::Stop:
+	case MotorState::Stop:
 		state = "Stay";
 		break;
-	case ::Car::MotorState::Start:
+	case MotorState::Start:
 		state = "Start";
 		break;
 	default:
@@ -274,37 +273,45 @@ void Core::SetRide() {
 	m_tfc.setServo_i(0, m_servoPosition);
 	m_tfc.setMotorPWM_i(-leftSpeed, -rightSpeed);
 
-	m_data.ServoPosition = m_servoPosition;
-	m_data.Angle = turningAngle;
-	m_data.MotorState = m_motorState;
-	m_data.Mode = m_settings.Mode;
-	m_data.LeftSpeed = leftSpeed;
-	m_data.RightSpeed = rightSpeed;
+	m_data.CarSteerData.ServoPosition = m_servoPosition;
+	m_data.CarSteerData.Angle = turningAngle;
+	m_data.CarMotorData.CarMotorState = m_motorState;
+	m_data.CarMotorData.RideMode = m_settings.RideMode;
+	m_data.CarMotorData.LeftSpeed = leftSpeed;
+	m_data.CarMotorData.RightSpeed = rightSpeed;
 
 	SendData();
 }
 
 void Core::SendData() {
 	// Line tracer
-	m_data.RegionsListSize = m_tracer.ListSize();
-	m_data.UnchangedLeft = m_tracer.UnchangedLeft();
-	m_data.UnchangedRight = m_tracer.UnchangedRight();
-	m_data.HasLeft = m_tracer.HasLeft();
-	m_data.HasRight = m_tracer.HasRight();
+	m_data.CarCameraData.RegionsListSize = m_tracer.ListSize();
+	m_data.CarCameraData.UnchangedLeft = m_tracer.UnchangedLeft();
+	m_data.CarCameraData.UnchangedRight = m_tracer.UnchangedRight();
+	m_data.CarCameraData.HasLeft = m_tracer.HasLeft();
+	m_data.CarCameraData.HasRight = m_tracer.HasRight();
 	m_data.Timestamp = HW_TFC_TimeStamp;
 
 	// PID
-	memcpy(&m_data.SteerData, &m_settings.PIDdata, sizeof(PIDData));
+	memcpy(&m_data.CarSteerData.SteerPIDData, &m_settings.PID, sizeof(PIDData));
 
 	// Sensors
-	m_data.SensorData.AccelData = m_accelSensor.Data();
-	m_data.SensorData.MagData = m_magSensor.Data();
+	std::optional<Vec3<uint16_t>> fxas_data = m_fxas.Read();
+	if (fxas_data.has_value()) {
+		m_data.CarSensorData.gyro = *fxas_data;
+	}
+	std::optional<FXOS8700CQ::Data> fxos_data = m_fxos.Read();
+
+	if (fxos_data.has_value()) {
+		m_data.CarSensorData.mag = fxos_data->mag;
+		m_data.CarSensorData.accel = fxos_data->accel;
+	}
 
 	m_enet.Send(&m_data, sizeof(m_data));
 }
 
 void Core::ResetRegulator() {
-	PIDData& data = m_settings.PIDdata;
+	PIDData& data = m_settings.PID;
 	data.Input = 0;
 	data.Output = 0;
 	data.SetPoint = 0;
