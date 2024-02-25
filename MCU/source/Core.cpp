@@ -24,7 +24,7 @@ Core::Core() :
 		m_settings(), m_motorState(Shared::MotorState::Stop), m_tracer(TRACER_HISTORY_SIZE), m_pid(&m_settings.PID.Input,
 				&m_settings.PID.Output, &m_settings.PID.SetPoint, m_settings.PID.P,
 				m_settings.PID.I, m_settings.PID.D,
-				P_ON_E, DIRECT) {
+				P_ON_E, DIRECT), m_ir(m_tfc) {
 
 }
 
@@ -211,6 +211,7 @@ void Core::Update() {
 	}
 	}
 
+	m_motorState = m_ir.CheckState(m_motorState);
 	SetRide();
 }
 

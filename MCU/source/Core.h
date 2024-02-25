@@ -10,6 +10,7 @@
 #include "Shared/MotorState.h"
 #include "Sensor/FXAS21002.h"
 #include "Sensor/FXOS8700CQ.h"
+#include "Sensor/IRSensor.h"
 
 namespace MCU {
 class Core {
@@ -60,6 +61,7 @@ private:
 	// Sensors
 	FXOS8700CQ m_fxos;
 	FXAS21002 m_fxas;
+	IRSensor m_ir;
 };
 }
 
