@@ -1,9 +1,8 @@
 #include "MainWindow.h"
 
-#include <QGraphicsScene.h>
+#include <QGraphicsScene>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
-
 
 #include "./ui_MainWindow.h"
 #include "Client/BaseClient.h"

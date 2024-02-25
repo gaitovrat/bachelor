@@ -1,8 +1,3 @@
-//
-// Created by ratmirgaitov on 6/14/23.
-//
-
-#include <_types/_uint16_t.h>
 #include <cstring>
 #include <iostream>
 
