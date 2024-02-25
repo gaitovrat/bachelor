@@ -6,6 +6,7 @@
 #include "BaseClient.h"
 #include "Settings.h"
 
+namespace CarQt {
 class SerialClient : public BaseClient {
     Q_OBJECT
 
@@ -16,11 +17,12 @@ class SerialClient : public BaseClient {
 
     virtual ~SerialClient() = default;
 
-    std::optional<Data> getData() override;
+    std::optional<Shared::Data> Data() override;
 
-    bool connected() const override;
+    bool IsConnected() const override;
 
-    void connect() override;
+    void Connect() override;
 };
+}
 
 #endif  // SERIALCLIENT_H

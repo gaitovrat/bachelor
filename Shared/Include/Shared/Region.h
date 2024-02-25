@@ -5,6 +5,7 @@
 
 #include "Image.h"
 
+namespace Shared {
 struct Region {
 	static constexpr uint8_t MIN_LEFT = Image::BLACK_COUNT;
 	static constexpr uint8_t MAX_RIGHT = Image::LINE_LENGTH - Image::BLACK_COUNT - 1;
@@ -27,5 +28,6 @@ struct Region {
 
 	bool operator!=(const Region &rhs);
 };
+}
 
 #endif // _REGION_H

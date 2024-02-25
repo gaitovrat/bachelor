@@ -15,6 +15,8 @@ static constexpr uint8_t CTRL_REG3 = 0x15U;
 static constexpr uint8_t F_SETUP = 0x09U;
 static constexpr uint8_t STATUS = 0x00U;
 
+using namespace MCU;
+
 FXAS21002::FXAS21002(FXAS21002::Range range) : BaseSensor(I2C0),
 		m_eviceAddress(0x21), m_range(range) {
 }
@@ -75,8 +77,8 @@ uint8_t FXAS21002::DeviceAddress() const {
 	return this->m_eviceAddress;
 }
 
-std::optional<Vec3<uint16_t>> FXAS21002::Read() const {
-	Vec3<uint16_t> data;
+std::optional<Shared::Vec3<uint16_t>> FXAS21002::Read() const {
+	Shared::Vec3<uint16_t> data;
 	uint8_t buffer[7] = { 0 };
 
 	status_t status = ReadRegister(STATUS, buffer, sizeof(buffer));

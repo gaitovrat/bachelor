@@ -6,8 +6,9 @@
 #include <QIODevice>
 #include <QObject>
 
-#include "Data.h"
+#include "Shared/Data.h"
 
+namespace CarQt {
 class BaseClient : public QObject {
     Q_OBJECT
 
@@ -16,23 +17,24 @@ class BaseClient : public QObject {
    public:
     BaseClient(QObject *parent);
 
-    void bind(const QIODevice *sender, IOSignal signal);
+    void Bind(const QIODevice *sender, IOSignal signal);
 
     virtual ~BaseClient() = default;
 
-    virtual std::optional<Data> getData() = 0;
+    virtual std::optional<Shared::Data> Data() = 0;
 
-    virtual bool connected() const = 0;
+    virtual bool IsConnected() const = 0;
 
-    virtual void connect() = 0;
+    virtual void Connect() = 0;
 
    public slots:
-    void read();
+    void Read();
 
    signals:
-    void dataReady(const Data &data);
+    void DataReady(const Shared::Data &data);
 
-    void dataReceived(qint64 size);
+    void DataReceived(qint64 size);
 };
+}
 
 #endif

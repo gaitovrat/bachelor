@@ -10,6 +10,7 @@
 
 #include <cstdint>
 
+namespace MCU {
 template <typename T>
 constexpr T BitRead(T value, uint8_t bit) {
 	return (value >> bit) & 0x01;
@@ -28,6 +29,7 @@ constexpr T BitClear(T value, uint8_t bit) {
 template <typename T>
 constexpr T BitWrite(T value, uint8_t bit, bool bitValue) {
 	return bitValue ? BitSet(value, bit) : BitClear(value, bit);
+}
 }
 
 #endif /* UTILS_H_ */

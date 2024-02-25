@@ -10,6 +10,7 @@
 
 #include <cstdint>
 
+namespace Shared {
 template <typename T>
 union Vec3 {
     struct {
@@ -21,5 +22,6 @@ union Vec3 {
 
     Vec3() : Vec3(0, 0, 0) {}
 };
+}
 
 #endif /* VEC_H_ */

@@ -3,14 +3,15 @@
 
 #include "tfc.h"
 #include "Enet.h"
-#include "MotorState.h"
-#include "LineTracer.h"
 #include "PID.h"
-#include "Settings.h"
-#include "Data.h"
+#include "LineTracer.h"
+#include "Shared/Data.h"
+#include "Shared/Settings.h"
+#include "Shared/MotorState.h"
 #include "Sensor/FXAS21002.h"
 #include "Sensor/FXOS8700CQ.h"
 
+namespace MCU {
 class Core {
 public:
 	Core();
@@ -39,8 +40,8 @@ private:
 private:
 	TFC m_tfc;
 	Enet m_enet;
-	Settings m_settings;
-	MotorState m_motorState;
+	Shared::Settings m_settings;
+	Shared::MotorState m_motorState;
 	LineTracer m_tracer;
 	PID m_pid;
 
@@ -54,11 +55,12 @@ private:
 	uint8_t m_left;
 	uint8_t m_right;
 
-	Data m_data;
+	Shared::Data m_data;
 
 	// Sensors
 	FXOS8700CQ m_fxos;
 	FXAS21002 m_fxas;
 };
+}
 
 #endif /* CORE_H_ */

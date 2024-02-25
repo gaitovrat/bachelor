@@ -2,23 +2,26 @@
 // Created by ratmirgaitov on 6/14/23.
 //
 
+#include <_types/_uint16_t.h>
 #include <cstring>
 #include <iostream>
 
 #include "Image.h"
 
-Client::Image::Image() : RawImage{0}, NormalizedImage{0}, ThresholdedImage{0} {}
+using namespace CarQt;
 
-Client::Image::Image(uint16_t (&rawImage)[128]) : ::Image() {
-    SetRawImage(rawImage);
-}
+Image::Image() : RawImage{0}, NormalizedImage{0}, ThresholdedImage{0} {}
 
-void Client::Image::SetRawImage(uint16_t (&rawImage)[128]) {
+Image::Image(CImageLine rawImage) : Image() { SetRawImage(rawImage); }
+
+Image::Image(ImageLine rawImage) : Image(const_cast<CImageLine>(rawImage)) { }
+
+void Image::SetRawImage(const uint16_t (&rawImage)[128]) {
     std::memcpy(RawImage, rawImage, sizeof(rawImage));
     Process();
 }
 
-void Client::Image::Process() {
+void Image::Process() {
     ComputeMinMax(RawImage);
     Cut(RawImage);
     Normalize(RawImage, NormalizedImage);
@@ -26,21 +29,21 @@ void Client::Image::Process() {
     Threshold(NormalizedImage, ThresholdedImage);
 }
 
-uint16_t Client::Image::At(const uint8_t index, ImgType type) const {
-    if (index >= TFC_CAMERA_LINE_LENGTH) {
+uint16_t Image::At(const uint8_t index, Type type) const {
+    if (index >= LINE_LENGTH) {
         std::cerr << "Index out of bounds\n";
         return 0;
     }
 
     switch (type) {
-        case ImgType::Raw:
-            return RawImage[index];
-        case ImgType::Normalized:
-            return NormalizedImage[index];
-        case ImgType::Thresholded:
-            return ThresholdedImage[index];
-        default:
-            std::cerr << "Unknown image type\n";
-            return 0;
+    case Raw:
+        return RawImage[index];
+    case Normalized:
+        return NormalizedImage[index];
+    case Thresholded:
+        return ThresholdedImage[index];
+    default:
+        std::cerr << "Unknown image type\n";
+        return 0;
     }
 }

@@ -4,6 +4,7 @@
 #include "lwip/udp.h"
 #include <cstdint>
 
+namespace MCU {
 class Enet {
 	static constexpr uint32_t BUFFER_COUNT = 4;
 	static constexpr size_t BUFFER_SIZE = 2048;
@@ -33,4 +34,5 @@ private:
 	uint32_t m_dataLen;
 	uint32_t m_dataIndex;
 };
+}
 #endif /* ENET_ENET_H_ */

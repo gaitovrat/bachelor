@@ -10,6 +10,7 @@
 #include "PIDData.h"
 #include "Mode.h"
 
+namespace Shared {
 struct Settings {
 	static constexpr float DEFAULT_ERROR = 160.6f;
 	static constexpr float DEFAULT_DERIVATIVE = 8.3f;
@@ -31,6 +32,6 @@ struct Settings {
 			Mode rideMode = Mode::RideDefault
 	);
 };
-
+}
 
 #endif //_MODE_SETTING_H

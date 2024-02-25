@@ -4,6 +4,8 @@
 
 #define millis() std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()
 
+using namespace MCU;
+
 PID::PID(double *Input, double *Output, double *Setpoint,
                  double Kp, double Ki, double Kd, int POn, int ControllerDirection) {
     myOutput = Output;

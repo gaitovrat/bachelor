@@ -5,6 +5,7 @@
 #include "MotorState.h"
 #include "Mode.h"
 
+namespace Shared {
 struct MotorData {
 	PIDData MotorPIDData;
 	MotorState CarMotorState;
@@ -12,7 +13,6 @@ struct MotorData {
 	int LeftSpeed;
 	int RightSpeed;
 };
-
-
+}
 
 #endif /* INCLUDE_MOTORDATA_H_ */

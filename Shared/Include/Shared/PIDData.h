@@ -5,6 +5,7 @@
 #ifndef UDPSEND_PIDDATA_H
 #define UDPSEND_PIDDATA_H
 
+namespace Shared {
 struct PIDData {
     double P;
     double I;
@@ -18,5 +19,6 @@ struct PIDData {
 
     PIDData();
 };
+}
 
 #endif //UDPSEND_PIDDATA_H

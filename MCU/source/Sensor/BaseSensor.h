@@ -12,6 +12,7 @@
 
 #include <fsl_i2c.h>
 
+namespace MCU {
 class BaseSensor {
 public:
 	BaseSensor(I2C_Type *base);
@@ -29,5 +30,6 @@ private:
 	static bool s_initialized;
 	I2C_Type *m_base;
 };
+}
 
 #endif /* SENSORS_BASESENSOR_H_ */

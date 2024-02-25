@@ -5,26 +5,26 @@
 #ifndef CARCONTROL_IMAGE_H
 #define CARCONTROL_IMAGE_H
 
-#include "common/Image.h"
-#include "common/ImageType.h"
+#include "Shared/Image.h"
 
-namespace Client {
-struct Image : public ::Image {
+namespace CarQt {
+struct Image : public Shared::Image {
     Image();
 
-    explicit Image(uint16_t (&rawImage)[TFC_CAMERA_LINE_LENGTH]);
+    explicit Image(CImageLine rawImage);
 
-    void SetRawImage(uint16_t (&rawImage)[TFC_CAMERA_LINE_LENGTH]);
+    explicit Image(ImageLine rawImage);
+
+    void SetRawImage(CImageLine rawImage);
 
     void Process();
 
-    uint16_t At(const uint8_t index, ImgType type) const;
+    uint16_t At(const uint8_t index, Type type) const;
 
-    uint16_t RawImage[TFC_CAMERA_LINE_LENGTH];
-    uint16_t NormalizedImage[TFC_CAMERA_LINE_LENGTH];
-    uint16_t ThresholdedImage[TFC_CAMERA_LINE_LENGTH];
+    uint16_t RawImage[LINE_LENGTH];
+    uint16_t NormalizedImage[LINE_LENGTH];
+    uint16_t ThresholdedImage[LINE_LENGTH];
 };
-}
+} // namespace Client
 
-
-#endif //CARCONTROL_IMAGE_H
+#endif // CARCONTROL_IMAGE_H

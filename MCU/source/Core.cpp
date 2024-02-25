@@ -1,12 +1,13 @@
-#include <Core.h>
-#include <Mode.h>
+#include "Core.h"
 
-#include "fsl_debug_console.h"
-#include "tfc_k6xf.h"
-
-#include "Image.h"
 #include <cstdint>
 #include <cmath>
+
+#include "fsl_debug_console.h"
+
+#include "tfc_k6xf.h"
+#include "Shared/Image.h"
+#include "Shared/Mode.h"
 
 #ifndef PI
 #define PI 3.14
@@ -16,9 +17,11 @@
 #define LED_CENTER(pot) ((pot) < -(LED_HYST) ? 0x01 : ((pot) > (LED_HYST) ? 0x2 : 0x03))
 #define TRACER_HISTORY_SIZE 5
 
+using namespace MCU;
+
 
 Core::Core() :
-		m_settings(), m_motorState(MotorState::Stop), m_tracer(TRACER_HISTORY_SIZE), m_pid(&m_settings.PID.Input,
+		m_settings(), m_motorState(Shared::MotorState::Stop), m_tracer(TRACER_HISTORY_SIZE), m_pid(&m_settings.PID.Input,
 				&m_settings.PID.Output, &m_settings.PID.SetPoint, m_settings.PID.P,
 				m_settings.PID.I, m_settings.PID.D,
 				P_ON_E, DIRECT) {
@@ -131,10 +134,10 @@ void Core::Drive() {
 	m_enet.Check();
 
 	if (m_tfc.getPushButton(0) == 1) {
-		if (m_motorState == MotorState::Start) {
-			m_motorState = MotorState::Stop;
+		if (m_motorState == Shared::MotorState::Start) {
+			m_motorState = Shared::MotorState::Stop;
 		} else {
-			m_motorState = MotorState::Start;
+			m_motorState = Shared::MotorState::Start;
 		}
 	}
 
@@ -152,25 +155,25 @@ void Core::Drive() {
 void Core::Update() {
 	PrintCurrentState();
 
-	if (m_motorState == MotorState::Start) {
+	if (m_motorState == Shared::MotorState::Start) {
 		m_tfc.setLEDs(0b1001);
 	} else {
 		m_tfc.setLEDs(0b0000);
 	}
 
-	uint16_t line[Image::LINE_LENGTH];
-	m_tfc.getImage(0, line, Image::LINE_LENGTH);
-	memcpy(m_data.CarCameraData.Line, line, Image::LINE_LENGTH);
-	Image image(line);
+	uint16_t line[Shared::Image::LINE_LENGTH];
+	m_tfc.getImage(0, line, Shared::Image::LINE_LENGTH);
+	memcpy(m_data.CarCameraData.Line, line, Shared::Image::LINE_LENGTH);
+	Shared::Image image(line);
 	m_tracer.AddImage(image);
-	m_data.CarCameraData.RegionsCount = m_tracer.Regions(image, 0, Image::LINE_LENGTH - 1, false).size();
+	m_data.CarCameraData.RegionsCount = m_tracer.Regions(image, 0, Shared::Image::LINE_LENGTH - 1, false).size();
 
 	auto &distances = m_tracer.DistancesPair();
 	m_data.CarCameraData.LeftDistance = distances.first;
 	m_data.CarCameraData.RightDistance = distances.second;
 
 	const int leftDistance = m_data.CarCameraData.LeftDistance;
-	const int rightDistance = Image::LINE_LENGTH - m_data.CarCameraData.RightDistance;
+	const int rightDistance = Shared::Image::LINE_LENGTH - m_data.CarCameraData.RightDistance;
 
 	const float leftRatio = static_cast<float>(leftDistance)
 			/ static_cast<float>(rightDistance);
@@ -179,7 +182,7 @@ void Core::Update() {
 
 	float ratioDiff = rightRatio - leftRatio;
 
-	if (m_motorState != MotorState::Stop) {
+	if (m_motorState != Shared::MotorState::Stop) {
 		m_settings.PID.Input = ratioDiff;
 		m_pid.Compute();
 		m_steerSetting = static_cast<float>(m_settings.PID.Output);
@@ -188,7 +191,7 @@ void Core::Update() {
 	}
 
 	switch (m_motorState) {
-	case MotorState::Start: {
+	case Shared::MotorState::Start: {
 		m_speed = 100;
 		m_tfc.setPWMMax(m_settings.MaxSpeed);
 
@@ -197,7 +200,7 @@ void Core::Update() {
 
 		break;
 	}
-	case MotorState::Stop:
+	case Shared::MotorState::Stop:
 	default: {
 		m_speed = 0;
 		m_pid.SetMode(MANUAL);
@@ -215,10 +218,10 @@ void Core::PrintCurrentState() {
 	const char *state = nullptr;
 
 	switch (m_motorState) {
-	case MotorState::Stop:
+	case Shared::MotorState::Stop:
 		state = "Stay";
 		break;
-	case MotorState::Start:
+	case Shared::MotorState::Start:
 		state = "Start";
 		break;
 	default:
@@ -293,10 +296,10 @@ void Core::SendData() {
 	m_data.Timestamp = HW_TFC_TimeStamp;
 
 	// PID
-	memcpy(&m_data.CarSteerData.SteerPIDData, &m_settings.PID, sizeof(PIDData));
+	memcpy(&m_data.CarSteerData.SteerPIDData, &m_settings.PID, sizeof(Shared::PIDData));
 
 	// Sensors
-	std::optional<Vec3<uint16_t>> fxas_data = m_fxas.Read();
+	std::optional<Shared::Vec3<uint16_t>> fxas_data = m_fxas.Read();
 	if (fxas_data.has_value()) {
 		m_data.CarSensorData.gyro = *fxas_data;
 	}
@@ -311,7 +314,7 @@ void Core::SendData() {
 }
 
 void Core::ResetRegulator() {
-	PIDData& data = m_settings.PID;
+	Shared::PIDData& data = m_settings.PID;
 	data.Input = 0;
 	data.Output = 0;
 	data.SetPoint = 0;

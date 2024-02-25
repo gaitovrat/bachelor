@@ -2,16 +2,18 @@
 
 #include <optional>
 
+using namespace CarQt;
+
 BaseClient::BaseClient(QObject *parent) : QObject(parent) {}
 
-void BaseClient::bind(const QIODevice *sender, IOSignal signal) {
-    QObject::connect(sender, signal, this, &BaseClient::read);
+void BaseClient::Bind(const QIODevice *sender, IOSignal signal) {
+    QObject::connect(sender, signal, this, &BaseClient::Read);
 }
 
-void BaseClient::read() {
-    std::optional<Data> data = this->getData();
+void BaseClient::Read() {
+    std::optional<Shared::Data> data = Data();
 
     if (data.has_value()) {
-        emit this->dataReady(*data);
+        emit DataReady(*data);
     }
 }

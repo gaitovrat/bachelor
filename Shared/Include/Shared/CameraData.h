@@ -6,6 +6,7 @@
 
 #include "Image.h"
 
+namespace Shared {
 struct CameraData {
 	uint16_t Line[Image::LINE_LENGTH];
 	uint32_t RegionsCount;
@@ -17,5 +18,6 @@ struct CameraData {
 	uint8_t LeftDistance;
 	uint8_t RightDistance;
 };
+}
 
 #endif /* TRACERDATA_H_ */

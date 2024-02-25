@@ -1,8 +1,10 @@
-#include "Region.h"
+#include "Shared/Region.h"
 
 #include <algorithm>
 
-#include "Image.h"
+#include "Shared/Image.h"
+
+using namespace Shared;
 
 Region::Region(uint8_t left, uint8_t right, uint8_t color) :
 	Left(std::max(left, MIN_LEFT)), Right(std::min(right, MAX_RIGHT)), Color(color) {}

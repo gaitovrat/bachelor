@@ -6,43 +6,46 @@
 #include <QSerialPort>
 #include <QUdpSocket>
 
+namespace CarQt {
 struct Settings {
+public:
     enum Mode {
-        Serial = 0,
+        Serial,
         Network
     };
 
     struct Serial {
-        QString portName;
-        QSerialPort::BaudRate baudRate;
-        QSerialPort::DataBits dataBits;
-        QSerialPort::Parity parity;
-        QSerialPort::StopBits stopBits;
+        QString PortName;
+        QSerialPort::BaudRate BaudRate;
+        QSerialPort::DataBits DataBits;
+        QSerialPort::Parity Parity;
+        QSerialPort::StopBits StopBits;
 
         Serial();
     };
 
     struct Network {
-        QHostAddress address;
-        uint32_t port;
+        QHostAddress Address;
+        uint32_t Port;
 
         Network();
     };
 
-    Mode mode;
-    struct Serial serial;
-    struct Network network;
-    QString recordDestination;
+    Mode AppMode;
+    struct Serial ClientSerial;
+    struct Network ClientNetwork;
+    QString RecordDestination;
 
     Settings();
 
-    void save(const char *filename);
+    void Save(const char *filename);
 
-    static std::optional<Settings> load(const char *filename);
+    static std::optional<Settings> Load(const char *filename);
 
-    static const char *modeToString(Mode mode);
-    static Mode stringToMode(const QString& value);
+    static const char *ModeToString(Mode mode);
+
+    static Mode ModeFromString(const QString& value);
 };
-
+}
 
 #endif

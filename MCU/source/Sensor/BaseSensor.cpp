@@ -9,6 +9,8 @@
 
 #include <cstring>
 
+using namespace MCU;
+
 static constexpr uint32_t BAUDRATE = 100000;
 
 bool BaseSensor::s_initialized = false;

@@ -3,10 +3,12 @@
 
 #include <json/json.h>
 #include <QComboBox>
+#include <QGraphicsView>
+#include <opencv2/core/mat.hpp>
 
-namespace Utils {
+namespace CarQt::Utils {
     template<typename T>
-    inline T jsonGetKey(const Json::Value& root, const char *key, const T& keyDefault) {
+    inline T JsonGetKey(const Json::Value& root, const char *key, const T& keyDefault) {
         if (root.isMember(key))
             return static_cast<T>(root[key].asInt());
 
@@ -14,7 +16,7 @@ namespace Utils {
     }
 
     template<>
-    inline Json::Value jsonGetKey<Json::Value>(const Json::Value& root, const char *key, const Json::Value& keyDefault) {
+    inline Json::Value JsonGetKey<Json::Value>(const Json::Value& root, const char *key, const Json::Value& keyDefault) {
         if (root.isMember(key))
             return root[key];
 
@@ -22,13 +24,19 @@ namespace Utils {
     }
 
     template<>
-    inline std::string jsonGetKey<std::string>(const Json::Value& root, const char *key, const std::string& keyDefault) {
+    inline std::string JsonGetKey<std::string>(const Json::Value& root, const char *key, const std::string& keyDefault) {
         if (root.isMember(key))
             return root[key].asString();
 
         return keyDefault;
     }
 
-    void setComboBox(QComboBox& comboBox, const QString& value);
+    inline QString ToQString(bool value) {
+        return value ? "true" : "false";
+    }
+
+    void SetComboBox(QComboBox& comboBox, const QString& value);
+
+    void ShowMat(QGraphicsView *graphicsView, const cv::Mat& mat);
 }
 #endif // UTILS_H

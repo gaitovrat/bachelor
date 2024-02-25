@@ -6,73 +6,74 @@
 #include <QPushButton>
 
 #include "Utils.h"
-#include "Settings.h"
 #include "ui_SettingsWindow.h"
+
+using namespace CarQt;
 
 SettingsWindow::SettingsWindow(QWidget *parent)
     : QDialog(parent), ui(new Ui::SettingsWindow) {
     ui->setupUi(this);
-    std::optional<Settings> settings = Settings::load(SettingsWindow::FILENAME);
+    std::optional<Settings> settings = Settings::Load(SettingsWindow::FILENAME);
 
     if (!settings.has_value()) {
         return;
     }
 
-    Utils::setComboBox(*this->ui->cbMode, Settings::modeToString(settings->mode));
+    Utils::SetComboBox(*ui->cbMode, Settings::ModeToString(settings->AppMode));
 
-    this->ui->leSerialPort->setText(settings->serial.portName);
-    Utils::setComboBox(*this->ui->cbSerialBaudRate, QString::number(settings->serial.baudRate));
-    Utils::setComboBox(*this->ui->cbSerialDataBits, QString::number(settings->serial.dataBits));
-    QString key = QMetaEnum::fromType<QSerialPort::Parity>().valueToKey(settings->serial.parity);
+    ui->leSerialPort->setText(settings->ClientSerial.PortName);
+    Utils::SetComboBox(*ui->cbSerialBaudRate, QString::number(settings->ClientSerial.BaudRate));
+    Utils::SetComboBox(*ui->cbSerialDataBits, QString::number(settings->ClientSerial.DataBits));
+    QString key = QMetaEnum::fromType<QSerialPort::Parity>().valueToKey(settings->ClientSerial.Parity);
     key.remove("Parity");
-    Utils::setComboBox(*this->ui->cbSerialParity, key);
-    if (settings->serial.stopBits == QSerialPort::StopBits::OneAndHalfStop)
-        Utils::setComboBox(*this->ui->cbStopBits, "1.5");
+    Utils::SetComboBox(*ui->cbSerialParity, key);
+    if (settings->ClientSerial.StopBits == QSerialPort::StopBits::OneAndHalfStop)
+        Utils::SetComboBox(*ui->cbStopBits, "1.5");
     else
-        Utils::setComboBox(*this->ui->cbStopBits, QString::number(settings->serial.stopBits));
+        Utils::SetComboBox(*ui->cbStopBits, QString::number(settings->ClientSerial.StopBits));
 
-    this->ui->leNetworkAddress->setText(settings->network.address.toString());
-    this->ui->leNetworkPort->setText(QString::number(settings->network.port));
+    ui->leNetworkAddress->setText(settings->ClientNetwork.Address.toString());
+    ui->leNetworkPort->setText(QString::number(settings->ClientNetwork.Port));
 
-    this->ui->leDestination->setText(settings->recordDestination);
+    ui->leDestination->setText(settings->RecordDestination);
 
-    connect(this->ui->bChoose, &QPushButton::clicked, this, &SettingsWindow::selectRecordDirectory);
+    connect(ui->bChoose, &QPushButton::clicked, this, &SettingsWindow::selectRecordDirectory);
 }
 
 SettingsWindow::~SettingsWindow() { delete ui; }
 
 std::optional<Settings> SettingsWindow::execute() {
-    int status = this->exec();
+    int status = exec();
     if (status == 0) {
         return std::nullopt;
     }
 
     Settings settings = getSettings();
-    settings.save(SettingsWindow::FILENAME);
+    settings.Save(SettingsWindow::FILENAME);
 
     return settings;
 }
 
 Settings SettingsWindow::getSettings() const {
     Settings settings;
-    settings.mode = Settings::stringToMode(this->ui->cbMode->currentText());
+    settings.AppMode = Settings::ModeFromString(ui->cbMode->currentText());
 
-    settings.serial.portName = this->ui->leSerialPort->text();
-    settings.serial.baudRate = static_cast<QSerialPort::BaudRate>(this->ui->cbSerialBaudRate->currentText().toInt());
-    settings.serial.dataBits = static_cast<QSerialPort::DataBits>(this->ui->cbSerialDataBits->currentText().toInt());
-    QString text = this->ui->cbSerialParity->currentText() + "Parity";
+    settings.ClientSerial.PortName = ui->leSerialPort->text();
+    settings.ClientSerial.BaudRate = static_cast<QSerialPort::BaudRate>(ui->cbSerialBaudRate->currentText().toInt());
+    settings.ClientSerial.DataBits = static_cast<QSerialPort::DataBits>(ui->cbSerialDataBits->currentText().toInt());
+    QString text = ui->cbSerialParity->currentText() + "Parity";
     int value = QMetaEnum::fromType<QSerialPort::Parity>().keyToValue(text.toUtf8().constData());
-    settings.serial.parity = static_cast<QSerialPort::Parity>(value);
-    float stopBits = this->ui->cbStopBits->currentText().toFloat();
+    settings.ClientSerial.Parity = static_cast<QSerialPort::Parity>(value);
+    float stopBits = ui->cbStopBits->currentText().toFloat();
     if (stopBits == 1.5f)
-        settings.serial.stopBits = QSerialPort::StopBits::OneAndHalfStop;
+        settings.ClientSerial.StopBits = QSerialPort::StopBits::OneAndHalfStop;
     else
-        settings.serial.stopBits = static_cast<QSerialPort::StopBits>(stopBits);
+        settings.ClientSerial.StopBits = static_cast<QSerialPort::StopBits>(stopBits);
 
-    settings.network.address = QHostAddress(this->ui->leNetworkAddress->text());
-    settings.network.port = this->ui->leNetworkPort->text().toUInt();
+    settings.ClientNetwork.Address = QHostAddress(ui->leNetworkAddress->text());
+    settings.ClientNetwork.Port = ui->leNetworkPort->text().toUInt();
 
-    settings.recordDestination = this->ui->leDestination->text();
+    settings.RecordDestination = ui->leDestination->text();
 
     return settings;
 }
@@ -85,6 +86,6 @@ void SettingsWindow::selectRecordDirectory() {
 
     QString selectedDirectory = dialog.getExistingDirectory(this, "Select Directory", QDir::homePath());
     if (!selectedDirectory.isEmpty()) {
-        this->ui->leDestination->setText(selectedDirectory);
+        ui->leDestination->setText(selectedDirectory);
     }
 }

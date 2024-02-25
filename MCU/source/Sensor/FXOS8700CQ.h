@@ -12,8 +12,9 @@
 #include <cstdint>
 
 #include "Sensor/BaseSensor.h"
-#include "Vec.h"
+#include "Shared/Vec.h"
 
+namespace MCU {
 class FXOS8700CQ : public BaseSensor {
 public:
 	enum Range {
@@ -23,8 +24,8 @@ public:
 	};
 
 	struct Data {
-		Vec3<uint16_t> accel;
-		Vec3<uint16_t> mag;
+		Shared::Vec3<uint16_t> accel;
+		Shared::Vec3<uint16_t> mag;
 	};
 
 public:
@@ -41,5 +42,6 @@ private:
 	uint8_t m_deviceAddress;
 	Range m_range;
 };
+}
 
 #endif /* SENSORS_FXOS8700CQ_H_ */

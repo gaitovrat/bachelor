@@ -18,6 +18,8 @@ static constexpr uint8_t STATUS = 0x00U;
 static constexpr uint8_t M_STATUS = 0x32U;
 static constexpr uint8_t F_SETUP = 0x09;
 
+using namespace MCU;
+
 FXOS8700CQ::FXOS8700CQ(FXOS8700CQ::Range range) : BaseSensor(I2C0),
 		m_deviceAddress(0x1DU),
 		m_range(range) {

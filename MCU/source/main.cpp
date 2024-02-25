@@ -5,7 +5,7 @@
 
 #include "Core.h"
 
-Core core;
+MCU::Core core;
 
 int main(void) {
     BOARD_InitBootPins();

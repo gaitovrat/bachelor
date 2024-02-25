@@ -10,6 +10,7 @@
 #include "MotorData.h"
 #include "SteerData.h"
 
+namespace Shared {
 struct Data {
 	CameraData CarCameraData;
 	MotorData CarMotorData;
@@ -17,5 +18,6 @@ struct Data {
     SensorData CarSensorData;
     uint64_t Timestamp;
 };
+}
 
 #endif //UDPSEND_UDPDATA_H

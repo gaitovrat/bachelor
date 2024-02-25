@@ -15,6 +15,7 @@
 #define P_ON_M 0
 #define P_ON_E 1
 
+namespace MCU {
 class PID {
 public:
 	//commonly used functions **************************************************************************
@@ -85,4 +86,6 @@ private:
 	double outMin, outMax;
 	bool inAuto, pOnE;
 };
+}
+
 #endif /* PID_H_ */

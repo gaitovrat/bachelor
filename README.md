@@ -6,6 +6,7 @@ Monorepository for bachelor work
 #### Dependencies
 1. Cmake == 3.28
 2. Qt >= 6.4
+3. OpenCV 4.x
 
 #### Build
 ```sh

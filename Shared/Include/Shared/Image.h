@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+namespace Shared {
 class Image {
 public:
 	enum Type {
@@ -18,9 +19,12 @@ public:
 	static constexpr uint8_t LOW_DIVERSITY = 100;
 	static constexpr uint8_t BLACK_COUNT = 10;
 
+	using ImageLine = uint16_t (&)[LINE_LENGTH];
+	using CImageLine = const uint16_t (&)[LINE_LENGTH];
+
 	Image();
 
-	Image(uint16_t (&rawImage)[LINE_LENGTH]);
+	Image(ImageLine rawImage);
 
 	uint16_t At(uint8_t index, Type type) const;
 
@@ -36,37 +40,31 @@ public:
 
 	bool IsLowDiversity() const;
 
-private:
-	void ComputeMinMax(const uint16_t (&img)[LINE_LENGTH]);
+protected:
+	void ComputeMinMax(CImageLine img);
 
-	void Cut(uint16_t (&img)[LINE_LENGTH]);
+	void Cut(ImageLine srcImg);
 
-	void Normalize(const uint16_t (&srcImg)[LINE_LENGTH],
-			uint16_t (&dstImg)[LINE_LENGTH]);
+	void Normalize(CImageLine srcImg, ImageLine dstImg);
 
-	uint16_t AverageThreshold(
-			const uint16_t (&srcImg)[LINE_LENGTH]);
+	uint16_t AverageThreshold(CImageLine srcImg);
 
-	void Threshold(const uint16_t (&srcImg)[LINE_LENGTH],
-			uint16_t (&dstImg)[LINE_LENGTH]);
+	void Threshold(CImageLine srcImg, ImageLine dstImg);
 
-	void SlowMedianBlur(const uint16_t (&srcImg)[LINE_LENGTH],
-			uint16_t (&dstImg)[LINE_LENGTH], int pixels);
+	void SlowMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
 
-	void SlowMedianBlur(uint16_t (&srcImg)[LINE_LENGTH],
-			int pixels);
+	void SlowMedianBlur(ImageLine srcImg, int pixels);
 
-	void FastMedianBlur(const uint16_t (&srcImg)[LINE_LENGTH],
-			uint16_t (&dstImg)[LINE_LENGTH], int pixels);
+	void FastMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
 
-	void FastMedianBlur(uint16_t (&srcImg)[LINE_LENGTH],
-			int pixels);
+	void FastMedianBlur(ImageLine srcImg, int pixels);
 
-private:
+protected:
 	uint16_t m_thresholdedImage[LINE_LENGTH];
 	uint16_t m_max;
 	uint16_t m_min;
 	uint16_t m_threshValue;
 	int16_t m_diversity;
 };
+}
 #endif

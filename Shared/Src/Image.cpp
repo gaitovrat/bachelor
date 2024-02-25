@@ -1,15 +1,18 @@
+#include "Shared/Image.h"
+
 #include <deque>
 #include <cstring>
 
-#include "Image.h"
-#include "CarMath.h"
+#include "Shared/Utils.h"
+
+using namespace Shared;
 
 Image::Image() :
 		m_thresholdedImage { 0 }, m_max { COLOR_BLACK }, m_min { COLOR_WHITE } {
 
 }
 
-void Image::ComputeMinMax(const uint16_t (&img)[LINE_LENGTH]) {
+void Image::ComputeMinMax(CImageLine img) {
 	m_max = COLOR_BLACK;
 	m_min = COLOR_WHITE_ORIGINAL;
 
@@ -33,7 +36,7 @@ void Image::ComputeMinMax(const uint16_t (&img)[LINE_LENGTH]) {
 	m_diversity = std::max(m_max, m_min) - std::min(m_min, m_max);
 }
 
-void Image::Cut(uint16_t (&srcImg)[LINE_LENGTH]) {
+void Image::Cut(ImageLine srcImg) {
 	for (uint64_t col = 0; col < BLACK_COUNT; col++) {
 		srcImg[col] = m_max;
 	}
@@ -45,8 +48,7 @@ void Image::Cut(uint16_t (&srcImg)[LINE_LENGTH]) {
 
 }
 
-void Image::Normalize(const uint16_t (&srcImg)[LINE_LENGTH],
-		uint16_t (&dstImg)[LINE_LENGTH]) {
+void Image::Normalize(CImageLine srcImg, ImageLine dstImg) {
 	for (int i = 0; i < LINE_LENGTH; i++) {
 		float pixel = static_cast<float>(srcImg[i]);
 		pixel -= m_min;
@@ -56,8 +58,7 @@ void Image::Normalize(const uint16_t (&srcImg)[LINE_LENGTH],
 	}
 }
 
-uint16_t Image::AverageThreshold(
-		const uint16_t (&srcImg)[LINE_LENGTH]) {
+uint16_t Image::AverageThreshold(CImageLine srcImg) {
 	long sum = 0;
 	for (uint64_t i = BLACK_COUNT; i < LINE_LENGTH - BLACK_COUNT;
 			i++) {
@@ -68,8 +69,7 @@ uint16_t Image::AverageThreshold(
 	return avg;
 }
 
-void Image::Threshold(const uint16_t (&srcImg)[LINE_LENGTH],
-		uint16_t (&dstImg)[LINE_LENGTH]) {
+void Image::Threshold(CImageLine srcImg, ImageLine dstImg) {
 	for (int i = 0; i < LINE_LENGTH; i++) {
 		if (srcImg[i] < m_threshValue)
 			dstImg[i] = COLOR_BLACK;
@@ -78,9 +78,7 @@ void Image::Threshold(const uint16_t (&srcImg)[LINE_LENGTH],
 	}
 }
 
-void Image::FastMedianBlur(uint16_t (&srcImg)[LINE_LENGTH],
-		const int pixels) {
-
+void Image::FastMedianBlur(ImageLine srcImg, int pixels) {
 	const int buffSize = pixels * 2 + 1;
 	std::vector<uint16_t> blurBuffer;
 
@@ -90,15 +88,14 @@ void Image::FastMedianBlur(uint16_t (&srcImg)[LINE_LENGTH],
 		}
 
 		for (int j = -pixels; j <= pixels; j++) {
-			srcImg[i + j] = Median(blurBuffer);
+			srcImg[i + j] = Utils::Median(blurBuffer);
 		}
 		blurBuffer.clear();
 	}
 
 }
 
-void Image::FastMedianBlur(const uint16_t (&srcImg)[LINE_LENGTH],
-		uint16_t (&dstImg)[LINE_LENGTH], const int pixels) {
+void Image::FastMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels) {
 	memcpy(dstImg, srcImg, LINE_LENGTH);
 
 	const int buffSize = pixels * 2 + 1;
@@ -117,8 +114,7 @@ void Image::FastMedianBlur(const uint16_t (&srcImg)[LINE_LENGTH],
 	}
 }
 
-void Image::SlowMedianBlur(const uint16_t (&srcImg)[LINE_LENGTH],
-		uint16_t (&dstImg)[LINE_LENGTH], const int pixels) {
+void Image::SlowMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels) {
 	memcpy(dstImg, srcImg, LINE_LENGTH);
 	std::vector<uint16_t> blurBuffer;
 
@@ -132,8 +128,7 @@ void Image::SlowMedianBlur(const uint16_t (&srcImg)[LINE_LENGTH],
 	}
 }
 
-void Image::SlowMedianBlur(uint16_t (&srcImg)[LINE_LENGTH],
-		int pixels) {
+void Image::SlowMedianBlur(ImageLine srcImg, int pixels) {
 	std::deque<uint16_t> pixBuffer;
 
 	for (int i = /*0*/1; i < LINE_LENGTH; i++) {
@@ -144,7 +139,7 @@ void Image::SlowMedianBlur(uint16_t (&srcImg)[LINE_LENGTH],
 		pixBuffer.emplace_back(srcImg[i]);
 
 		for (int j = -pixels; j <= pixels; j++) {
-			srcImg[i + j] = Median<uint16_t>(
+			srcImg[i + j] = Utils::Median<uint16_t>(
 					std::vector<uint16_t>(pixBuffer.begin(), pixBuffer.end()));
 		}
 		//blurBuffer.clear();

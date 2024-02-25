@@ -25,6 +25,8 @@ static constexpr u8_t NETMASK[4] = { 255, 255, 255, 0 };
 static constexpr u8_t GATEWAY[4] = { 192, 168, 99, 100 };
 static constexpr u8_t PC_IP[4] = {192, 168, 99, 255 };
 
+using namespace MCU;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

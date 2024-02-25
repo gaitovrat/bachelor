@@ -10,9 +10,10 @@
 
 #include <optional>
 
-#include "Vec.h"
+#include "Shared/Vec.h"
 #include "Sensor/BaseSensor.h"
 
+namespace MCU {
 class FXAS21002 : public BaseSensor {
 public:
 	enum Range {
@@ -31,10 +32,11 @@ public:
 
 	uint8_t DeviceAddress() const override;
 
-	std::optional<Vec3<uint16_t>> Read() const;
+	std::optional<Shared::Vec3<uint16_t>> Read() const;
 private:
 	uint8_t m_eviceAddress;
 	FXAS21002::Range m_range;
 };
+}
 
 #endif /* SENSORS_FXAS21002_H_ */

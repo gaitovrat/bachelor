@@ -5,15 +5,17 @@
 #include <json/json.h>
 #include <qdebug.h>
 
+using namespace CarQt;
 
-Recording::Recording() : start(std::chrono::system_clock::now()) {}
 
-void Recording::save(const QString& path) {
+Recording::Recording() : Start(std::chrono::system_clock::now()) {}
+
+void Recording::Save(const QString& path) {
 	Json::Value root;
 	Json::StreamWriterBuilder writer;
 	std::chrono::time_point<std::chrono::system_clock> end(std::chrono::system_clock::now());
 	
-	std::string filename = "recordng-" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(this->start.time_since_epoch()).count()) + "-" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(end.time_since_epoch()).count()) + ".json";
+	std::string filename = "recordng-" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(Start.time_since_epoch()).count()) + "-" + std::to_string(std::chrono::duration_cast<std::chrono::seconds>(end.time_since_epoch()).count()) + ".json";
 	std::string filepath = path.toStdString() + "/" + filename;
 	std::ofstream fout(filepath);
 
@@ -22,26 +24,26 @@ void Recording::save(const QString& path) {
 		return;
 	}
 
-	for (const Entry& entry : this->entries) {
+	for (const Entry& entry : entries) {
 		Json::Value jsonEntry, jsonData, jsonAccel, jsonMag, jsonGyro;
 		
-		jsonAccel["x"] = entry.data.accel.x;
-		jsonAccel["y"] = entry.data.accel.y;
-		jsonAccel["z"] = entry.data.accel.z;
+		jsonAccel["x"] = entry.data.CarSensorData.accel.X;
+		jsonAccel["y"] = entry.data.CarSensorData.accel.Y;
+		jsonAccel["z"] = entry.data.CarSensorData.accel.Z;
 
-		jsonMag["x"] = entry.data.mag.x;
-		jsonMag["y"] = entry.data.mag.y;
-		jsonMag["z"] = entry.data.mag.z;
+		jsonMag["x"] = entry.data.CarSensorData.mag.X;
+		jsonMag["y"] = entry.data.CarSensorData.mag.Y;
+		jsonMag["z"] = entry.data.CarSensorData.mag.Z;
 
-		jsonGyro["x"] = entry.data.gyro.x;
-		jsonGyro["y"] = entry.data.gyro.y;
-		jsonGyro["z"] = entry.data.gyro.z;
+		jsonGyro["x"] = entry.data.CarSensorData.gyro.X;
+		jsonGyro["y"] = entry.data.CarSensorData.gyro.Y;
+		jsonGyro["z"] = entry.data.CarSensorData.gyro.Z;
 
 		jsonData["accel"] = jsonAccel;
 		jsonData["mag"] = jsonMag;
 		jsonData["gyro"] = jsonGyro;
 
-		jsonEntry["time"] = std::chrono::duration_cast<std::chrono::milliseconds>(entry.time.time_since_epoch()).count();
+		jsonEntry["time"] = std::chrono::duration_cast<std::chrono::milliseconds>(entry.Time.time_since_epoch()).count();
 		jsonEntry["data"] = jsonData;
 
 		root.append(jsonEntry);
@@ -50,11 +52,11 @@ void Recording::save(const QString& path) {
 	fout << Json::writeString(writer, root);
 }
 
-void Recording::add(const Data& data) {
+void Recording::Add(const Shared::Data& data) {
 	Entry entry;
-	entry.time = std::chrono::system_clock::now();
+	entry.Time = std::chrono::system_clock::now();
 	entry.data = data;
 
-	this->entries.push_back(entry);
+	entries.push_back(entry);
 }
 

@@ -1,37 +1,39 @@
 #include "SerialClient.h"
 #include <QtCore/qtypes.h>
 
+using namespace CarQt;
+
 static constexpr int BUFFER_SIZE = 1024;
 
 SerialClient::SerialClient(const struct Settings::Serial& settings, QObject *parent)
-    : BaseClient(parent), port(settings.portName, parent) {
-    this->bind(&this->port, &QSerialPort::readyRead);
+    : BaseClient(parent), port(settings.PortName, parent) {
+    Bind(&port, &QSerialPort::readyRead);
 
-    this->port.setBaudRate(settings.baudRate);
-    this->port.setDataBits(settings.dataBits);
-    this->port.setParity(settings.parity);
-    this->port.setStopBits(settings.stopBits);
+    port.setBaudRate(settings.BaudRate);
+    port.setDataBits(settings.DataBits);
+    port.setParity(settings.Parity);
+    port.setStopBits(settings.StopBits);
 }
 
-std::optional<Data> SerialClient::getData() {
-    Data data;
-    qint64 size = this->port.bytesAvailable();
-    emit this->dataReceived(size);
+std::optional<Shared::Data> SerialClient::Data() {
+    Shared::Data data;
+    qint64 size = port.bytesAvailable();
+    emit DataReceived(size);
 
-    if (size < sizeof(Data)) {
+    if (size < sizeof(Shared::Data)) {
         return std::nullopt;
     }
 
-    const QByteArray &buffer = this->port.read(sizeof(Data));
-    std::memcpy(&data, buffer.data(), sizeof(Data));
+    const QByteArray &buffer = port.read(sizeof(Shared::Data));
+    std::memcpy(&data, buffer.data(), sizeof(Shared::Data));
 
     return data;
 }
 
-bool SerialClient::connected() const {
-    return this->port.isOpen();
+bool SerialClient::IsConnected() const {
+    return port.isOpen();
 }
 
-void SerialClient::connect() {
-    this->port.open(QSerialPort::ReadWrite);
+void SerialClient::Connect() {
+    port.open(QSerialPort::ReadWrite);
 }

@@ -9,23 +9,25 @@
 #include "BaseClient.h"
 #include "Settings.h"
 
+namespace CarQt {
 class UDPClient : public BaseClient {
     Q_OBJECT
 
-    uint32_t port;
-    QUdpSocket socket;
-    QHostAddress address;
+    uint32_t m_port;
+    QUdpSocket m_socket;
+    QHostAddress m_address;
 
    public:
     UDPClient(const struct Settings::Network& settings, QObject *parent);
 
     virtual ~UDPClient() = default;
 
-    std::optional<Data> getData() override;
+    std::optional<Shared::Data> Data() override;
 
-    bool connected() const override;
+    bool IsConnected() const override;
 
-    void connect() override;
+    void Connect() override;
 };
+}
 
 #endif  // UDPCLIENT_H
