@@ -6,15 +6,16 @@
 
 #include <qstring.h>
 
-#include "Data.h"
+#include "Shared/Data.h"
 
+namespace CarQt {
 class Recording {
 	struct Entry {
-		std::chrono::time_point<std::chrono::system_clock> time;
-		Data data;
+		std::chrono::time_point<std::chrono::system_clock> Time;
+		Shared::Data data;
 	};
 
-	std::chrono::time_point<std::chrono::system_clock> start;
+	std::chrono::time_point<std::chrono::system_clock> Start;
 	std::vector<Entry> entries;
 
 public:
@@ -22,9 +23,10 @@ public:
 
 	virtual ~Recording() = default;
 
-	void save(const QString& path);
+	void Save(const QString& path);
 
-	void add(const Data& data);
+	void Add(const Shared::Data& data);
 };
+}
 
 #endif // !RECORDING_H_

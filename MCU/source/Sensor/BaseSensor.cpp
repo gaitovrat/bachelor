@@ -5,18 +5,20 @@
  *      Author: ratmirgaitov
  */
 
-#include "sensors/BaseSensor.h"
+#include "BaseSensor.h"
 
 #include <cstring>
 
+using namespace MCU;
+
 static constexpr uint32_t BAUDRATE = 100000;
 
-bool BaseSensor::initialized = false;
+bool BaseSensor::s_initialized = false;
 
-BaseSensor::BaseSensor(I2C_Type *base) : base(base) {}
+BaseSensor::BaseSensor(I2C_Type *base) : m_base(base) {}
 
-status_t BaseSensor::init() {
-	if (BaseSensor::initialized) {
+status_t BaseSensor::Init() {
+	if (BaseSensor::s_initialized) {
 		return kStatus_Success;
 	}
 
@@ -25,15 +27,15 @@ status_t BaseSensor::init() {
 
 	I2C_MasterGetDefaultConfig(&masterConfig);
 	masterConfig.baudRate_Bps = BAUDRATE;
-	I2C_MasterInit(this->base, &masterConfig, sourceClock);
+	I2C_MasterInit(this->m_base, &masterConfig, sourceClock);
 
-	BaseSensor::initialized = true;
+	BaseSensor::s_initialized = true;
 
 	return kStatus_Success;
 }
 
-status_t BaseSensor::readRegister(uint8_t registerAddress, uint8_t *buffer, size_t bufferSize) const {
-	const uint8_t deviceAddress = this->getDeviceAddress();
+status_t BaseSensor::ReadRegister(uint8_t registerAddress, uint8_t *buffer, size_t bufferSize) const {
+	const uint8_t deviceAddress = this->DeviceAddress();
 
 	i2c_master_transfer_t masterXfer;
 	memset(&masterXfer, 0, sizeof(masterXfer));
@@ -46,11 +48,11 @@ status_t BaseSensor::readRegister(uint8_t registerAddress, uint8_t *buffer, size
 	masterXfer.dataSize = bufferSize;
 	masterXfer.flags = kI2C_TransferDefaultFlag;
 
-	return I2C_MasterTransferBlocking(this->base, &masterXfer);
+	return I2C_MasterTransferBlocking(this->m_base, &masterXfer);
 }
 
-status_t BaseSensor::writeRegister(uint8_t registerAddress, uint8_t *buffer) {
-	const uint8_t deviceAddress = this->getDeviceAddress();
+status_t BaseSensor::WriteRegister(uint8_t registerAddress, uint8_t *buffer) {
+	const uint8_t deviceAddress = this->DeviceAddress();
 
 	i2c_master_transfer_t masterXfer;
 	memset(&masterXfer, 0, sizeof(masterXfer));
@@ -63,5 +65,5 @@ status_t BaseSensor::writeRegister(uint8_t registerAddress, uint8_t *buffer) {
 	masterXfer.dataSize = 1;
 	masterXfer.flags = kI2C_TransferDefaultFlag;
 
-	return I2C_MasterTransferBlocking(this->base, &masterXfer);
+	return I2C_MasterTransferBlocking(this->m_base, &masterXfer);
 }

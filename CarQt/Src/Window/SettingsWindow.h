@@ -11,6 +11,7 @@ namespace Ui {
 class SettingsWindow;
 }
 
+namespace CarQt {
 class SettingsWindow : public QDialog {
     Q_OBJECT
 
@@ -31,5 +32,6 @@ class SettingsWindow : public QDialog {
    private:
     Settings getSettings() const;
 };
+}
 
 #endif  // SETTINGSWINDOW_H

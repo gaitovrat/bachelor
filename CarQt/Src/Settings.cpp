@@ -7,23 +7,25 @@
 
 #include "Utils.h"
 
+using namespace CarQt;
+
 Settings::Serial::Serial() :
-    portName(""),
-    baudRate(QSerialPort::BaudRate::Baud115200),
-    dataBits(QSerialPort::DataBits::Data8),
-    parity(QSerialPort::Parity::NoParity),
-    stopBits(QSerialPort::StopBits::OneStop)
+    PortName(""),
+    BaudRate(QSerialPort::BaudRate::Baud115200),
+    DataBits(QSerialPort::DataBits::Data8),
+    Parity(QSerialPort::Parity::NoParity),
+    StopBits(QSerialPort::StopBits::OneStop)
 {}
 
-Settings::Network::Network() : address(QHostAddress::Any), port(8080u) {}
+Settings::Network::Network() : Address(QHostAddress::Any), Port(8080u) {}
 
 Settings::Settings() :
-    mode(Mode::Serial),
-    serial(),
-    network(),
-    recordDestination(".") {}
+    AppMode(Mode::Serial),
+    ClientSerial(),
+    ClientNetwork(),
+    RecordDestination(".") {}
 
-void Settings::save(const char *filename) {
+void Settings::Save(const char *filename) {
     Json::Value root, serial, network;
     Json::StreamWriterBuilder writer;
     std::ofstream fout(filename);
@@ -33,24 +35,24 @@ void Settings::save(const char *filename) {
         return;
     }
 
-    serial["portName"] = this->serial.portName.toUtf8().constData();
-    serial["baudRate"] = this->serial.baudRate;
-    serial["dataBits"] = this->serial.dataBits;
-    serial["parity"] = this->serial.parity;
-    serial["stopBits"] = this->serial.stopBits;
+    serial["portName"] = ClientSerial.PortName.toUtf8().constData();
+    serial["baudRate"] = ClientSerial.BaudRate;
+    serial["dataBits"] = ClientSerial.DataBits;
+    serial["parity"] = ClientSerial.Parity;
+    serial["stopBits"] = ClientSerial.StopBits;
 
-    network["address"] = this->network.address.toString().toUtf8().constData();
-    network["port"] = this->network.port;
+    network["address"] = ClientNetwork.Address.toString().toUtf8().constData();
+    network["port"] = ClientNetwork.Port;
 
-    root["mode"] = this->mode;
+    root["mode"] = AppMode;
     root["serial"] = serial;
     root["network"] = network;
-    root["recordDestination"] = this->recordDestination.toUtf8().constData();
+    root["recordDestination"] = RecordDestination.toUtf8().constData();
 
     fout << Json::writeString(writer, root);
 }
 
-std::optional<Settings> Settings::load(const char *filename) {
+std::optional<Settings> Settings::Load(const char *filename) {
     std::ifstream fin(filename);
     Json::Reader reader;
     Json::Value root;
@@ -68,27 +70,27 @@ std::optional<Settings> Settings::load(const char *filename) {
         return std::nullopt;
     }
 
-    Json::Value serial = Utils::jsonGetKey(root, "serial", Json::Value());
-    serialSettings.portName = QString::fromStdString(Utils::jsonGetKey<std::string>(serial, "portName", ""));
-    serialSettings.baudRate = Utils::jsonGetKey(serial, "baudRate", QSerialPort::BaudRate::Baud115200);
-    serialSettings.dataBits = Utils::jsonGetKey(serial, "dataBits", QSerialPort::DataBits::Data8);
-    serialSettings.parity = Utils::jsonGetKey(serial, "parity", QSerialPort::Parity::NoParity);
-    serialSettings.stopBits = Utils::jsonGetKey(serial, "stopBits", QSerialPort::StopBits::OneStop);
+    Json::Value serial = Utils::JsonGetKey(root, "serial", Json::Value());
+    serialSettings.PortName = QString::fromStdString(Utils::JsonGetKey<std::string>(serial, "portName", ""));
+    serialSettings.BaudRate = Utils::JsonGetKey(serial, "baudRate", QSerialPort::BaudRate::Baud115200);
+    serialSettings.DataBits = Utils::JsonGetKey(serial, "dataBits", QSerialPort::DataBits::Data8);
+    serialSettings.Parity = Utils::JsonGetKey(serial, "parity", QSerialPort::Parity::NoParity);
+    serialSettings.StopBits = Utils::JsonGetKey(serial, "stopBits", QSerialPort::StopBits::OneStop);
 
-    Json::Value network = Utils::jsonGetKey(root, "network", Json::Value());
-    QHostAddress address(QString::fromStdString(Utils::jsonGetKey<std::string>(network, "address", "")));
-    networkSettings.address = address;
-    networkSettings.port = Utils::jsonGetKey<uint32_t>(network, "port", 0u);
+    Json::Value network = Utils::JsonGetKey(root, "network", Json::Value());
+    QHostAddress address(QString::fromStdString(Utils::JsonGetKey<std::string>(network, "address", "")));
+    networkSettings.Address = address;
+    networkSettings.Port = Utils::JsonGetKey<uint32_t>(network, "port", 0u);
 
-    settings.mode = Utils::jsonGetKey(root, "mode", Mode::Serial);
-    settings.recordDestination = QString::fromStdString(Utils::jsonGetKey<std::string>(root, "recordDestination", ""));
-    settings.serial = serialSettings;
-    settings.network = networkSettings;
+    settings.AppMode = Utils::JsonGetKey(root, "mode", Mode::Serial);
+    settings.RecordDestination = QString::fromStdString(Utils::JsonGetKey<std::string>(root, "recordDestination", ""));
+    settings.ClientSerial = serialSettings;
+    settings.ClientNetwork = networkSettings;
 
     return settings;
 }
 
-const char *Settings::modeToString(Mode mode) {
+const char *Settings::ModeToString(Mode mode) {
     switch (mode) {
     case Mode::Network:
         return "Network";
@@ -99,7 +101,7 @@ const char *Settings::modeToString(Mode mode) {
     }
 }
 
-Settings::Mode Settings::stringToMode(const QString& value) {
+Settings::Mode Settings::ModeFromString(const QString& value) {
     if (value == "Network")
         return Mode::Network;
     return Mode::Serial;

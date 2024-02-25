@@ -10,9 +10,10 @@
 
 #include <optional>
 
-#include "Vec.h"
-#include "sensors/BaseSensor.h"
+#include "Shared/Vec.h"
+#include "Sensor/BaseSensor.h"
 
+namespace MCU {
 class FXAS21002 : public BaseSensor {
 public:
 	enum Range {
@@ -22,20 +23,20 @@ public:
 		DPS_250
 	};
 
-private:
-	uint8_t deviceAddress;
-	FXAS21002::Range range;
-
 public:
 	FXAS21002(FXAS21002::Range range = Range::DPS_1000);
 
 	virtual ~FXAS21002() = default;
 
-	status_t init() override;
+	status_t Init() override;
 
-	uint8_t getDeviceAddress() const override;
+	uint8_t DeviceAddress() const override;
 
-	std::optional<Vec3> read() const;
+	std::optional<Shared::Vec3<uint16_t>> Read() const;
+private:
+	uint8_t m_eviceAddress;
+	FXAS21002::Range m_range;
 };
+}
 
 #endif /* SENSORS_FXAS21002_H_ */

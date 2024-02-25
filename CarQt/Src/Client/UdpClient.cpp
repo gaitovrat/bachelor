@@ -1,33 +1,35 @@
 #include "UdpClient.h"
 
+using namespace CarQt;
+
 UDPClient::UDPClient(const struct Settings::Network& settings, QObject* parent)
-    : port(settings.port), socket(parent), address(settings.address), BaseClient(parent) {
-    this->bind(&this->socket, &QUdpSocket::readyRead);
+    : m_port(settings.Port), m_socket(parent), m_address(settings.Address), BaseClient(parent) {
+    Bind(&m_socket, &QUdpSocket::readyRead);
 }
 
-std::optional<Data> UDPClient::getData() {
-    Data data;
+std::optional<Shared::Data> UDPClient::Data() {
+    Shared::Data data;
     QByteArray buffer;
     QHostAddress sender;
     quint16 senderPort;
 
-    qint64 size = this->socket.pendingDatagramSize();
-    emit this->dataReceived(size);
+    qint64 size = m_socket.pendingDatagramSize();
+    emit DataReceived(size);
     buffer.resize(size);
 
-    this->socket.readDatagram(buffer.data(), buffer.size(), &sender,
+    m_socket.readDatagram(buffer.data(), buffer.size(), &sender,
                               &senderPort);
 
-    std::memcpy(&data, buffer.data(), sizeof(Data));
+    std::memcpy(&data, buffer.data(), sizeof(Shared::Data));
 
 
     return data;
 }
 
-bool UDPClient::connected() const {
-    return this->socket.state() == QAbstractSocket::BoundState;
+bool UDPClient::IsConnected() const {
+    return m_socket.state() == QAbstractSocket::BoundState;
 }
 
-void UDPClient::connect() {
-    this->socket.bind(this->address, this->port, QUdpSocket::ShareAddress);
+void UDPClient::Connect() {
+    m_socket.bind(m_address, m_port, QUdpSocket::ShareAddress);
 }
