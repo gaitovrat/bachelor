@@ -32,8 +32,8 @@ add_executable(CarQt
     Resources/resources.qrc
     Src/Recording.h
     Src/Recording.cpp
-    src/Image.h
-    src/Image.cpp)
+    Src/Image.h
+    Src/Image.cpp)
 
 list(TRANSFORM QT_COMPONENTS PREPEND Qt6::)
 
