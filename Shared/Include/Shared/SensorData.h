@@ -5,10 +5,10 @@
 
 namespace Shared {
 struct SensorData {
-	Vec3<uint16_t> accel;
-	Vec3<uint16_t> mag;
-	Vec3<uint16_t> gyro;
+    Vec3<uint16_t> accel;
+    Vec3<uint16_t> mag;
+    Vec3<uint16_t> gyro;
 };
-}
+} // namespace Shared
 
 #endif

@@ -25,6 +25,6 @@ struct Image : public Shared::Image {
     uint16_t NormalizedImage[LINE_LENGTH];
     uint16_t ThresholdedImage[LINE_LENGTH];
 };
-} // namespace Client
+} // namespace CarQt
 
 #endif // CARCONTROL_IMAGE_H

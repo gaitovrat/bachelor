@@ -12,8 +12,8 @@ class SerialClient : public BaseClient {
 
     QSerialPort port;
 
-   public:
-    SerialClient(const struct Settings::Serial& settings, QObject *parent);
+  public:
+    SerialClient(const struct Settings::Serial &settings, QObject *parent);
 
     virtual ~SerialClient() = default;
 
@@ -23,6 +23,6 @@ class SerialClient : public BaseClient {
 
     void Connect() override;
 };
-}
+} // namespace CarQt
 
-#endif  // SERIALCLIENT_H
+#endif // SERIALCLIENT_H

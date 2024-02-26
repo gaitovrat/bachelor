@@ -14,7 +14,7 @@ class BaseClient : public QObject {
 
     using IOSignal = void (QIODevice::*)();
 
-   public:
+  public:
     BaseClient(QObject *parent);
 
     void Bind(const QIODevice *sender, IOSignal signal);
@@ -27,14 +27,14 @@ class BaseClient : public QObject {
 
     virtual void Connect() = 0;
 
-   public slots:
+  public slots:
     void Read();
 
-   signals:
+  signals:
     void DataReady(const Shared::Data &data);
 
     void DataReceived(qint64 size);
 };
-}
+} // namespace CarQt
 
 #endif
