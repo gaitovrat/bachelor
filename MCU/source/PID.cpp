@@ -1,14 +1,19 @@
-#include <PID.h>
+#include "PID.h"
 
 #include <chrono>
 
-#define millis()                                                               \
-    std::chrono::duration_cast<std::chrono::milliseconds>(                     \
-        std::chrono::system_clock::now().time_since_epoch())                   \
-        .count()
-
 using namespace MCU;
 
+static size_t millis() {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+               std::chrono::system_clock::now().time_since_epoch())
+        .count();
+}
+
+/*Constructor (...)*********************************************************
+ *    The parameters specified here are those for for which we can't set up
+ *    reliable defaults, so we need to have the user set them.
+ ***************************************************************************/
 PID::PID(double *Input, double *Output, double *Setpoint, double Kp, double Ki,
          double Kd, int POn, int ControllerDirection) {
     myOutput = Output;
@@ -17,7 +22,7 @@ PID::PID(double *Input, double *Output, double *Setpoint, double Kp, double Ki,
     inAuto = false;
 
     PID::SetOutputLimits(-1000, 1000); // default output limit corresponds to
-    // the arduino pwm limits
+                                       // the frdm k66 pwm limits
 
     SampleTime = 10; // default Controller Sample Time is 0.1 seconds
 
@@ -37,6 +42,10 @@ PID::PID(double *Input, double *Output, double *Setpoint, double Kp, double Ki,
     : PID::PID(Input, Output, Setpoint, Kp, Ki, Kd, P_ON_E,
                ControllerDirection) {}
 
+PID::PID(Shared::PIDData &pidData, int POn, int ControllerDirection)
+    : PID(&pidData.Input, &pidData.Output, &pidData.SetPoint, pidData.P,
+          pidData.I, pidData.D, POn, ControllerDirection) {}
+
 /* Compute()
  *********************************************************************** This,
  *as they say, is where the magic happens.  this function should be called every
@@ -47,8 +56,8 @@ PID::PID(double *Input, double *Output, double *Setpoint, double Kp, double Ki,
 bool PID::Compute() {
     if (!inAuto)
         return false;
-    long long int now = 0;         // millis();
-    long long int timeChange = 10; //(now - lastTime);
+    unsigned long now = millis();
+    unsigned long timeChange = (now - lastTime);
     if (timeChange >= SampleTime) {
         /*Compute all the working error variables*/
         double input = *myInput;
@@ -210,48 +219,7 @@ void PID::SetControllerDirection(int Direction) {
  * purposes.  this are the functions the PID Front-end uses for example
  ******************************************************************************/
 double PID::GetKp() { return dispKp; }
-
 double PID::GetKi() { return dispKi; }
-
 double PID::GetKd() { return dispKd; }
-
 int PID::GetMode() { return inAuto ? AUTOMATIC : MANUAL; }
-
 int PID::GetDirection() { return controllerDirection; }
-
-bool PID::compute(double input, double target, double &output) {
-    // double input = *myInput;
-    double error = target - input;
-    double dInput = (input - lastInput);
-    outputSum += (ki * error);
-
-    /*Add Proportional on Measurement, if P_ON_M is specified*/
-    if (!pOnE)
-        outputSum -= kp * dInput;
-
-    if (outputSum > outMax)
-        outputSum = outMax;
-    else if (outputSum < outMin)
-        outputSum = outMin;
-
-    /*Add Proportional on Error, if P_ON_E is specified*/
-    // double output;
-    if (pOnE)
-        output = kp * error;
-    else
-        output = 0;
-
-    /*Compute Rest of PID Output*/
-    output += outputSum - kd * dInput;
-
-    if (output > outMax)
-        output = outMax;
-    else if (output < outMin)
-        output = outMin;
-    *myOutput = output;
-
-    /*Remember some variables for next time*/
-    lastInput = input;
-    // lastTime = now;
-    return true;
-}

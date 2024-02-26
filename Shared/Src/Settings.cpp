@@ -2,7 +2,6 @@
 
 using namespace Shared;
 
-Settings::Settings(double P, double I, double D, float diffCoef,
-                   uint16_t maxSpeed, Mode rideMode)
-    : PID(P, I, D), DiffCoef(diffCoef), MaxSpeed(maxSpeed), RideMode(rideMode) {
-}
+Settings::Settings(double P, double I, double D, uint16_t maxSpeed,
+                   Mode rideMode)
+    : P(P), I(I), D(D), MaxSpeed(maxSpeed), RideMode(rideMode) {}

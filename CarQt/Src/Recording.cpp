@@ -36,8 +36,7 @@ void Recording::Save(const QString &path) {
 
     for (const Entry &entry : entries) {
         Json::Value jsonEntry, jsonData, jsonAccel, jsonMag, jsonGyro,
-            jsonCamera, jsonMotor, jsonMotorPID, jsonSteer, jsonSteerPID,
-            jsonSensor;
+            jsonCamera, jsonMotor, jsonSteer, jsonSteerPID, jsonSensor;
 
         jsonCamera["regionsCount"] = entry.data.CarCameraData.RegionsCount;
         jsonCamera["regionsListSize"] =
@@ -53,14 +52,6 @@ void Recording::Save(const QString &path) {
         jsonMotor["rightSpeed"] = entry.data.CarMotorData.RightSpeed;
         jsonMotor["mode"] = entry.data.CarMotorData.RideMode;
         jsonMotor["state"] = entry.data.CarMotorData.CarMotorState;
-        jsonMotorPID["i"] = entry.data.CarMotorData.MotorPIDData.I;
-        jsonMotorPID["p"] = entry.data.CarMotorData.MotorPIDData.P;
-        jsonMotorPID["d"] = entry.data.CarMotorData.MotorPIDData.D;
-        jsonMotorPID["input"] = entry.data.CarMotorData.MotorPIDData.Input;
-        jsonMotorPID["output"] = entry.data.CarMotorData.MotorPIDData.Output;
-        jsonMotorPID["setPoint"] =
-            entry.data.CarMotorData.MotorPIDData.SetPoint;
-        jsonMotor["pid"] = jsonMotorPID;
 
         jsonSteer["angle"] = entry.data.CarSteerData.Angle;
         jsonSteer["servoPosition"] = entry.data.CarSteerData.ServoPosition;
