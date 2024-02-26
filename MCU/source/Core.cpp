@@ -7,37 +7,34 @@
 
 #include "Shared/Image.h"
 #include "Shared/Mode.h"
+#include "Utils.h"
 #include "tfc_k6xf.h"
 
 #ifndef PI
 #define PI 3.14
 #endif
 
-#define LED_HYST 5
-#define LED_CENTER(pot)                                                        \
-    ((pot) < -(LED_HYST) ? 0x01 : ((pot) > (LED_HYST) ? 0x2 : 0x03))
-#define TRACER_HISTORY_SIZE 5
+static constexpr uint32_t TRACER_HISTORY_SIZE = 5;
 
 using namespace MCU;
 
 Core::Core()
     : m_settings(), m_motorState(Shared::MotorState::Stop),
       m_tracer(TRACER_HISTORY_SIZE),
-      m_pid(&m_settings.PID.Input, &m_settings.PID.Output,
-            &m_settings.PID.SetPoint, m_settings.PID.P, m_settings.PID.I,
-            m_settings.PID.D, P_ON_E, DIRECT),
-      m_ir(m_tfc) {}
+      m_pidData(m_settings.P, m_settings.I, m_settings.D),
+      m_pid(m_pidData, P_ON_E, DIRECT), m_ir(m_tfc) {}
 
 void Core::Init() {
     m_tfc.InitAll();
-    m_enet.Init(sizeof(1024), 8080);
+
+    m_tfc.setLEDs(0b1111);
+    m_enet.Init(sizeof(1024), 5000);
     m_fxos.Init();
     m_fxas.Init();
 
-    m_tfc.setLEDs(0b1111);
-
     m_tfc.MotorPWMOnOff(true);
     m_tfc.ServoOnOff(true);
+    m_tfc.setPWMMax(m_settings.MaxSpeed);
 
     m_tfc.setLEDs(0);
 }
@@ -52,7 +49,7 @@ void Core::Calibrate() {
         int pa = m_tfc.ReadPot_i(0);
         int pb = m_tfc.ReadPot_i(1);
 
-        m_tfc.setLEDs(LED_CENTER(pa) | (LED_CENTER(pb) << 2));
+        m_tfc.setLEDs(LedCenter(pa) | (LedCenter(pb) << 2));
         PRINTF("DutyCycle: %4d %4d\r\n", TFC_SERVO_DEFAULT_CENTER + pa,
                TFC_SERVO_DEFAULT_CENTER + pb);
 
@@ -77,7 +74,7 @@ void Core::Calibrate() {
 
         int pa = m_tfc.ReadPot_i(0);
         int pb = m_tfc.ReadPot_i(1);
-        m_tfc.setLEDs(LED_CENTER(pa) | (LED_CENTER(pb) << 2));
+        m_tfc.setLEDs(LedCenter(pa) | (LedCenter(pb) << 2));
         PRINTF("Pot1: %5d Pot2: %5d FB-A: %6.2f FB-B: %6.2f\r\n", pa, pb,
                m_tfc.ReadFB_f(0), m_tfc.ReadFB_f(1));
 
@@ -182,9 +179,9 @@ void Core::Update() {
     float ratioDiff = rightRatio - leftRatio;
 
     if (m_motorState != Shared::MotorState::Stop) {
-        m_settings.PID.Input = ratioDiff;
+        m_pidData.Input = ratioDiff;
         m_pid.Compute();
-        m_steerSetting = static_cast<float>(m_settings.PID.Output);
+        m_steerSetting = static_cast<float>(m_pidData.Output);
     } else {
         m_steerSetting = 0.f;
     }
@@ -219,7 +216,7 @@ void Core::PrintCurrentState() {
 
     switch (m_motorState) {
     case Shared::MotorState::Stop:
-        state = "Stay";
+        state = "Stop";
         break;
     case Shared::MotorState::Start:
         state = "Start";
@@ -295,7 +292,7 @@ void Core::SendData() {
     m_data.Timestamp = HW_TFC_TimeStamp;
 
     // PID
-    memcpy(&m_data.CarSteerData.SteerPIDData, &m_settings.PID,
+    memcpy(&m_data.CarSteerData.SteerPIDData, &m_pidData,
            sizeof(Shared::PIDData));
 
     // Sensors
@@ -314,11 +311,9 @@ void Core::SendData() {
 }
 
 void Core::ResetRegulator() {
-    Shared::PIDData &data = m_settings.PID;
-    data.Input = 0;
-    data.Output = 0;
-    data.SetPoint = 0;
+    m_pidData.Input = 0;
+    m_pidData.Output = 0;
+    m_pidData.SetPoint = 0;
 
-    m_pid = PID(&data.Input, &data.Output, &data.SetPoint, data.P, data.I,
-                data.D, P_ON_E, DIRECT);
+    m_pid = PID(m_pidData, P_ON_E, DIRECT);
 }

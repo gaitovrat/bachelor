@@ -27,6 +27,16 @@ template <typename T>
 constexpr T BitWrite(T value, uint8_t bit, bool bitValue) {
     return bitValue ? BitSet(value, bit) : BitClear(value, bit);
 }
+
+constexpr uint8_t LedCenter(const int pot) {
+    if (pot < -5)
+        return 0x01;
+
+    if (pot > 5)
+        return 0x2;
+
+    return 0x3;
+}
 } // namespace MCU
 
 #endif /* UTILS_H_ */

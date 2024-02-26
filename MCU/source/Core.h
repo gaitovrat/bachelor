@@ -44,13 +44,14 @@ class Core {
     Shared::Settings m_settings;
     Shared::MotorState m_motorState;
     LineTracer m_tracer;
-    PID m_pid;
 
-    // PID
-    float m_steerSetting;
+    // Motor
+    Shared::PIDData m_pidData;
+    PID m_pid;
     int m_speed;
 
     // Servo
+    float m_steerSetting;
     int16_t m_prevServoPosition;
     int16_t m_servoPosition;
     uint8_t m_left;
