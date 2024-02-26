@@ -4,6 +4,7 @@
 
 #include <json/json.h>
 #include <qdebug.h>
+#include <string>
 
 using namespace CarQt;
 
@@ -34,7 +35,43 @@ void Recording::Save(const QString &path) {
     }
 
     for (const Entry &entry : entries) {
-        Json::Value jsonEntry, jsonData, jsonAccel, jsonMag, jsonGyro;
+        Json::Value jsonEntry, jsonData, jsonAccel, jsonMag, jsonGyro,
+            jsonCamera, jsonMotor, jsonMotorPID, jsonSteer, jsonSteerPID,
+            jsonSensor;
+
+        jsonCamera["regionsCount"] = entry.data.CarCameraData.RegionsCount;
+        jsonCamera["regionsListSize"] =
+            std::to_string(entry.data.CarCameraData.RegionsListSize);
+        jsonCamera["unchangedLeft"] = entry.data.CarCameraData.UnchangedLeft;
+        jsonCamera["unchangedRight"] = entry.data.CarCameraData.UnchangedRight;
+        jsonCamera["hasLeft"] = entry.data.CarCameraData.HasLeft;
+        jsonCamera["hasRight"] = entry.data.CarCameraData.HasRight;
+        jsonCamera["leftDistance"] = entry.data.CarCameraData.LeftDistance;
+        jsonCamera["rightDistance"] = entry.data.CarCameraData.RightDistance;
+
+        jsonMotor["leftSpeed"] = entry.data.CarMotorData.LeftSpeed;
+        jsonMotor["rightSpeed"] = entry.data.CarMotorData.RightSpeed;
+        jsonMotor["mode"] = entry.data.CarMotorData.RideMode;
+        jsonMotor["state"] = entry.data.CarMotorData.CarMotorState;
+        jsonMotorPID["i"] = entry.data.CarMotorData.MotorPIDData.I;
+        jsonMotorPID["p"] = entry.data.CarMotorData.MotorPIDData.P;
+        jsonMotorPID["d"] = entry.data.CarMotorData.MotorPIDData.D;
+        jsonMotorPID["input"] = entry.data.CarMotorData.MotorPIDData.Input;
+        jsonMotorPID["output"] = entry.data.CarMotorData.MotorPIDData.Output;
+        jsonMotorPID["setPoint"] =
+            entry.data.CarMotorData.MotorPIDData.SetPoint;
+        jsonMotor["pid"] = jsonMotorPID;
+
+        jsonSteer["angle"] = entry.data.CarSteerData.Angle;
+        jsonSteer["servoPosition"] = entry.data.CarSteerData.ServoPosition;
+        jsonSteerPID["i"] = entry.data.CarSteerData.SteerPIDData.I;
+        jsonSteerPID["p"] = entry.data.CarSteerData.SteerPIDData.P;
+        jsonSteerPID["d"] = entry.data.CarSteerData.SteerPIDData.D;
+        jsonSteerPID["input"] = entry.data.CarSteerData.SteerPIDData.Input;
+        jsonSteerPID["output"] = entry.data.CarSteerData.SteerPIDData.Output;
+        jsonSteerPID["setPoint"] =
+            entry.data.CarSteerData.SteerPIDData.SetPoint;
+        jsonSteer["pid"] = jsonSteerPID;
 
         jsonAccel["x"] = entry.data.CarSensorData.accel.X;
         jsonAccel["y"] = entry.data.CarSensorData.accel.Y;
@@ -48,15 +85,20 @@ void Recording::Save(const QString &path) {
         jsonGyro["y"] = entry.data.CarSensorData.gyro.Y;
         jsonGyro["z"] = entry.data.CarSensorData.gyro.Z;
 
-        jsonData["accel"] = jsonAccel;
-        jsonData["mag"] = jsonMag;
-        jsonData["gyro"] = jsonGyro;
+        jsonSensor["accel"] = jsonAccel;
+        jsonSensor["mag"] = jsonMag;
+        jsonSensor["gyro"] = jsonGyro;
 
-        jsonEntry["time"] =
-            std::chrono::duration_cast<std::chrono::milliseconds>(
-                entry.Time.time_since_epoch())
-                .count();
+        jsonData["camera"] = jsonCamera;
+        jsonData["motor"] = jsonMotor;
+        jsonData["steer"] = jsonSteer;
+        jsonData["sensor"] = jsonSensor;
+        jsonData["timestamp"] = entry.data.Timestamp;
+
         jsonEntry["data"] = jsonData;
+        jsonEntry["time"] = std::chrono::duration_cast<std::chrono::seconds>(
+                                entry.Time.time_since_epoch())
+                                .count();
 
         root.append(jsonEntry);
     }
