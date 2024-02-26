@@ -17,8 +17,8 @@ class UDPClient : public BaseClient {
     QUdpSocket m_socket;
     QHostAddress m_address;
 
-   public:
-    UDPClient(const struct Settings::Network& settings, QObject *parent);
+  public:
+    UDPClient(const struct Settings::Network &settings, QObject *parent);
 
     virtual ~UDPClient() = default;
 
@@ -28,6 +28,6 @@ class UDPClient : public BaseClient {
 
     void Connect() override;
 };
-}
+} // namespace CarQt
 
-#endif  // UDPCLIENT_H
+#endif // UDPCLIENT_H

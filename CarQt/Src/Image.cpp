@@ -9,7 +9,7 @@ Image::Image() : RawImage{0}, NormalizedImage{0}, ThresholdedImage{0} {}
 
 Image::Image(CImageLine rawImage) : Image() { SetRawImage(rawImage); }
 
-Image::Image(ImageLine rawImage) : Image(const_cast<CImageLine>(rawImage)) { }
+Image::Image(ImageLine rawImage) : Image(const_cast<CImageLine>(rawImage)) {}
 
 void Image::SetRawImage(const uint16_t (&rawImage)[128]) {
     std::memcpy(RawImage, rawImage, sizeof(rawImage));

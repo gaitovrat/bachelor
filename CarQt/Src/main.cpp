@@ -3,7 +3,7 @@
 
 #include "Window/MainWindow.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     QApplication app(argc, argv);
     CarQt::MainWindow window(app.applicationName());
     QFile style(":/resources/style.qss");

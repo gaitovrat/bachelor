@@ -9,21 +9,17 @@
 
 using namespace CarQt;
 
-Settings::Serial::Serial() :
-    PortName(""),
-    BaudRate(QSerialPort::BaudRate::Baud115200),
-    DataBits(QSerialPort::DataBits::Data8),
-    Parity(QSerialPort::Parity::NoParity),
-    StopBits(QSerialPort::StopBits::OneStop)
-{}
+Settings::Serial::Serial()
+    : PortName(""), BaudRate(QSerialPort::BaudRate::Baud115200),
+      DataBits(QSerialPort::DataBits::Data8),
+      Parity(QSerialPort::Parity::NoParity),
+      StopBits(QSerialPort::StopBits::OneStop) {}
 
 Settings::Network::Network() : Address(QHostAddress::Any), Port(8080u) {}
 
-Settings::Settings() :
-    AppMode(Mode::Serial),
-    ClientSerial(),
-    ClientNetwork(),
-    RecordDestination(".") {}
+Settings::Settings()
+    : AppMode(Mode::Serial), ClientSerial(), ClientNetwork(),
+      RecordDestination(".") {}
 
 void Settings::Save(const char *filename) {
     Json::Value root, serial, network;
@@ -71,19 +67,26 @@ std::optional<Settings> Settings::Load(const char *filename) {
     }
 
     Json::Value serial = Utils::JsonGetKey(root, "serial", Json::Value());
-    serialSettings.PortName = QString::fromStdString(Utils::JsonGetKey<std::string>(serial, "portName", ""));
-    serialSettings.BaudRate = Utils::JsonGetKey(serial, "baudRate", QSerialPort::BaudRate::Baud115200);
-    serialSettings.DataBits = Utils::JsonGetKey(serial, "dataBits", QSerialPort::DataBits::Data8);
-    serialSettings.Parity = Utils::JsonGetKey(serial, "parity", QSerialPort::Parity::NoParity);
-    serialSettings.StopBits = Utils::JsonGetKey(serial, "stopBits", QSerialPort::StopBits::OneStop);
+    serialSettings.PortName = QString::fromStdString(
+        Utils::JsonGetKey<std::string>(serial, "portName", ""));
+    serialSettings.BaudRate = Utils::JsonGetKey(
+        serial, "baudRate", QSerialPort::BaudRate::Baud115200);
+    serialSettings.DataBits =
+        Utils::JsonGetKey(serial, "dataBits", QSerialPort::DataBits::Data8);
+    serialSettings.Parity =
+        Utils::JsonGetKey(serial, "parity", QSerialPort::Parity::NoParity);
+    serialSettings.StopBits =
+        Utils::JsonGetKey(serial, "stopBits", QSerialPort::StopBits::OneStop);
 
     Json::Value network = Utils::JsonGetKey(root, "network", Json::Value());
-    QHostAddress address(QString::fromStdString(Utils::JsonGetKey<std::string>(network, "address", "")));
+    QHostAddress address(QString::fromStdString(
+        Utils::JsonGetKey<std::string>(network, "address", "")));
     networkSettings.Address = address;
     networkSettings.Port = Utils::JsonGetKey<uint32_t>(network, "port", 0u);
 
     settings.AppMode = Utils::JsonGetKey(root, "mode", Mode::Serial);
-    settings.RecordDestination = QString::fromStdString(Utils::JsonGetKey<std::string>(root, "recordDestination", ""));
+    settings.RecordDestination = QString::fromStdString(
+        Utils::JsonGetKey<std::string>(root, "recordDestination", ""));
     settings.ClientSerial = serialSettings;
     settings.ClientNetwork = networkSettings;
 
@@ -101,7 +104,7 @@ const char *Settings::ModeToString(Mode mode) {
     }
 }
 
-Settings::Mode Settings::ModeFromString(const QString& value) {
+Settings::Mode Settings::ModeFromString(const QString &value) {
     if (value == "Network")
         return Mode::Network;
     return Mode::Serial;

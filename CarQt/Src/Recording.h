@@ -10,23 +10,23 @@
 
 namespace CarQt {
 class Recording {
-	struct Entry {
-		std::chrono::time_point<std::chrono::system_clock> Time;
-		Shared::Data data;
-	};
+    struct Entry {
+        std::chrono::time_point<std::chrono::system_clock> Time;
+        Shared::Data data;
+    };
 
-	std::chrono::time_point<std::chrono::system_clock> Start;
-	std::vector<Entry> entries;
+    std::chrono::time_point<std::chrono::system_clock> Start;
+    std::vector<Entry> entries;
 
-public:
-	Recording();
+  public:
+    Recording();
 
-	virtual ~Recording() = default;
+    virtual ~Recording() = default;
 
-	void Save(const QString& path);
+    void Save(const QString &path);
 
-	void Add(const Shared::Data& data);
+    void Add(const Shared::Data &data);
 };
-}
+} // namespace CarQt
 
 #endif // !RECORDING_H_

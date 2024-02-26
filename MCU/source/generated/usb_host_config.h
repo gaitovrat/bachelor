@@ -13,28 +13,32 @@
 
 /* Host Controller Enable */
 /*!
- * @brief host khci instance count, meantime it indicates khci enable or disable.
+ * @brief host khci instance count, meantime it indicates khci enable or
+ * disable.
  *        - if 0, host khci driver is disable.
  *        - if greater than 0, host khci driver is enable.
  */
 #define USB_HOST_CONFIG_KHCI (0U)
 
 /*!
- * @brief host ehci instance count, meantime it indicates ehci enable or disable.
+ * @brief host ehci instance count, meantime it indicates ehci enable or
+ * disable.
  *        - if 0, host ehci driver is disable.
  *        - if greater than 0, host ehci driver is enable.
  */
 #define USB_HOST_CONFIG_EHCI (1U)
 
 /*!
- * @brief host ohci instance count, meantime it indicates ohci enable or disable.
+ * @brief host ohci instance count, meantime it indicates ohci enable or
+ * disable.
  *        - if 0, host ohci driver is disable.
  *        - if greater than 0, host ohci driver is enable.
  */
 #define USB_HOST_CONFIG_OHCI (0U)
 
 /*!
- * @brief host ip3516hs instance count, meantime it indicates ohci enable or disable.
+ * @brief host ip3516hs instance count, meantime it indicates ohci enable or
+ * disable.
  *        - if 0, host ip3516hs driver is disable.
  *        - if greater than 0, host ip3516hs driver is enable.
  */
@@ -46,18 +50,21 @@
  * @brief host driver instance max count.
  * for example: 2 - one for khci, one for ehci.
  */
-#define USB_HOST_CONFIG_MAX_HOST \
-    (USB_HOST_CONFIG_KHCI + USB_HOST_CONFIG_EHCI + USB_HOST_CONFIG_OHCI + USB_HOST_CONFIG_IP3516HS)
+#define USB_HOST_CONFIG_MAX_HOST                                               \
+    (USB_HOST_CONFIG_KHCI + USB_HOST_CONFIG_EHCI + USB_HOST_CONFIG_OHCI +      \
+     USB_HOST_CONFIG_IP3516HS)
 
 /*!
  * @brief host pipe max count.
- * pipe is the host driver resource for device endpoint, one endpoint need one pipe.
+ * pipe is the host driver resource for device endpoint, one endpoint need one
+ * pipe.
  */
 #define USB_HOST_CONFIG_MAX_PIPES (16U)
 
 /*!
  * @brief host transfer max count.
- * transfer is the host driver resource for data transmission mission, one transmission mission need one transfer.
+ * transfer is the host driver resource for data transmission mission, one
+ * transmission mission need one transfer.
  */
 #define USB_HOST_CONFIG_MAX_TRANSFERS (16U)
 
@@ -69,7 +76,8 @@
 
 /*!
  * @brief the max interface for one configuration.
- * the max interface descriptor number that one configuration descriptor can contain.
+ * the max interface descriptor number that one configuration descriptor can
+ * contain.
  */
 #define USB_HOST_CONFIG_CONFIGURATION_MAX_INTERFACE (5U)
 
@@ -101,12 +109,14 @@
 #ifndef USB_HOST_CONFIG_BUFFER_PROPERTY_CACHEABLE
 #define USB_HOST_CONFIG_BUFFER_PROPERTY_CACHEABLE (0U)
 #endif
-/*! @brief if 1, enable usb compliance test codes; if 0, disable usb compliance test codes. */
+/*! @brief if 1, enable usb compliance test codes; if 0, disable usb compliance
+ * test codes. */
 #ifndef USB_HOST_CONFIG_COMPLIANCE_TEST
 #define USB_HOST_CONFIG_COMPLIANCE_TEST (0U)
 #endif
 
-/*! @brief if 1, class driver clear stall automatically; if 0, class driver don't clear stall. */
+/*! @brief if 1, class driver clear stall automatically; if 0, class driver
+ * don't clear stall. */
 #define USB_HOST_CONFIG_CLASS_AUTO_CLEAR_STALL (0U)
 
 /* KHCI configuration */
@@ -193,56 +203,64 @@
 #endif
 
 /*!
- * @brief host HUB class instance count, meantime it indicates HUB class enable or disable.
+ * @brief host HUB class instance count, meantime it indicates HUB class enable
+ * or disable.
  *        - if 0, host HUB class driver is disable.
  *        - if greater than 0, host HUB class driver is enable.
  */
 #define USB_HOST_CONFIG_HUB (1U)
 
 /*!
- * @brief host HID class instance count, meantime it indicates HID class enable or disable.
+ * @brief host HID class instance count, meantime it indicates HID class enable
+ * or disable.
  *        - if 0, host HID class driver is disable.
  *        - if greater than 0, host HID class driver is enable.
  */
 #define USB_HOST_CONFIG_HID (1U)
 
 /*!
- * @brief host MSD class instance count, meantime it indicates MSD class enable or disable.
+ * @brief host MSD class instance count, meantime it indicates MSD class enable
+ * or disable.
  *        - if 0, host MSD class driver is disable.
  *        - if greater than 0, host MSD class driver is enable.
  */
 #define USB_HOST_CONFIG_MSD (1U)
 
 /*!
- * @brief host CDC class instance count, meantime it indicates CDC class enable or disable.
+ * @brief host CDC class instance count, meantime it indicates CDC class enable
+ * or disable.
  *        - if 0, host CDC class driver is disable.
  *        - if greater than 0, host CDC class driver is enable.
  */
 #define USB_HOST_CONFIG_CDC (1U)
 
 /*!
- * @brief host CDC RNDSI class instance count, meantime it indicates CDC rndis class enable or disable.
+ * @brief host CDC RNDSI class instance count, meantime it indicates CDC rndis
+ * class enable or disable.
  *        - if 0, host CDC class driver is disable.
  *        - if greater than 0, host CDC class driver is enable.
  */
 #define USB_HOST_CONFIG_CDC_RNDIS (1U)
 
 /*!
- * @brief host AUDIO class instance count, meantime it indicates AUDIO class enable or disable.
+ * @brief host AUDIO class instance count, meantime it indicates AUDIO class
+ * enable or disable.
  *        - if 0, host AUDIO class driver is disable.
  *        - if greater than 0, host AUDIO class driver is enable.
  */
 #define USB_HOST_CONFIG_AUDIO (1U)
 
 /*!
- * @brief host PHDC class instance count, meantime it indicates PHDC class enable or disable.
+ * @brief host PHDC class instance count, meantime it indicates PHDC class
+ * enable or disable.
  *        - if 0, host PHDC class driver is disable.
  *        - if greater than 0, host PHDC class driver is enable.
  */
 #define USB_HOST_CONFIG_PHDC (1U)
 
 /*!
- * @brief host printer class instance count, meantime it indicates printer class enable or disable.
+ * @brief host printer class instance count, meantime it indicates printer class
+ * enable or disable.
  *        - if 0, host printer class driver is disable.
  *        - if greater than 0, host printer class driver is enable.
  */

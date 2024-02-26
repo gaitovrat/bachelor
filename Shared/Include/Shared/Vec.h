@@ -11,8 +11,7 @@
 #include <cstdint>
 
 namespace Shared {
-template <typename T>
-union Vec3 {
+template <typename T> union Vec3 {
     struct {
         T X, Y, Z;
     };
@@ -22,6 +21,6 @@ union Vec3 {
 
     Vec3() : Vec3(0, 0, 0) {}
 };
-}
+} // namespace Shared
 
 #endif /* VEC_H_ */

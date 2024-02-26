@@ -8,11 +8,8 @@
 
 namespace CarQt {
 struct Settings {
-public:
-    enum Mode {
-        Serial,
-        Network
-    };
+  public:
+    enum Mode { Serial, Network };
 
     struct Serial {
         QString PortName;
@@ -44,8 +41,8 @@ public:
 
     static const char *ModeToString(Mode mode);
 
-    static Mode ModeFromString(const QString& value);
+    static Mode ModeFromString(const QString &value);
 };
-}
+} // namespace CarQt
 
 #endif

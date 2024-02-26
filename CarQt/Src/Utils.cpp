@@ -3,9 +3,7 @@
 
 using namespace CarQt;
 
-
-
-void Utils::SetComboBox(QComboBox& comboBox, const QString& value) {
+void Utils::SetComboBox(QComboBox &comboBox, const QString &value) {
     int index = comboBox.findText(value);
     if (index == -1)
         return;
@@ -13,7 +11,7 @@ void Utils::SetComboBox(QComboBox& comboBox, const QString& value) {
     comboBox.setCurrentIndex(index);
 }
 
-void Utils::ShowMat(QGraphicsView *graphicsView, const cv::Mat& mat) {
+void Utils::ShowMat(QGraphicsView *graphicsView, const cv::Mat &mat) {
     QGraphicsScene *scene = graphicsView->scene();
     scene->clear();
 

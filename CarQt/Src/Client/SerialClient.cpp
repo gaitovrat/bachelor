@@ -5,7 +5,8 @@ using namespace CarQt;
 
 static constexpr int BUFFER_SIZE = 1024;
 
-SerialClient::SerialClient(const struct Settings::Serial& settings, QObject *parent)
+SerialClient::SerialClient(const struct Settings::Serial &settings,
+                           QObject *parent)
     : BaseClient(parent), port(settings.PortName, parent) {
     Bind(&port, &QSerialPort::readyRead);
 
@@ -30,10 +31,6 @@ std::optional<Shared::Data> SerialClient::Data() {
     return data;
 }
 
-bool SerialClient::IsConnected() const {
-    return port.isOpen();
-}
+bool SerialClient::IsConnected() const { return port.isOpen(); }
 
-void SerialClient::Connect() {
-    port.open(QSerialPort::ReadWrite);
-}
+void SerialClient::Connect() { port.open(QSerialPort::ReadWrite); }

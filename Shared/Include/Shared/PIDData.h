@@ -19,6 +19,6 @@ struct PIDData {
 
     PIDData();
 };
-}
+} // namespace Shared
 
-#endif //UDPSEND_PIDDATA_H
+#endif // UDPSEND_PIDDATA_H

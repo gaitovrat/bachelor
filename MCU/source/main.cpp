@@ -1,7 +1,7 @@
 #include "board.h"
+#include "clock_config.h"
 #include "peripherals.h"
 #include "pin_mux.h"
-#include "clock_config.h"
 
 #include "Core.h"
 
@@ -16,8 +16,8 @@ int main(void) {
     core.Init();
 
     while (1) {
-    	core.Drive();
+        core.Drive();
     }
 
-    return 0 ;
+    return 0;
 }
