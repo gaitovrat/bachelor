@@ -10,7 +10,7 @@ namespace Shared {
 struct CameraData {
     uint16_t Line[Image::LINE_LENGTH];
     uint32_t RegionsCount;
-    size_t RegionsListSize;
+    uint32_t RegionsListSize;
     bool UnchangedLeft;
     bool UnchangedRight;
     bool HasLeft;

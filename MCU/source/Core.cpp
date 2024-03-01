@@ -28,7 +28,7 @@ void Core::Init() {
     m_tfc.InitAll();
 
     m_tfc.setLEDs(0b1111);
-    m_enet.Init(sizeof(1024), 5000);
+    m_enet.Init(sizeof(Shared::Data), 5000);
     m_fxos.Init();
     m_fxas.Init();
 
@@ -307,7 +307,12 @@ void Core::SendData() {
         m_data.CarSensorData.accel = fxos_data->accel;
     }
 
-    m_enet.Send(&m_data, sizeof(m_data));
+    PRINTF("%d %d %d %d %d %d\r\n", sizeof(m_data),
+           sizeof(m_data.CarCameraData), sizeof(m_data.CarMotorData),
+           sizeof(m_data.CarSteerData), sizeof(m_data.CarSensorData),
+           sizeof(m_data.Timestamp));
+    uint8_t *pData = reinterpret_cast<uint8_t *>(&m_data);
+    m_enet.Send(pData, sizeof(m_data));
 }
 
 void Core::ResetRegulator() {

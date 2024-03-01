@@ -107,6 +107,9 @@ void Enet::Send(const void *pData, const uint32_t len) {
     if (this->m_initialized == false)
         return;
 
+    PRINTF("Sent: %d\r\n", len);
+    bzero(m_data[m_dataIndex], BUFFER_SIZE);
+
     memcpy(this->m_data[this->m_dataIndex], pData,
            std::min(this->m_dataLen, len));
     udp_send(this->m_pcb, this->m_pBuffer[this->m_dataIndex]);

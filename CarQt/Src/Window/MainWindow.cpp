@@ -209,7 +209,9 @@ void MainWindow::reconnect() {
 
 void MainWindow::record() {
     if (m_recording.has_value()) {
-        m_recording->Save(m_recordingPath);
+        m_recording->Save(m_recordingPath,
+                          {m_ui->ui_originalGraphics, m_ui->ui_normalizedView,
+                           m_ui->ui_thresholdedGraphics});
         m_recording = std::nullopt;
         m_ui->ui_recordingButton->setText("Start Recording");
     } else {

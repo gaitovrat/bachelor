@@ -3,7 +3,6 @@
 
 #include "Mode.h"
 #include "MotorState.h"
-#include "PIDData.h"
 
 namespace Shared {
 struct MotorData {
@@ -11,7 +10,7 @@ struct MotorData {
     Mode RideMode;
     int LeftSpeed;
     int RightSpeed;
-};
+} __attribute__((packed));
 } // namespace Shared
 
 #endif /* INCLUDE_MOTORDATA_H_ */

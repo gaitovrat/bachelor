@@ -10,7 +10,8 @@ using namespace CarQt;
 
 Recording::Recording() : Start(std::chrono::system_clock::now()) {}
 
-void Recording::Save(const QString &path) {
+void Recording::Save(const QString &path,
+                     const std::vector<QGraphicsView *> &views) {
     Json::Value root;
     Json::StreamWriterBuilder writer;
     std::chrono::time_point<std::chrono::system_clock> end(
@@ -24,9 +25,15 @@ void Recording::Save(const QString &path) {
         "-" +
         std::to_string(std::chrono::duration_cast<std::chrono::seconds>(
                            end.time_since_epoch())
-                           .count()) +
-        ".json";
-    std::string filepath = path.toStdString() + "/" + filename;
+                           .count());
+
+    for (int i = 0; i < views.size(); ++i) {
+        views[i]->grab().save(
+            QString::fromStdString(path.toStdString() + "/" + filename +
+                                   "_image" + std::to_string(i) + ".png"),
+            "PNG");
+    }
+    std::string filepath = path.toStdString() + "/" + filename + ".json";
     std::ofstream fout(filepath);
 
     if (!fout.is_open()) {

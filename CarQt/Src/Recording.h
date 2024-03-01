@@ -4,6 +4,7 @@
 #include <chrono>
 #include <vector>
 
+#include <QGraphicsView>
 #include <qstring.h>
 
 #include "Shared/Data.h"
@@ -23,7 +24,7 @@ class Recording {
 
     virtual ~Recording() = default;
 
-    void Save(const QString &path);
+    void Save(const QString &path, const std::vector<QGraphicsView *> &views);
 
     void Add(const Shared::Data &data);
 };
