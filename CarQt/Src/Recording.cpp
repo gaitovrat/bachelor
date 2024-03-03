@@ -17,7 +17,7 @@ void Recording::Save(const QString &path) {
     Json::StreamWriterBuilder writer;
     std::chrono::time_point<std::chrono::system_clock> end(
         std::chrono::system_clock::now());
-    std::vector<decltype(Shared::CameraData::Line)> lines;
+    std::vector<const uint16_t *> lines;
 
     std::string filename =
         "recordng-" +
