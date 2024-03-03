@@ -1,5 +1,4 @@
 #include "UdpClient.h"
-#include <cstrings>
 
 using namespace CarQt;
 
