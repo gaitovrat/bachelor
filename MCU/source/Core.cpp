@@ -307,18 +307,12 @@ void Core::SendData() {
         m_data.CarSensorData.accel = fxos_data->accel;
     }
 
-    PRINTF("%d %d %d %d %d %d\r\n", sizeof(m_data),
-           sizeof(m_data.CarCameraData), sizeof(m_data.CarMotorData),
-           sizeof(m_data.CarSteerData), sizeof(m_data.CarSensorData),
-           sizeof(m_data.Timestamp));
     uint8_t *pData = reinterpret_cast<uint8_t *>(&m_data);
     m_enet.Send(pData, sizeof(m_data));
 }
 
 void Core::ResetRegulator() {
-    m_pidData.Input = 0;
-    m_pidData.Output = 0;
-    m_pidData.SetPoint = 0;
+    m_pidData = Shared::PIDData();
 
     m_pid = PID(m_pidData, P_ON_E, DIRECT);
 }

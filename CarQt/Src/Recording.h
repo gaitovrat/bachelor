@@ -24,7 +24,7 @@ class Recording {
 
     virtual ~Recording() = default;
 
-    void Save(const QString &path, const std::vector<QGraphicsView *> &views);
+    void Save(const QString &path);
 
     void Add(const Shared::Data &data);
 };

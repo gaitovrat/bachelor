@@ -1,21 +1,23 @@
 #include "Recording.h"
+#include "Shared/CameraData.h"
 
 #include <fstream>
 
 #include <json/json.h>
 #include <qdebug.h>
+#include <opencv2/opencv.hpp>
 #include <string>
 
 using namespace CarQt;
 
 Recording::Recording() : Start(std::chrono::system_clock::now()) {}
 
-void Recording::Save(const QString &path,
-                     const std::vector<QGraphicsView *> &views) {
+void Recording::Save(const QString &path) {
     Json::Value root;
     Json::StreamWriterBuilder writer;
     std::chrono::time_point<std::chrono::system_clock> end(
         std::chrono::system_clock::now());
+    std::vector<decltype(Shared::CameraData::Line)> lines;
 
     std::string filename =
         "recordng-" +
@@ -27,13 +29,8 @@ void Recording::Save(const QString &path,
                            end.time_since_epoch())
                            .count());
 
-    for (int i = 0; i < views.size(); ++i) {
-        views[i]->grab().save(
-            QString::fromStdString(path.toStdString() + "/" + filename +
-                                   "_image" + std::to_string(i) + ".png"),
-            "PNG");
-    }
     std::string filepath = path.toStdString() + "/" + filename + ".json";
+    std::string imageFilepath = path.toStdString() + "/" + filename + ".png";
     std::ofstream fout(filepath);
 
     if (!fout.is_open()) {
@@ -44,6 +41,8 @@ void Recording::Save(const QString &path,
     for (const Entry &entry : entries) {
         Json::Value jsonEntry, jsonData, jsonAccel, jsonMag, jsonGyro,
             jsonCamera, jsonMotor, jsonSteer, jsonSteerPID, jsonSensor;
+
+        lines.push_back(entry.data.CarCameraData.Line);
 
         jsonCamera["regionsCount"] = entry.data.CarCameraData.RegionsCount;
         jsonCamera["regionsListSize"] =
@@ -102,6 +101,14 @@ void Recording::Save(const QString &path,
     }
 
     fout << Json::writeString(writer, root);
+
+    cv::Mat image(lines.size(), Shared::Image::LINE_LENGTH, CV_8UC1, cv::Scalar(0));
+    for (int i = 0; i < lines.size(); ++i) {
+        for (int j = 0; j < Shared::Image::LINE_LENGTH; ++j) {
+            image.at<uint8_t>(i, j) = lines[i][j];
+        }
+    }
+    cv::imwrite(imageFilepath, image);
 }
 
 void Recording::Add(const Shared::Data &data) {

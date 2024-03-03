@@ -10,7 +10,7 @@ struct MotorData {
     Mode RideMode;
     int LeftSpeed;
     int RightSpeed;
-} __attribute__((packed));
+};
 } // namespace Shared
 
 #endif /* INCLUDE_MOTORDATA_H_ */
