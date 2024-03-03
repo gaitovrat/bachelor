@@ -4,6 +4,7 @@
 #include <chrono>
 #include <vector>
 
+#include <QGraphicsView>
 #include <qstring.h>
 
 #include "Shared/Data.h"

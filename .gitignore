@@ -44,3 +44,5 @@ Text/BachelorThesis.pdf
 *.lot
 *.out
 *.xmpi
+
+venv

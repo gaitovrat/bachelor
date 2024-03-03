@@ -3,7 +3,6 @@
 
 #include "Mode.h"
 #include "MotorState.h"
-#include "PIDData.h"
 
 namespace Shared {
 struct MotorData {

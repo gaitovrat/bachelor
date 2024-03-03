@@ -16,6 +16,11 @@ std::optional<Shared::Data> UDPClient::Data() {
 
     qint64 size = m_socket.pendingDatagramSize();
     emit DataReceived(size);
+
+    if (size != sizeof(Shared::Data)) {
+        return std::nullopt;
+    }
+
     buffer.resize(size);
 
     m_socket.readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
