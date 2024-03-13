@@ -11,7 +11,7 @@ Monorepository for bachelor work
 #### Build
 ```sh
 cmake -S . -B build
-cmake --build build --parallel
+cmake --build build --parallel CarQt
 ```
 
 ### MCU
