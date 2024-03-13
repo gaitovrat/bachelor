@@ -46,3 +46,7 @@ Text/BachelorThesis.pdf
 *.xmpi
 
 venv
+
+# CLion
+.idea
+cmake-build-debug
