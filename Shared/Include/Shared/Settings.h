@@ -20,14 +20,14 @@ struct Settings {
     double P;
     double I;
     double D;
-    float DiffCoef;
+    float DiffCoef{};
     uint16_t MaxSpeed;
     Mode RideMode;
 
-    Settings(double P = DEFAULT_ERROR, double I = DEFAULT_INTEGRAL,
-             double D = DEFAULT_DERIVATIVE,
-             uint16_t maxSpeed = DEFAULT_MAX_SPEED,
-             Mode rideMode = Mode::RideDefault);
+    explicit Settings(double P = DEFAULT_ERROR, double I = DEFAULT_INTEGRAL,
+                      double D = DEFAULT_DERIVATIVE,
+                      uint16_t maxSpeed = DEFAULT_MAX_SPEED,
+                      Mode rideMode = Mode::RideDefault);
 };
 } // namespace Shared
 

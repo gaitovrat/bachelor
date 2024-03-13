@@ -1,7 +1,6 @@
 #include "MainWindow.h"
 
 #include <QGraphicsScene>
-#include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
 #include "./ui_MainWindow.h"
@@ -24,13 +23,13 @@ MainWindow::MainWindow(const QString &name, QWidget *parent)
       m_recording(std::nullopt) {
     m_ui->setupUi(this);
 #ifdef __APPLE__
-    QMenu *fileMenu = new QMenu(name, this);
+    auto *fileMenu = new QMenu(name, this);
 #else
-    QMenu *fileMenu = new QMenu("File", this);
+    auto *fileMenu = new QMenu("File", this);
 #endif
-    QMenu *clientMenu = new QMenu("Client", this);
-    QAction *preferenceAction = new QAction("Preferences", this);
-    QAction *reconnectAction = new QAction("Reconnect", this);
+    auto *clientMenu = new QMenu("Client", this);
+    auto *preferenceAction = new QAction("Preferences", this);
+    auto *reconnectAction = new QAction("Reconnect", this);
 
     fileMenu->addAction(preferenceAction);
     clientMenu->addAction(reconnectAction);
@@ -218,7 +217,7 @@ void MainWindow::record() {
     }
 }
 
-void MainWindow::receivedSize(const qint64 size) {
+void MainWindow::receivedSize(const qint64 size) const {
     m_labelRXBytes->setText(
         QString::asprintf(MainWindow::LABEL_RX_FORMAT, size));
 }

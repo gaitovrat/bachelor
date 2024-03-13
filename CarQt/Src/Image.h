@@ -19,7 +19,7 @@ struct Image : public Shared::Image {
 
     void Process();
 
-    uint16_t At(const uint8_t index, Type type) const;
+    [[nodiscard]] uint16_t At(uint8_t index, Type type) const override;
 
     uint16_t RawImage[LINE_LENGTH];
     uint16_t NormalizedImage[LINE_LENGTH];

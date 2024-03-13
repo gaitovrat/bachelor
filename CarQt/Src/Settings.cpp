@@ -21,7 +21,7 @@ Settings::Settings()
     : AppMode(Mode::Serial), ClientSerial(), ClientNetwork(),
       RecordDestination(".") {}
 
-void Settings::Save(const char *filename) {
+void Settings::Save(const char *filename) const {
     Json::Value root, serial, network;
     Json::StreamWriterBuilder writer;
     std::ofstream fout(filename);

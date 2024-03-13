@@ -1,7 +1,7 @@
-#ifndef _IMAGE_H
-#define _IMAGE_H
+#ifndef IMAGE_H
+#define IMAGE_H
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace Shared {
 class Image {
@@ -20,47 +20,47 @@ class Image {
 
     Image();
 
-    Image(ImageLine rawImage);
+    explicit Image(ImageLine rawImage);
 
-    uint16_t At(uint8_t index, Type type) const;
+    [[nodiscard]] virtual uint16_t At(uint8_t index, Type type) const;
 
-    uint8_t AtThresh(uint8_t index) const;
+    [[nodiscard]] uint8_t AtThresh(uint8_t index) const;
 
-    uint16_t Min() const;
+    [[nodiscard]] uint16_t Min() const;
 
-    uint16_t Max() const;
+    [[nodiscard]] uint16_t Max() const;
 
-    uint16_t ThreshValue() const;
+    [[nodiscard]] uint16_t ThreshValue() const;
 
-    int16_t Diversity() const;
+    [[nodiscard]] int16_t Diversity() const;
 
-    bool IsLowDiversity() const;
+    [[nodiscard]] bool IsLowDiversity() const;
 
   protected:
     void ComputeMinMax(CImageLine img);
 
-    void Cut(ImageLine srcImg);
+    void Cut(ImageLine srcImg) const;
 
-    void Normalize(CImageLine srcImg, ImageLine dstImg);
+    void Normalize(CImageLine srcImg, ImageLine dstImg) const;
 
-    uint16_t AverageThreshold(CImageLine srcImg);
+    static uint16_t AverageThreshold(CImageLine srcImg);
 
-    void Threshold(CImageLine srcImg, ImageLine dstImg);
+    void Threshold(CImageLine srcImg, ImageLine dstImg) const;
 
-    void SlowMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
+    static void SlowMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
 
-    void SlowMedianBlur(ImageLine srcImg, int pixels);
+    static void SlowMedianBlur(ImageLine srcImg, int pixels);
 
-    void FastMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
+    static void FastMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
 
-    void FastMedianBlur(ImageLine srcImg, int pixels);
+    static void FastMedianBlur(ImageLine srcImg, int pixels);
 
   protected:
     uint16_t m_thresholdedImage[LINE_LENGTH];
     uint16_t m_max;
     uint16_t m_min;
-    uint16_t m_threshValue;
-    int16_t m_diversity;
+    uint16_t m_threshValue{};
+    int16_t m_diversity{};
 };
 } // namespace Shared
 #endif

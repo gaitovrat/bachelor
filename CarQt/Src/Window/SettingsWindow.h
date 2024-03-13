@@ -22,7 +22,7 @@ class SettingsWindow : public QDialog {
 
     explicit SettingsWindow(QWidget *parent = nullptr);
 
-    ~SettingsWindow();
+    ~SettingsWindow() override;
 
     std::optional<Settings> execute();
 
@@ -30,7 +30,7 @@ class SettingsWindow : public QDialog {
     void selectRecordDirectory();
 
   private:
-    Settings getSettings() const;
+    [[nodiscard]] Settings getSettings() const;
 };
 } // namespace CarQt
 

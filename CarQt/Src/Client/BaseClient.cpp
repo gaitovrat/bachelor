@@ -6,7 +6,7 @@ using namespace CarQt;
 
 BaseClient::BaseClient(QObject *parent) : QObject(parent) {}
 
-void BaseClient::Bind(const QIODevice *sender, IOSignal signal) {
+void BaseClient::Bind(const QIODevice *sender, IOSignal signal) const {
     QObject::connect(sender, signal, this, &BaseClient::Read);
 }
 

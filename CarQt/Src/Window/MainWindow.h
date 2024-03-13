@@ -25,14 +25,14 @@ class MainWindow : public QMainWindow {
     static constexpr const char *LABEL_RX_FORMAT = "RX: %lldB";
 
   public:
-    MainWindow(const QString &name, QWidget *parent = nullptr);
+    explicit MainWindow(const QString &name, QWidget *parent = nullptr);
 
-    virtual ~MainWindow();
+    ~MainWindow() override;
 
   public slots:
     void update(const Shared::Data &data);
 
-    void receivedSize(qint64 size);
+    void receivedSize(qint64 size) const;
 
     void openPreferences();
 
@@ -52,7 +52,7 @@ class MainWindow : public QMainWindow {
             QLabel *m_labelTXBytes;
             QLabel *m_labelRXBytes;
         };
-        QLabel *m_labels[3];
+        QLabel *m_labels[3]{};
     };
     std::optional<Recording> m_recording;
     QString m_recordingPath;

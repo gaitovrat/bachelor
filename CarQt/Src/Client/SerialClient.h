@@ -15,11 +15,11 @@ class SerialClient : public BaseClient {
   public:
     SerialClient(const struct Settings::Serial &settings, QObject *parent);
 
-    virtual ~SerialClient() = default;
+    ~SerialClient() override = default;
 
     std::optional<Shared::Data> Data() override;
 
-    bool IsConnected() const override;
+    [[nodiscard]] bool IsConnected() const override;
 
     void Connect() override;
 };

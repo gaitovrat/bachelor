@@ -35,7 +35,7 @@ struct Settings {
 
     Settings();
 
-    void Save(const char *filename);
+    void Save(const char *filename) const;
 
     static std::optional<Settings> Load(const char *filename);
 

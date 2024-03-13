@@ -15,15 +15,15 @@ class BaseClient : public QObject {
     using IOSignal = void (QIODevice::*)();
 
   public:
-    BaseClient(QObject *parent);
+    explicit BaseClient(QObject *parent);
 
-    void Bind(const QIODevice *sender, IOSignal signal);
+    void Bind(const QIODevice *sender, IOSignal signal) const;
 
-    virtual ~BaseClient() = default;
+    ~BaseClient() override = default;
 
     virtual std::optional<Shared::Data> Data() = 0;
 
-    virtual bool IsConnected() const = 0;
+    [[nodiscard]] virtual bool IsConnected() const = 0;
 
     virtual void Connect() = 0;
 

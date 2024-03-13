@@ -89,13 +89,8 @@ Settings SettingsWindow::getSettings() const {
 }
 
 void SettingsWindow::selectRecordDirectory() {
-    QFileDialog dialog(this);
-
-    dialog.setFileMode(QFileDialog::Directory);
-    dialog.setOption(QFileDialog::ShowDirsOnly);
-
-    QString selectedDirectory =
-        dialog.getExistingDirectory(this, "Select Directory", QDir::homePath());
+    QString selectedDirectory = QFileDialog::getExistingDirectory(
+        this, "Select Directory", QDir::homePath());
     if (!selectedDirectory.isEmpty()) {
         ui->leDestination->setText(selectedDirectory);
     }

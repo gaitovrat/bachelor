@@ -1,8 +1,8 @@
-#ifndef _MOTORSSTATE_H
-#define _MOTORSSTATE_H
+#ifndef MOTORSSTATE_H
+#define MOTORSSTATE_H
 
 namespace Shared {
 enum MotorState { Stop, Start, Manual };
 }
 
-#endif //_MOTORSSTATE_H
+#endif // MOTORSSTATE_H

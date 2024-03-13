@@ -20,11 +20,11 @@ class UDPClient : public BaseClient {
   public:
     UDPClient(const struct Settings::Network &settings, QObject *parent);
 
-    virtual ~UDPClient() = default;
+    ~UDPClient() override = default;
 
     std::optional<Shared::Data> Data() override;
 
-    bool IsConnected() const override;
+    [[nodiscard]] bool IsConnected() const override;
 
     void Connect() override;
 };

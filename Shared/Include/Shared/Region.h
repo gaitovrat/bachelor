@@ -15,20 +15,20 @@ struct Region {
     uint8_t Right;
     uint8_t Color;
 
-    Region(uint8_t left = MIN_LEFT, uint8_t right = MAX_RIGHT,
-           uint8_t color = Image::COLOR_WHITE);
+    explicit Region(uint8_t left = MIN_LEFT, uint8_t right = MAX_RIGHT,
+                    uint8_t color = Image::COLOR_WHITE);
 
-    uint8_t Size() const;
+    [[nodiscard]] uint8_t Size() const;
 
-    uint8_t Center() const;
+    [[nodiscard]] uint8_t Center() const;
 
-    bool IsBlack();
+    bool IsBlack() const;
 
-    bool IsWhite();
+    bool IsWhite() const;
 
-    bool operator==(const Region &rhs);
+    bool operator==(const Region &rhs) const;
 
-    bool operator!=(const Region &rhs);
+    bool operator!=(const Region &rhs) const;
 };
 } // namespace Shared
 

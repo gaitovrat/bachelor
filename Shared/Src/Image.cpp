@@ -32,7 +32,7 @@ void Image::ComputeMinMax(CImageLine img) {
     m_diversity = std::max(m_max, m_min) - std::min(m_min, m_max);
 }
 
-void Image::Cut(ImageLine srcImg) {
+void Image::Cut(ImageLine srcImg) const {
     for (uint64_t col = 0; col < BLACK_COUNT; col++) {
         srcImg[col] = m_max;
     }
@@ -43,9 +43,9 @@ void Image::Cut(ImageLine srcImg) {
     }
 }
 
-void Image::Normalize(CImageLine srcImg, ImageLine dstImg) {
+void Image::Normalize(CImageLine srcImg, ImageLine dstImg) const {
     for (int i = 0; i < LINE_LENGTH; i++) {
-        float pixel = static_cast<float>(srcImg[i]);
+        auto pixel = static_cast<float>(srcImg[i]);
         pixel -= m_min;
         pixel *= COLOR_WHITE;
         pixel /= (m_max - m_min);
@@ -62,7 +62,7 @@ uint16_t Image::AverageThreshold(CImageLine srcImg) {
     return avg;
 }
 
-void Image::Threshold(CImageLine srcImg, ImageLine dstImg) {
+void Image::Threshold(CImageLine srcImg, ImageLine dstImg) const {
     for (int i = 0; i < LINE_LENGTH; i++) {
         if (srcImg[i] < m_threshValue)
             dstImg[i] = COLOR_BLACK;

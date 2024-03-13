@@ -4,8 +4,8 @@
 #include <fstream>
 
 #include <json/json.h>
-#include <qdebug.h>
 #include <opencv2/opencv.hpp>
+#include <qdebug.h>
 #include <string>
 
 using namespace CarQt;
@@ -102,7 +102,9 @@ void Recording::Save(const QString &path) {
 
     fout << Json::writeString(writer, root);
 
-    cv::Mat image(lines.size(), Shared::Image::LINE_LENGTH, CV_8UC1, cv::Scalar(0));
+    int historySize = static_cast<int>(lines.size());
+    cv::Mat image(historySize, Shared::Image::LINE_LENGTH, CV_8UC1,
+                  cv::Scalar(0));
     for (int i = 0; i < lines.size(); ++i) {
         for (int j = 0; j < Shared::Image::LINE_LENGTH; ++j) {
             image.at<uint8_t>(i, j) = lines[i][j];
