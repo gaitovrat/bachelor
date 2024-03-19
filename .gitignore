@@ -17,17 +17,9 @@ doc
 .settings
 *.launch
 
-# UI app
-settings.json
-
-# VS code
-.vscode
-*.code-workspace
-
 # VS
 out
 .vs
-*.json
 
 # Emacs
 *~
@@ -44,6 +36,11 @@ Text/BachelorThesis.pdf
 *.lot
 *.out
 *.xmpi
+*.fls
+*.bbl
+*.blg
+*.fdb_latexmk
+*.synctex.gz
 
 venv
 

@@ -1,0 +1,23 @@
+{
+    "folders": [
+        {
+            "path": "CarQt"
+        },
+        {
+            "path": "MCU"
+        },
+        {
+            "path": "Shared",
+        },
+        {
+            "path": "Text"
+        },
+        {
+            "name": "Root",
+            "path": "."
+        }
+    ],
+    "settings": {
+        "cSpell.enabled": true
+    }
+}
