@@ -1,4 +1,4 @@
-name: Build CarQt
+name: Build MCU
 
 on:
   pull_request:
