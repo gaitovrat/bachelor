@@ -15,8 +15,8 @@ struct Region {
     uint8_t Right;
     uint8_t Color;
 
-    explicit Region(uint8_t left = MIN_LEFT, uint8_t right = MAX_RIGHT,
-                    uint8_t color = Image::COLOR_WHITE);
+    Region(uint8_t left = MIN_LEFT, uint8_t right = MAX_RIGHT,
+           uint8_t color = Image::COLOR_WHITE);
 
     [[nodiscard]] uint8_t Size() const;
 

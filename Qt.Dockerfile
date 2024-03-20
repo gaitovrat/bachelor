@@ -1,4 +1,4 @@
-FROM fedora:latest
+FROM --platform=linux/amd64 fedora:latest
 
 # Install build dependencies
 RUN dnf install -y ninja-build \
