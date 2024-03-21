@@ -20,6 +20,8 @@ doc
 # VS
 out
 .vs
+.vscode
+CMakeSettings.json
 
 # Emacs
 *~
