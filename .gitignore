@@ -39,7 +39,7 @@ Text/BachelorThesis.pdf
 *.out
 *.xmpi
 *.fls
-*.bbl
+*.bbl*
 *.blg
 *.fdb_latexmk
 *.synctex.gz
