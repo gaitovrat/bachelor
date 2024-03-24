@@ -6,6 +6,7 @@ set(QT_COMPONENTS
     Network
     SerialPort
     Widgets
+    Charts
 )
 
 find_package(Qt6 REQUIRED COMPONENTS ${QT_COMPONENTS})
@@ -36,7 +37,8 @@ add_executable(CarQt
     Src/Recording.h
     Src/Recording.cpp
     Src/Image.h
-    Src/Image.cpp)
+    Src/Image.cpp
+    Src/Window/SensorsDialog.h Src/Window/SensorsDialog.cpp Src/Window/SensorsDialog.ui)
 
 list(TRANSFORM QT_COMPONENTS PREPEND Qt6::)
 

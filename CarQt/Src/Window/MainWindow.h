@@ -11,6 +11,7 @@
 #include "Image.h"
 #include "Recording.h"
 #include "Settings.h"
+#include "Window/SensorsDialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -42,6 +43,7 @@ class MainWindow : public QMainWindow {
     QString recordingPath;
     std::unique_ptr<BaseClient> client;
     std::list<Image> images;
+    SensorsDialog *sensorsDialog;
 
   public:
     explicit MainWindow(const QString &name, QWidget *parent = nullptr);
@@ -62,6 +64,10 @@ class MainWindow : public QMainWindow {
     void updateJoystick();
 
     void handleJoystick() const;
+
+    void openSensorsDialog();
+
+    void destroySensorsDialog();
 
   private:
     void updateClient(const Settings &settings);
