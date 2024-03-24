@@ -8,20 +8,22 @@
 #include "Client/SerialClient.h"
 #include "Client/UdpClient.h"
 #include "Image.h"
+#include "Shared/Signal.h"
 #include "Utils.h"
 #include "Window/SettingsWindow.h"
 
 using namespace CarQt;
 
 MainWindow::MainWindow(const QString &name, QWidget *parent)
-    : QMainWindow(parent), m_ui(new Ui::MainWindow), m_client(nullptr),
-      m_labelConnected(new QLabel("Connected", this)),
-      m_labelTXBytes(new QLabel(
+    : QMainWindow(parent), ui(new Ui::MainWindow), client(nullptr),
+      labelConnected(new QLabel("Connected", this)),
+      labelJoystickConnected(new QLabel("Connected", this)),
+      labelTXBytes(new QLabel(
           QString::asprintf(MainWindow::LABEL_TX_FORMAT, 0ll), this)),
-      m_labelRXBytes(new QLabel(
+      labelRXBytes(new QLabel(
           QString::asprintf(MainWindow::LABEL_RX_FORMAT, 0ll), this)),
-      m_recording(std::nullopt) {
-    m_ui->setupUi(this);
+      recording(std::nullopt), timer(this) {
+    ui->setupUi(this);
 #ifdef __APPLE__
     auto *fileMenu = new QMenu(name, this);
 #else
@@ -29,72 +31,81 @@ MainWindow::MainWindow(const QString &name, QWidget *parent)
 #endif
     auto *clientMenu = new QMenu("Client", this);
     auto *preferenceAction = new QAction("Preferences", this);
-    auto *reconnectAction = new QAction("Reconnect", this);
+    auto *reconnectAction = new QAction("Reconnect MCU", this);
+    auto *reconnectJoystickAction = new QAction("Reconnect Joystick", this);
 
     fileMenu->addAction(preferenceAction);
     clientMenu->addAction(reconnectAction);
-    m_ui->menubar->addMenu(fileMenu);
-    m_ui->menubar->addMenu(clientMenu);
-    m_ui->ui_originalGraphics->setScene(new QGraphicsScene);
-    m_ui->ui_normalizedView->setScene(new QGraphicsScene);
-    m_ui->ui_thresholdedGraphics->setScene(new QGraphicsScene);
+    clientMenu->addAction(reconnectJoystickAction);
+    ui->menubar->addMenu(fileMenu);
+    ui->menubar->addMenu(clientMenu);
+    ui->ui_originalGraphics->setScene(new QGraphicsScene);
+    ui->ui_normalizedView->setScene(new QGraphicsScene);
+    ui->ui_thresholdedGraphics->setScene(new QGraphicsScene);
 
-    for (QLabel *label : m_labels)
-        m_ui->statusbar->addWidget(label);
+    for (QLabel *label : labels)
+        ui->statusbar->addWidget(label);
+
+    this->timer.setInterval(10);
 
     Settings settings =
         Settings::Load(SettingsWindow::FILENAME).value_or(Settings());
-    m_recordingPath = settings.RecordDestination;
+    recordingPath = settings.RecordDestination;
     updateClient(settings);
     updateConnected();
+    this->updateJoystick();
 
     connect(preferenceAction, &QAction::triggered, this,
             &MainWindow::openPreferences);
     connect(reconnectAction, &QAction::triggered, this, &MainWindow::reconnect);
-    connect(m_ui->ui_recordingButton, &QPushButton::clicked, this,
+    connect(ui->ui_recordingButton, &QPushButton::clicked, this,
             &MainWindow::record);
+    connect(&this->timer, &QTimer::timeout, this, &MainWindow::handleJoystick);
+    connect(reconnectJoystickAction, &QAction::triggered, this,
+            &MainWindow::updateJoystick);
+
+    this->timer.start();
 }
 
 MainWindow::~MainWindow() {
-    for (QLabel *label : m_labels)
+    this->timer.stop();
+    for (QLabel *label : labels)
         delete label;
-    delete m_ui;
+    delete ui;
 }
 
 void MainWindow::update(const Shared::Data &data) {
     // Motor
-    m_ui->ui_leftPwmValue->setText(
-        QString::number(data.CarMotorData.LeftSpeed));
-    m_ui->ui_rightPwmValue->setText(
+    ui->ui_leftPwmValue->setText(QString::number(data.CarMotorData.LeftSpeed));
+    ui->ui_rightPwmValue->setText(
         QString::number(data.CarMotorData.RightSpeed));
 
     // Servo
-    m_ui->ui_servoPositionValue->setText(
+    ui->ui_servoPositionValue->setText(
         QString::number(data.CarSteerData.ServoPosition));
-    m_ui->ui_servoAngleValue->setText(QString::number(data.CarSteerData.Angle));
+    ui->ui_servoAngleValue->setText(QString::number(data.CarSteerData.Angle));
 
     // Camera
-    m_ui->ui_regsionsListSizeValue->setText(
+    ui->ui_regsionsListSizeValue->setText(
         QString::number(data.CarCameraData.RegionsListSize));
-    m_ui->ui_regionsCountValue->setText(
+    ui->ui_regionsCountValue->setText(
         QString::number(data.CarCameraData.RegionsCount));
-    m_ui->ui_unchangedLeftValue->setText(
+    ui->ui_unchangedLeftValue->setText(
         Utils::ToQString(data.CarCameraData.UnchangedLeft));
-    m_ui->ui_unchangedRightValue->setText(
+    ui->ui_unchangedRightValue->setText(
         Utils::ToQString(data.CarCameraData.UnchangedRight));
-    m_ui->ui_hasLeftValue->setText(
-        Utils::ToQString(data.CarCameraData.HasLeft));
-    m_ui->ui_hasRightValue->setText(
+    ui->ui_hasLeftValue->setText(Utils::ToQString(data.CarCameraData.HasLeft));
+    ui->ui_hasRightValue->setText(
         Utils::ToQString(data.CarCameraData.HasRight));
-    m_ui->ui_leftDistance->setText(
+    ui->ui_leftDistance->setText(
         QString::number(data.CarCameraData.LeftDistance));
-    m_ui->ui_rightDistance->setText(
+    ui->ui_rightDistance->setText(
         QString::number(data.CarCameraData.RightDistance));
 
-    m_images.emplace_front(data.CarCameraData.Line);
-    int historySize = m_ui->ui_originalGraphics->size().height();
-    if (m_images.size() > historySize) {
-        m_images.pop_back();
+    images.emplace_front(data.CarCameraData.Line);
+    int historySize = ui->ui_originalGraphics->size().height();
+    if (images.size() > historySize) {
+        images.pop_back();
     }
     cv::Mat imageOriginalBW =
         cv::Mat(historySize, Image::LINE_LENGTH, CV_8UC1, cv::Scalar(0));
@@ -103,8 +114,8 @@ void MainWindow::update(const Shared::Data &data) {
     cv::Mat imageThresholdedBW =
         cv::Mat(historySize, Image::LINE_LENGTH, CV_8UC1, cv::Scalar(0));
 
-    auto imagesIterator = m_images.begin();
-    for (int i = 0; i < historySize && imagesIterator != m_images.end(); ++i) {
+    auto imagesIterator = images.begin();
+    for (int i = 0; i < historySize && imagesIterator != images.end(); ++i) {
         cv::Mat imageOriginalRow = imageOriginalBW.row(i);
         cv::Mat imageNormalizedRow = imageNormalizedBW.row(i);
         cv::Mat imageThresholdedRow = imageThresholdedBW.row(i);
@@ -134,33 +145,30 @@ void MainWindow::update(const Shared::Data &data) {
     cv::cvtColor(imageNormalizedBW, imageNormalized, cv::COLOR_GRAY2RGB);
     cv::cvtColor(imageThresholdedBW, imageThresholded, cv::COLOR_GRAY2RGB);
 
-    Utils::ShowMat(m_ui->ui_originalGraphics, imageOriginal);
-    Utils::ShowMat(m_ui->ui_normalizedView, imageNormalized);
-    Utils::ShowMat(m_ui->ui_thresholdedGraphics, imageThresholded);
+    Utils::ShowMat(ui->ui_originalGraphics, imageOriginal);
+    Utils::ShowMat(ui->ui_normalizedView, imageNormalized);
+    Utils::ShowMat(ui->ui_thresholdedGraphics, imageThresholded);
 
-    m_ui->ui_accelerometerXValue->setText(
+    ui->ui_accelerometerXValue->setText(
         QString::number(data.CarSensorData.accel.X));
-    m_ui->ui_accelerometerYValue->setText(
+    ui->ui_accelerometerYValue->setText(
         QString::number(data.CarSensorData.accel.Y));
-    m_ui->ui_accelerometerZValue->setText(
+    ui->ui_accelerometerZValue->setText(
         QString::number(data.CarSensorData.accel.Z));
 
-    m_ui->ui_gyroscopeXValue->setText(
-        QString::number(data.CarSensorData.gyro.X));
-    m_ui->ui_gyroscopeYValue->setText(
-        QString::number(data.CarSensorData.gyro.Y));
-    m_ui->ui_gyroscopeZValue->setText(
-        QString::number(data.CarSensorData.gyro.Z));
+    ui->ui_gyroscopeXValue->setText(QString::number(data.CarSensorData.gyro.X));
+    ui->ui_gyroscopeYValue->setText(QString::number(data.CarSensorData.gyro.Y));
+    ui->ui_gyroscopeZValue->setText(QString::number(data.CarSensorData.gyro.Z));
 
-    m_ui->ui_magnetometerXValue->setText(
+    ui->ui_magnetometerXValue->setText(
         QString::number(data.CarSensorData.mag.X));
-    m_ui->ui_magnetometerYValue->setText(
+    ui->ui_magnetometerYValue->setText(
         QString::number(data.CarSensorData.mag.Y));
-    m_ui->ui_magnetometerZValue->setText(
+    ui->ui_magnetometerZValue->setText(
         QString::number(data.CarSensorData.mag.Z));
 
-    if (m_recording.has_value()) {
-        m_recording->Add(data);
+    if (recording.has_value()) {
+        recording->Add(data);
     }
 }
 
@@ -173,51 +181,69 @@ void MainWindow::openPreferences() {
     }
 
     updateClient(settings.value());
-    m_recordingPath = settings->RecordDestination;
+    recordingPath = settings->RecordDestination;
 }
 
 void MainWindow::updateClient(const Settings &settings) {
     switch (settings.AppMode) {
     case Settings::Mode::Network:
-        m_client = std::make_unique<UDPClient>(settings.ClientNetwork, this);
+        client = std::make_unique<UDPClient>(settings.ClientNetwork, this);
         break;
     case Settings::Mode::Serial:
-        m_client = std::make_unique<SerialClient>(settings.ClientSerial, this);
+        client = std::make_unique<SerialClient>(settings.ClientSerial, this);
         break;
     default:
         break;
     }
-    connect(m_client.get(), &BaseClient::DataReady, this, &MainWindow::update);
-    connect(m_client.get(), &BaseClient::DataReceived, this,
+    connect(client.get(), &BaseClient::DataReady, this, &MainWindow::update);
+    connect(client.get(), &BaseClient::DataReceived, this,
             &MainWindow::receivedSize);
     reconnect();
 }
 
 void MainWindow::updateConnected() {
-    bool connected = m_client->IsConnected();
+    bool connected = client->IsConnected();
     QString value = connected ? "Connected" : "Disconnected";
 
-    m_labelConnected->setProperty("class", value);
-    m_labelConnected->setText(value);
+    labelConnected->setProperty("class", value);
+    labelConnected->setText(value);
 }
 
 void MainWindow::reconnect() {
-    m_client->Connect();
+    client->Connect();
     updateConnected();
 }
 
 void MainWindow::record() {
-    if (m_recording.has_value()) {
-        m_recording->Save(m_recordingPath);
-        m_recording = std::nullopt;
-        m_ui->ui_recordingButton->setText("Start Recording");
+    if (recording.has_value()) {
+        recording->Save(recordingPath);
+        recording = std::nullopt;
+        ui->ui_recordingButton->setText("Start Recording");
     } else {
-        m_recording = std::make_optional<Recording>();
-        m_ui->ui_recordingButton->setText("Stop Recording");
+        recording = std::make_optional<Recording>();
+        ui->ui_recordingButton->setText("Stop Recording");
     }
 }
 
 void MainWindow::receivedSize(const qint64 size) const {
-    m_labelRXBytes->setText(
-        QString::asprintf(MainWindow::LABEL_RX_FORMAT, size));
+    labelRXBytes->setText(QString::asprintf(MainWindow::LABEL_RX_FORMAT, size));
+}
+
+void MainWindow::updateJoystick() {
+    bool opened = this->joystick.opened();
+
+    if (!opened) {
+        opened = this->joystick.open();
+    }
+
+    QString qssClass = opened ? "Connected" : "Disconnected";
+    QString text = opened ? this->joystick.getName() : "No gamepad found";
+
+    this->labelJoystickConnected->setProperty("class", qssClass);
+    this->labelJoystickConnected->setText(text);
+}
+
+void MainWindow::handleJoystick() const {
+    Shared::Signal signal = this->joystick.getSignal();
+    qDebug() << "Joystick signal: " << signal.type << " " << signal.value;
 }
