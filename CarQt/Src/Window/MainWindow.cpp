@@ -2,6 +2,7 @@
 
 #include <QGraphicsScene>
 #include <opencv2/imgproc.hpp>
+#include <optional>
 
 #include "./ui_MainWindow.h"
 #include "Client/BaseClient.h"
@@ -10,6 +11,7 @@
 #include "Image.h"
 #include "Shared/Signal.h"
 #include "Utils.h"
+#include "Window/SensorsDialog.h"
 #include "Window/SettingsWindow.h"
 
 using namespace CarQt;
@@ -22,29 +24,33 @@ MainWindow::MainWindow(const QString &name, QWidget *parent)
           QString::asprintf(MainWindow::LABEL_TX_FORMAT, 0ll), this)),
       labelRXBytes(new QLabel(
           QString::asprintf(MainWindow::LABEL_RX_FORMAT, 0ll), this)),
-      recording(std::nullopt), timer(this) {
-    ui->setupUi(this);
+      recording(std::nullopt), sensorsDialog(nullptr), timer(this) {
+    this->ui->setupUi(this);
 #ifdef __APPLE__
     auto *fileMenu = new QMenu(name, this);
 #else
     auto *fileMenu = new QMenu("File", this);
 #endif
     auto *clientMenu = new QMenu("Client", this);
+    auto *viewMenu = new QMenu("View", this);
     auto *preferenceAction = new QAction("Preferences", this);
     auto *reconnectAction = new QAction("Reconnect MCU", this);
     auto *reconnectJoystickAction = new QAction("Reconnect Joystick", this);
+    auto *viewSensorsChartAction = new QAction("Sensors Chart", this);
 
     fileMenu->addAction(preferenceAction);
     clientMenu->addAction(reconnectAction);
     clientMenu->addAction(reconnectJoystickAction);
-    ui->menubar->addMenu(fileMenu);
-    ui->menubar->addMenu(clientMenu);
-    ui->ui_originalGraphics->setScene(new QGraphicsScene);
-    ui->ui_normalizedView->setScene(new QGraphicsScene);
-    ui->ui_thresholdedGraphics->setScene(new QGraphicsScene);
+    viewMenu->addAction(viewSensorsChartAction);
+    this->ui->menubar->addMenu(fileMenu);
+    this->ui->menubar->addMenu(clientMenu);
+    this->ui->menubar->addMenu(viewMenu);
+    this->ui->ui_originalGraphics->setScene(new QGraphicsScene);
+    this->ui->ui_normalizedView->setScene(new QGraphicsScene);
+    this->ui->ui_thresholdedGraphics->setScene(new QGraphicsScene);
 
     for (QLabel *label : labels)
-        ui->statusbar->addWidget(label);
+        this->ui->statusbar->addWidget(label);
 
     this->timer.setInterval(10);
 
@@ -58,11 +64,13 @@ MainWindow::MainWindow(const QString &name, QWidget *parent)
     connect(preferenceAction, &QAction::triggered, this,
             &MainWindow::openPreferences);
     connect(reconnectAction, &QAction::triggered, this, &MainWindow::reconnect);
-    connect(ui->ui_recordingButton, &QPushButton::clicked, this,
+    connect(this->ui->ui_recordingButton, &QPushButton::clicked, this,
             &MainWindow::record);
     connect(&this->timer, &QTimer::timeout, this, &MainWindow::handleJoystick);
     connect(reconnectJoystickAction, &QAction::triggered, this,
             &MainWindow::updateJoystick);
+    connect(viewSensorsChartAction, &QAction::triggered, this,
+            &MainWindow::openSensorsDialog);
 
     this->timer.start();
 }
@@ -76,34 +84,37 @@ MainWindow::~MainWindow() {
 
 void MainWindow::update(const Shared::Data &data) {
     // Motor
-    ui->ui_leftPwmValue->setText(QString::number(data.CarMotorData.LeftSpeed));
-    ui->ui_rightPwmValue->setText(
+    this->ui->ui_leftPwmValue->setText(
+        QString::number(data.CarMotorData.LeftSpeed));
+    this->ui->ui_rightPwmValue->setText(
         QString::number(data.CarMotorData.RightSpeed));
 
     // Servo
-    ui->ui_servoPositionValue->setText(
+    this->ui->ui_servoPositionValue->setText(
         QString::number(data.CarSteerData.ServoPosition));
-    ui->ui_servoAngleValue->setText(QString::number(data.CarSteerData.Angle));
+    this->ui->ui_servoAngleValue->setText(
+        QString::number(data.CarSteerData.Angle));
 
     // Camera
-    ui->ui_regsionsListSizeValue->setText(
+    this->ui->ui_regsionsListSizeValue->setText(
         QString::number(data.CarCameraData.RegionsListSize));
-    ui->ui_regionsCountValue->setText(
+    this->ui->ui_regionsCountValue->setText(
         QString::number(data.CarCameraData.RegionsCount));
-    ui->ui_unchangedLeftValue->setText(
+    this->ui->ui_unchangedLeftValue->setText(
         Utils::ToQString(data.CarCameraData.UnchangedLeft));
-    ui->ui_unchangedRightValue->setText(
+    this->ui->ui_unchangedRightValue->setText(
         Utils::ToQString(data.CarCameraData.UnchangedRight));
-    ui->ui_hasLeftValue->setText(Utils::ToQString(data.CarCameraData.HasLeft));
-    ui->ui_hasRightValue->setText(
+    this->ui->ui_hasLeftValue->setText(
+        Utils::ToQString(data.CarCameraData.HasLeft));
+    this->ui->ui_hasRightValue->setText(
         Utils::ToQString(data.CarCameraData.HasRight));
-    ui->ui_leftDistance->setText(
+    this->ui->ui_leftDistance->setText(
         QString::number(data.CarCameraData.LeftDistance));
-    ui->ui_rightDistance->setText(
+    this->ui->ui_rightDistance->setText(
         QString::number(data.CarCameraData.RightDistance));
 
     images.emplace_front(data.CarCameraData.Line);
-    int historySize = ui->ui_originalGraphics->size().height();
+    int historySize = this->ui->ui_originalGraphics->size().height();
     if (images.size() > historySize) {
         images.pop_back();
     }
@@ -145,30 +156,37 @@ void MainWindow::update(const Shared::Data &data) {
     cv::cvtColor(imageNormalizedBW, imageNormalized, cv::COLOR_GRAY2RGB);
     cv::cvtColor(imageThresholdedBW, imageThresholded, cv::COLOR_GRAY2RGB);
 
-    Utils::ShowMat(ui->ui_originalGraphics, imageOriginal);
-    Utils::ShowMat(ui->ui_normalizedView, imageNormalized);
-    Utils::ShowMat(ui->ui_thresholdedGraphics, imageThresholded);
+    Utils::ShowMat(this->ui->ui_originalGraphics, imageOriginal);
+    Utils::ShowMat(this->ui->ui_normalizedView, imageNormalized);
+    Utils::ShowMat(this->ui->ui_thresholdedGraphics, imageThresholded);
 
-    ui->ui_accelerometerXValue->setText(
+    this->ui->ui_accelerometerXValue->setText(
         QString::number(data.CarSensorData.accel.X));
-    ui->ui_accelerometerYValue->setText(
+    this->ui->ui_accelerometerYValue->setText(
         QString::number(data.CarSensorData.accel.Y));
-    ui->ui_accelerometerZValue->setText(
+    this->ui->ui_accelerometerZValue->setText(
         QString::number(data.CarSensorData.accel.Z));
 
-    ui->ui_gyroscopeXValue->setText(QString::number(data.CarSensorData.gyro.X));
-    ui->ui_gyroscopeYValue->setText(QString::number(data.CarSensorData.gyro.Y));
-    ui->ui_gyroscopeZValue->setText(QString::number(data.CarSensorData.gyro.Z));
+    this->ui->ui_gyroscopeXValue->setText(
+        QString::number(data.CarSensorData.gyro.X));
+    this->ui->ui_gyroscopeYValue->setText(
+        QString::number(data.CarSensorData.gyro.Y));
+    this->ui->ui_gyroscopeZValue->setText(
+        QString::number(data.CarSensorData.gyro.Z));
 
-    ui->ui_magnetometerXValue->setText(
+    this->ui->ui_magnetometerXValue->setText(
         QString::number(data.CarSensorData.mag.X));
-    ui->ui_magnetometerYValue->setText(
+    this->ui->ui_magnetometerYValue->setText(
         QString::number(data.CarSensorData.mag.Y));
-    ui->ui_magnetometerZValue->setText(
+    this->ui->ui_magnetometerZValue->setText(
         QString::number(data.CarSensorData.mag.Z));
 
     if (recording.has_value()) {
         recording->Add(data);
+    }
+
+    if (sensorsDialog) {
+        sensorsDialog->add(data.CarSensorData, data.Timestamp);
     }
 }
 
@@ -218,10 +236,10 @@ void MainWindow::record() {
     if (recording.has_value()) {
         recording->Save(recordingPath);
         recording = std::nullopt;
-        ui->ui_recordingButton->setText("Start Recording");
+        this->ui->ui_recordingButton->setText("Start Recording");
     } else {
         recording = std::make_optional<Recording>();
-        ui->ui_recordingButton->setText("Stop Recording");
+        this->ui->ui_recordingButton->setText("Stop Recording");
     }
 }
 
@@ -246,4 +264,26 @@ void MainWindow::updateJoystick() {
 void MainWindow::handleJoystick() const {
     Shared::Signal signal = this->joystick.getSignal();
     qDebug() << "Joystick signal: " << signal.type << " " << signal.value;
+}
+
+void MainWindow::destroySensorsDialog() {
+    if (!this->sensorsDialog) {
+        return;
+    }
+
+    this->sensorsDialog->deleteLater();
+    this->sensorsDialog = nullptr;
+}
+
+void MainWindow::openSensorsDialog() {
+    if (this->sensorsDialog) {
+        return;
+    }
+
+    this->sensorsDialog = new SensorsDialog(this);
+
+    connect(this->sensorsDialog, &SensorsDialog::finished, this,
+            &MainWindow::destroySensorsDialog);
+
+    sensorsDialog->show();
 }
