@@ -10,11 +10,14 @@ set(QT_COMPONENTS
 
 find_package(Qt6 REQUIRED COMPONENTS ${QT_COMPONENTS})
 find_package(OpenCV REQUIRED)
+find_package(SDL2 CONFIG REQUIRED)
 
 add_executable(CarQt
     Src/main.cpp
     Src/Settings.cpp
     Src/Settings.h
+    Src/GameController.h
+    Src/GameController.cpp
     Src/Window/MainWindow.cpp
     Src/Window/MainWindow.h
     Src/Window/MainWindow.ui
@@ -37,13 +40,14 @@ add_executable(CarQt
 
 list(TRANSFORM QT_COMPONENTS PREPEND Qt6::)
 
-target_include_directories(CarQt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Src ${OpenCV_INCLUDE_DIRS})
+target_include_directories(CarQt PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Src ${OpenCV_INCLUDE_DIRS} ${SDL2_INCLUDE_DIRS})
 target_link_libraries(CarQt
-    PRIVATE 
+    PRIVATE
     ${QT_COMPONENTS}
     jsoncpp_static
     Shared
-    ${OpenCV_LIBS})
+    ${OpenCV_LIBS}
+    ${SDL2_LIBRARIES})
 
 set_target_properties(CarQt PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER CarQt.gaitov

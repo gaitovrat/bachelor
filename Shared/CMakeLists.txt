@@ -3,10 +3,12 @@ set(SOURCES
     Src/PIDData.cpp
     Src/Region.cpp
     Src/Settings.cpp
+    Src/Signal.cpp
 )
 
 add_library(Shared STATIC
     ${SOURCES}
+    Include/Shared/Signal.h
     Include/Shared/CameraData.h
     Include/Shared/Utils.h
     Include/Shared/Data.h

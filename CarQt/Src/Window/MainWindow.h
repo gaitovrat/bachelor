@@ -1,15 +1,16 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtWidgets/qlabel.h>
+#include <QLabel>
+#include <QMainWindow>
+#include <QTimer>
 #include <memory>
 
 #include "Client/BaseClient.h"
+#include "GameController.h"
 #include "Image.h"
 #include "Recording.h"
 #include "Settings.h"
-#include <QLabel>
-#include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,6 +24,24 @@ class MainWindow : public QMainWindow {
 
     static constexpr const char *LABEL_TX_FORMAT = "TX: %lldB";
     static constexpr const char *LABEL_RX_FORMAT = "RX: %lldB";
+
+    union {
+        struct {
+            QLabel *labelConnected;
+            QLabel *labelJoystickConnected;
+            QLabel *labelTXBytes;
+            QLabel *labelRXBytes;
+        };
+        QLabel *labels[4]{};
+    };
+
+    QTimer timer;
+    GameController joystick;
+    Ui::MainWindow *ui;
+    std::optional<Recording> recording;
+    QString recordingPath;
+    std::unique_ptr<BaseClient> client;
+    std::list<Image> images;
 
   public:
     explicit MainWindow(const QString &name, QWidget *parent = nullptr);
@@ -40,25 +59,14 @@ class MainWindow : public QMainWindow {
 
     void record();
 
+    void updateJoystick();
+
+    void handleJoystick() const;
+
   private:
     void updateClient(const Settings &settings);
 
     void updateConnected();
-
-    Ui::MainWindow *m_ui;
-    union {
-        struct {
-            QLabel *m_labelConnected;
-            QLabel *m_labelTXBytes;
-            QLabel *m_labelRXBytes;
-        };
-        QLabel *m_labels[3]{};
-    };
-    std::optional<Recording> m_recording;
-    QString m_recordingPath;
-
-    std::unique_ptr<BaseClient> m_client;
-    std::list<Image> m_images;
 };
 } // namespace CarQt
 
