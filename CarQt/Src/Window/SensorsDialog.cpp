@@ -86,8 +86,8 @@ void SensorsDialog::add(const Shared::SensorData &data, const uint64_t time) {
                                            this->magnetometer->serieses[2]};
 
     for (int i = 0; i < 3; ++i) {
-        accelerometerSerieses[i]->append(time, data.accel.Values[i]);
-        gyroscopeSerieses[i]->append(time, data.gyro.Values[i]);
-        magnetometerSerieses[i]->append(time, data.mag.Values[i]);
+        accelerometerSerieses[i]->append(time, data.accel.values[i]);
+        gyroscopeSerieses[i]->append(time, data.gyro.values[i]);
+        magnetometerSerieses[i]->append(time, data.mag.values[i]);
     }
 }

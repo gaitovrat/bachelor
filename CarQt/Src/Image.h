@@ -9,21 +9,21 @@
 
 namespace CarQt {
 struct Image : public Shared::Image {
+    uint16_t rawImage[LINE_LENGTH];
+    uint16_t normalizedImage[LINE_LENGTH];
+    uint16_t thresholdedImage[LINE_LENGTH];
+
     Image();
 
     explicit Image(CImageLine rawImage);
 
     explicit Image(ImageLine rawImage);
 
-    void SetRawImage(CImageLine rawImage);
+    void setRawImage(CImageLine rawImage);
 
-    void Process();
+    void process();
 
-    [[nodiscard]] uint16_t At(uint8_t index, Type type) const override;
-
-    uint16_t RawImage[LINE_LENGTH];
-    uint16_t NormalizedImage[LINE_LENGTH];
-    uint16_t ThresholdedImage[LINE_LENGTH];
+    uint16_t at(uint8_t index, Type type) const override;
 };
 } // namespace CarQt
 

@@ -8,52 +8,54 @@
 using namespace Shared;
 
 Image::Image()
-    : m_thresholdedImage{0}, m_max{COLOR_BLACK}, m_min{COLOR_WHITE} {}
+    : thresholdedImage{0}, maxValue{COLOR_BLACK}, minValue{COLOR_WHITE} {}
 
-void Image::ComputeMinMax(CImageLine img) {
-    m_max = COLOR_BLACK;
-    m_min = COLOR_WHITE_ORIGINAL;
+void Image::computeMinMax(CImageLine img) {
+    this->maxValue = COLOR_BLACK;
+    this->minValue = COLOR_WHITE_ORIGINAL;
 
     for (uint64_t i = BLACK_COUNT; i < LINE_LENGTH - BLACK_COUNT; i++) {
         uint16_t pixel = img[i];
-        if (pixel > m_max) {
-            m_max = pixel;
+        if (pixel > this->maxValue) {
+            this->maxValue = pixel;
         }
 
-        if (pixel < m_min) {
-            m_min = pixel;
+        if (pixel < this->minValue) {
+            this->minValue = pixel;
         }
 
-        if (m_max == COLOR_WHITE_ORIGINAL && m_min == COLOR_BLACK) {
+        if (this->maxValue == COLOR_WHITE_ORIGINAL &&
+            this->minValue == COLOR_BLACK) {
             break;
         }
     }
 
-    m_diversity = std::max(m_max, m_min) - std::min(m_min, m_max);
+    diversity = std::max(this->maxValue, this->minValue) -
+                std::min(this->minValue, this->maxValue);
 }
 
-void Image::Cut(ImageLine srcImg) const {
+void Image::cut(ImageLine srcImg) const {
     for (uint64_t col = 0; col < BLACK_COUNT; col++) {
-        srcImg[col] = m_max;
+        srcImg[col] = this->maxValue;
     }
 
     for (uint64_t col = LINE_LENGTH - 1; col > LINE_LENGTH - 1 - BLACK_COUNT;
          col--) {
-        srcImg[col] = m_max;
+        srcImg[col] = this->maxValue;
     }
 }
 
-void Image::Normalize(CImageLine srcImg, ImageLine dstImg) const {
+void Image::normalize(CImageLine srcImg, ImageLine dstImg) const {
     for (int i = 0; i < LINE_LENGTH; i++) {
         auto pixel = static_cast<float>(srcImg[i]);
-        pixel -= m_min;
+        pixel -= this->minValue;
         pixel *= COLOR_WHITE;
-        pixel /= (m_max - m_min);
+        pixel /= (this->maxValue - this->minValue);
         dstImg[i] = static_cast<uint16_t>(pixel);
     }
 }
 
-uint16_t Image::AverageThreshold(CImageLine srcImg) {
+uint16_t Image::averageThreshold(CImageLine srcImg) {
     long sum = 0;
     for (uint64_t i = BLACK_COUNT; i < LINE_LENGTH - BLACK_COUNT; i++) {
         sum += srcImg[i];
@@ -62,16 +64,16 @@ uint16_t Image::AverageThreshold(CImageLine srcImg) {
     return avg;
 }
 
-void Image::Threshold(CImageLine srcImg, ImageLine dstImg) const {
+void Image::threshold(CImageLine srcImg, ImageLine dstImg) const {
     for (int i = 0; i < LINE_LENGTH; i++) {
-        if (srcImg[i] < m_threshValue)
+        if (srcImg[i] < this->threshValue)
             dstImg[i] = COLOR_BLACK;
         else
             dstImg[i] = COLOR_WHITE;
     }
 }
 
-void Image::FastMedianBlur(ImageLine srcImg, int pixels) {
+void Image::fastMedianBlur(ImageLine srcImg, int pixels) {
     const int buffSize = pixels * 2 + 1;
     std::vector<uint16_t> blurBuffer;
 
@@ -81,13 +83,13 @@ void Image::FastMedianBlur(ImageLine srcImg, int pixels) {
         }
 
         for (int j = -pixels; j <= pixels; j++) {
-            srcImg[i + j] = Utils::Median(blurBuffer);
+            srcImg[i + j] = Utils::median(blurBuffer);
         }
         blurBuffer.clear();
     }
 }
 
-void Image::FastMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels) {
+void Image::fastMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels) {
     memcpy(dstImg, srcImg, LINE_LENGTH);
 
     const int buffSize = pixels * 2 + 1;
@@ -106,7 +108,7 @@ void Image::FastMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels) {
     }
 }
 
-void Image::SlowMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels) {
+void Image::slowMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels) {
     memcpy(dstImg, srcImg, LINE_LENGTH);
     std::vector<uint16_t> blurBuffer;
 
@@ -120,7 +122,7 @@ void Image::SlowMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels) {
     }
 }
 
-void Image::SlowMedianBlur(ImageLine srcImg, int pixels) {
+void Image::slowMedianBlur(ImageLine srcImg, int pixels) {
     std::deque<uint16_t> pixBuffer;
 
     for (int i = /*0*/ 1; i < LINE_LENGTH; i++) {
@@ -131,7 +133,7 @@ void Image::SlowMedianBlur(ImageLine srcImg, int pixels) {
         pixBuffer.emplace_back(srcImg[i]);
 
         for (int j = -pixels; j <= pixels; j++) {
-            srcImg[i + j] = Utils::Median<uint16_t>(
+            srcImg[i + j] = Utils::median<uint16_t>(
                 std::vector<uint16_t>(pixBuffer.begin(), pixBuffer.end()));
         }
         // blurBuffer.clear();
@@ -139,45 +141,49 @@ void Image::SlowMedianBlur(ImageLine srcImg, int pixels) {
     }
 }
 
-uint8_t Image::AtThresh(uint8_t index) const {
-    return static_cast<uint8_t>(m_thresholdedImage[index]);
+uint8_t Image::atThresh(uint8_t index) const {
+    if (index >= LINE_LENGTH) {
+        return 0;
+    }
+
+    return static_cast<uint8_t>(this->thresholdedImage[index]);
 }
 
-uint16_t Image::Min() const { return m_min; }
+uint16_t Image::getMin() const { return this->minValue; }
 
-uint16_t Image::Max() const { return m_max; }
+uint16_t Image::getMax() const { return this->maxValue; }
 
-uint16_t Image::ThreshValue() const { return m_threshValue; }
+uint16_t Image::getThreshValue() const { return this->threshValue; }
 
-int16_t Image::Diversity() const { return m_diversity; }
+int16_t Image::getDiversity() const { return this->diversity; }
 
-bool Image::IsLowDiversity() const { return m_diversity < LOW_DIVERSITY; }
+bool Image::isLowDiversity() const { return this->diversity < LOW_DIVERSITY; }
 
 Image::Image(uint16_t (&rawImage)[LINE_LENGTH]) : Image() {
-    ComputeMinMax(rawImage);
-    if (m_diversity < LOW_DIVERSITY) {
+    this->computeMinMax(rawImage);
+    if (this->diversity < LOW_DIVERSITY) {
         for (int i = 0; i < LINE_LENGTH; i++) {
-            m_thresholdedImage[i] = COLOR_WHITE;
+            this->thresholdedImage[i] = COLOR_WHITE;
             rawImage[i] = COLOR_WHITE_ORIGINAL;
         }
     } else {
-        Cut(rawImage);
+        this->cut(rawImage);
 
-        Normalize(rawImage, m_thresholdedImage);
+        this->normalize(rawImage, this->thresholdedImage);
 
-        m_threshValue = AverageThreshold(m_thresholdedImage);
-        Threshold(m_thresholdedImage, m_thresholdedImage);
+        this->threshValue = this->averageThreshold(this->thresholdedImage);
+        this->threshold(this->thresholdedImage, this->thresholdedImage);
     }
 }
 
-uint16_t Image::At(uint8_t index, Type type) const {
+uint16_t Image::at(uint8_t index, Type type) const {
     if (index >= LINE_LENGTH) {
         return 0;
     }
 
     switch (type) {
     case Thresholded:
-        return m_thresholdedImage[index];
+        return this->thresholdedImage[index];
     default:
         return 0;
     }

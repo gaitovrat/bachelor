@@ -1,8 +1,6 @@
 #ifndef SETTINGSWINDOW_H
 #define SETTINGSWINDOW_H
 
-#include <optional>
-
 #include <QDialog>
 
 #include "Settings.h"
@@ -30,7 +28,7 @@ class SettingsWindow : public QDialog {
     void selectRecordDirectory();
 
   private:
-    [[nodiscard]] Settings getSettings() const;
+    Settings getSettings() const;
 };
 } // namespace CarQt
 

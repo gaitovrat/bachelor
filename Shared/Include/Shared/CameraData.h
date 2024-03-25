@@ -8,15 +8,15 @@
 
 namespace Shared {
 struct CameraData {
-    uint16_t Line[Image::LINE_LENGTH];
-    uint32_t RegionsCount;
-    uint32_t RegionsListSize;
-    bool UnchangedLeft;
-    bool UnchangedRight;
-    bool HasLeft;
-    bool HasRight;
-    uint8_t LeftDistance;
-    uint8_t RightDistance;
+    uint16_t line[Image::LINE_LENGTH];
+    uint32_t regionsCount;
+    uint32_t regionsListSize;
+    bool unchangedLeft;
+    bool unchangedRight;
+    bool hasLeft;
+    bool hasRight;
+    uint8_t leftDistance;
+    uint8_t rightDistance;
 };
 } // namespace Shared
 

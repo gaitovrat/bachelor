@@ -1,9 +1,6 @@
 #include "GameController.h"
 
 #include <QDebug>
-#include <SDL_events.h>
-#include <SDL_gamecontroller.h>
-#include <SDL_stdinc.h>
 
 using namespace CarQt;
 

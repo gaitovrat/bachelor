@@ -6,11 +6,11 @@
 #include <QTimer>
 #include <memory>
 
-#include "Client/BaseClient.h"
 #include "GameController.h"
 #include "Image.h"
 #include "Recording.h"
 #include "Settings.h"
+#include "UdpClient.h"
 #include "Window/SensorsDialog.h"
 
 QT_BEGIN_NAMESPACE
@@ -39,9 +39,9 @@ class MainWindow : public QMainWindow {
     QTimer timer;
     GameController joystick;
     Ui::MainWindow *ui;
-    std::optional<Recording> recording;
+    Recording *recording;
     QString recordingPath;
-    std::unique_ptr<BaseClient> client;
+    UDPClient *client;
     std::list<Image> images;
     SensorsDialog *sensorsDialog;
 
@@ -71,8 +71,6 @@ class MainWindow : public QMainWindow {
 
   private:
     void updateClient(const Settings &settings);
-
-    void updateConnected();
 };
 } // namespace CarQt
 

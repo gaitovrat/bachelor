@@ -7,9 +7,8 @@
 
 namespace Shared {
 struct SteerData {
-    PIDData SteerPIDData;
-    int16_t ServoPosition{};
-    float Angle{};
+    int16_t servoPosition;
+    float angle;
 };
 } // namespace Shared
 

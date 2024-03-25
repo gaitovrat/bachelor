@@ -9,39 +9,21 @@
 namespace CarQt {
 struct Settings {
   public:
-    enum Mode { Serial, Network };
-
-    struct Serial {
-        QString PortName;
-        QSerialPort::BaudRate BaudRate;
-        QSerialPort::DataBits DataBits;
-        QSerialPort::Parity Parity;
-        QSerialPort::StopBits StopBits;
-
-        Serial();
-    };
-
     struct Network {
-        QHostAddress Address;
-        uint32_t Port;
+        QHostAddress address;
+        uint32_t port;
 
         Network();
     };
 
-    Mode AppMode;
-    struct Serial ClientSerial;
-    struct Network ClientNetwork;
-    QString RecordDestination;
+    Network network;
+    QString recordDestination;
 
     Settings();
 
-    void Save(const char *filename) const;
+    void save(const char *filename) const;
 
-    static std::optional<Settings> Load(const char *filename);
-
-    static const char *ModeToString(Mode mode);
-
-    static Mode ModeFromString(const QString &value);
+    static Settings load(const char *filename);
 };
 } // namespace CarQt
 

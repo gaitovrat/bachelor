@@ -11,20 +11,22 @@ struct Region {
     static constexpr uint8_t MAX_RIGHT =
         Image::LINE_LENGTH - Image::BLACK_COUNT - 1;
 
-    uint8_t Left;
-    uint8_t Right;
-    uint8_t Color;
+    uint8_t left;
+    uint8_t right;
+    uint8_t color;
 
     Region(uint8_t left = MIN_LEFT, uint8_t right = MAX_RIGHT,
            uint8_t color = Image::COLOR_WHITE);
 
-    [[nodiscard]] uint8_t Size() const;
+    virtual ~Region() = default;
 
-    [[nodiscard]] uint8_t Center() const;
+    uint8_t size() const;
 
-    bool IsBlack() const;
+    uint8_t center() const;
 
-    bool IsWhite() const;
+    bool isBlack() const;
+
+    bool isWhite() const;
 
     bool operator==(const Region &rhs) const;
 

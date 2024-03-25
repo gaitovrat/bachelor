@@ -13,7 +13,7 @@
 #include <vector>
 
 namespace Shared::Utils {
-template <class T> inline T Median(std::vector<T> v) {
+template <class T> inline T median(std::vector<T> v) {
     size_t n = v.size() / 2;
     std::nth_element(v.begin(), v.begin() + n, v.end());
 

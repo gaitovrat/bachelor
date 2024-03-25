@@ -7,21 +7,22 @@
 using namespace Shared;
 
 Region::Region(uint8_t left, uint8_t right, uint8_t color)
-    : Left(std::max(left, MIN_LEFT)), Right(std::min(right, MAX_RIGHT)),
-      Color(color) {}
+    : left(std::max(left, MIN_LEFT)), right(std::min(right, MAX_RIGHT)),
+      color(color) {}
 
-uint8_t Region::Size() const { return Right - Left; }
+uint8_t Region::size() const { return this->right - this->left; }
 
-uint8_t Region::Center() const {
-    return static_cast<uint8_t>((Right + Left) / 2);
+uint8_t Region::center() const {
+    return static_cast<uint8_t>((this->right + this->left) / 2);
 }
 
-bool Region::IsBlack() const { return Color == Image::COLOR_BLACK; }
-bool Region::IsWhite() const { return Color == Image::COLOR_WHITE; }
+bool Region::isBlack() const { return this->color == Image::COLOR_BLACK; }
+
+bool Region::isWhite() const { return this->color == Image::COLOR_WHITE; }
 
 bool Region::operator==(const Region &rhs) const {
-    return this->Left == rhs.Left && this->Right == rhs.Right &&
-           this->Color == rhs.Color;
+    return this->left == rhs.left && this->right == rhs.right &&
+           this->color == rhs.color;
 }
 
 bool Region::operator!=(const Region &rhs) const { return !(*this == rhs); }
