@@ -43,8 +43,8 @@ PID::PID(double *Input, double *Output, double *Setpoint, double Kp, double Ki,
                ControllerDirection) {}
 
 PID::PID(Shared::PIDData &pidData, int POn, int ControllerDirection)
-    : PID(&pidData.Input, &pidData.Output, &pidData.SetPoint, pidData.P,
-          pidData.I, pidData.D, POn, ControllerDirection) {}
+    : PID(&pidData.input, &pidData.output, &pidData.setPoint, pidData.p,
+          pidData.i, pidData.d, POn, ControllerDirection) {}
 
 /* Compute()
  *********************************************************************** This,

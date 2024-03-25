@@ -13,10 +13,10 @@ int main(void) {
     BOARD_InitBootPeripherals();
     BOARD_InitDebugConsole();
 
-    core.Init();
+    core.init();
 
     while (1) {
-        core.Drive();
+        core.drive();
     }
 
     return 0;

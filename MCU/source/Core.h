@@ -14,55 +14,50 @@
 
 namespace MCU {
 class Core {
+    TFC tfc;
+    Enet enet;
+    Shared::Settings settings;
+    Shared::MotorState motorState;
+    LineTracer tracer;
+
+    // Motor
+    Shared::PIDData pidData;
+    PID pid;
+    int speed;
+
+    // Servo
+    float steerSetting;
+    int16_t prevServoPosition;
+    int16_t servoPosition;
+    uint8_t left;
+    uint8_t right;
+
+    Shared::Data data;
+
+    // Sensors
+    FXOS8700CQ fxos;
+    FXAS21002 fxas;
+    IRSensor ir;
+
   public:
     Core();
 
     virtual ~Core() = default;
 
-    void Init();
+    void init();
 
-    void Calibrate();
+    void calibrate();
 
-    void Drive();
-
-  private:
-    void Update();
-
-    void PrintCurrentState();
-
-    void Reset();
-
-    void SetRide();
-
-    void ResetRegulator();
-
-    void SendData();
+    void drive();
 
   private:
-    TFC m_tfc;
-    Enet m_enet;
-    Shared::Settings m_settings;
-    Shared::MotorState m_motorState;
-    LineTracer m_tracer;
+    void update();
 
-    // Motor
-    Shared::PIDData m_pidData;
-    PID m_pid;
-    int m_speed;
+    void reset();
 
-    // Servo
-    float m_steerSetting;
-    int16_t m_prevServoPosition;
-    int16_t m_servoPosition;
-    uint8_t m_left;
-    uint8_t m_right;
+    void setRide();
 
-    Shared::Data m_data;
-
-    // Sensors
-    FXOS8700CQ m_fxos;
-    FXAS21002 m_fxas;
-    IRSensor m_ir;
+    void sendData();
 };
 } // namespace MCU
 

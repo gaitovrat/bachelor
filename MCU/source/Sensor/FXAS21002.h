@@ -18,20 +18,20 @@ class FXAS21002 : public BaseSensor {
   public:
     enum Range { DPS_2000 = 0, DPS_1000, DPS_500, DPS_250 };
 
+  private:
+    uint8_t address;
+    FXAS21002::Range range;
+
   public:
     FXAS21002(FXAS21002::Range range = Range::DPS_1000);
 
     virtual ~FXAS21002() = default;
 
-    status_t Init() override;
+    status_t init() override;
 
-    uint8_t DeviceAddress() const override;
+    uint8_t deviceAddress() const override;
 
-    std::optional<Shared::Vec3<uint16_t>> Read() const;
-
-  private:
-    uint8_t m_eviceAddress;
-    FXAS21002::Range m_range;
+    std::optional<Shared::Vec3<uint16_t>> read() const;
 };
 } // namespace MCU
 

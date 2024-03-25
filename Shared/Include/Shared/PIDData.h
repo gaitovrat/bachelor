@@ -19,7 +19,7 @@ struct PIDData {
 
     PIDData();
 
-    PIDData(const PIDData &other);
+    virtual ~PIDData() = default;
 
     void reset();
 };

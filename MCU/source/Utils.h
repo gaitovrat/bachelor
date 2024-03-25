@@ -11,24 +11,24 @@
 #include <cstdint>
 
 namespace MCU {
-template <typename T> constexpr T BitRead(T value, uint8_t bit) {
+template <typename T> constexpr T bitRead(T value, uint8_t bit) {
     return (value >> bit) & 0x01;
 }
 
-template <typename T> constexpr T BitSet(T value, uint8_t bit) {
+template <typename T> constexpr T bitSet(T value, uint8_t bit) {
     return value |= (1UL << bit);
 }
 
-template <typename T> constexpr T BitClear(T value, uint8_t bit) {
+template <typename T> constexpr T bitClear(T value, uint8_t bit) {
     return value &= ~(1UL << bit);
 }
 
 template <typename T>
-constexpr T BitWrite(T value, uint8_t bit, bool bitValue) {
-    return bitValue ? BitSet(value, bit) : BitClear(value, bit);
+constexpr T bitWrite(T value, uint8_t bit, bool bitValue) {
+    return bitValue ? bitSet(value, bit) : bitClear(value, bit);
 }
 
-constexpr uint8_t LedCenter(const int pot) {
+constexpr uint8_t ledCenter(const int pot) {
     if (pot < -5)
         return 0x01;
 

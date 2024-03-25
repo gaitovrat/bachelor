@@ -24,20 +24,20 @@ class FXOS8700CQ : public BaseSensor {
         Shared::Vec3<uint16_t> mag;
     };
 
+  private:
+    uint8_t address;
+    Range range;
+
   public:
     FXOS8700CQ(FXOS8700CQ::Range range = Range::G_4);
 
     virtual ~FXOS8700CQ() = default;
 
-    status_t Init() override;
+    status_t init() override;
 
-    uint8_t DeviceAddress() const override;
+    uint8_t deviceAddress() const override;
 
-    std::optional<FXOS8700CQ::Data> Read() const;
-
-  private:
-    uint8_t m_deviceAddress;
-    Range m_range;
+    std::optional<FXOS8700CQ::Data> read() const;
 };
 } // namespace MCU
 

@@ -39,13 +39,13 @@ void SysTick_Handler(void) { time_isr(); }
 }
 #endif
 
-static constexpr void MakeIp4Address(ip4_addr_t &address, const u8_t parts[4]) {
+static constexpr void makeIp4Address(ip4_addr_t &address, const u8_t parts[4]) {
     IP4_ADDR(&address, parts[0], parts[1], parts[2], parts[3]);
 }
 
-Enet::Enet() : m_initialized(false) {}
+Enet::Enet() : initialized(false) {}
 
-void Enet::Init(const size_t bufferSize, const uint16_t port) {
+void Enet::init(const size_t bufferSize, const uint16_t port) {
     /* Disable SYSMPU. */
     SYSMPU->CESR &= ~SYSMPU_CESR_VLD_MASK;
     /* Set RMII clock src. */
@@ -55,73 +55,71 @@ void Enet::Init(const size_t bufferSize, const uint16_t port) {
 
     MDIO_HANDLE.resource.csrClock_Hz = CLOCK_GetFreq(kCLOCK_CoreSysClk);
 
-    MakeIp4Address(this->m_gateway, GATEWAY);
-    MakeIp4Address(this->m_mcuIp, MCU_IP);
-    MakeIp4Address(this->m_netmask, NETMASK);
-    MakeIp4Address(this->m_pcIp, PC_IP);
+    makeIp4Address(this->gateway, GATEWAY);
+    makeIp4Address(this->mcuIp, MCU_IP);
+    makeIp4Address(this->netmask, NETMASK);
+    makeIp4Address(this->pcIp, PC_IP);
 
-    this->m_port = port;
-    this->m_dataIndex = 0;
-    this->m_dataLen = std::min(Enet::BUFFER_SIZE, bufferSize);
+    this->port = port;
+    this->dataIndex = 0;
+    this->dataLen = std::min(Enet::BUFFER_SIZE, bufferSize);
 
     time_init();
     lwip_init();
 
-    if (netif_add(&this->m_netif, &this->m_mcuIp, &this->m_netmask,
-                  &this->m_gateway, &ETHERNETIF_CONFIG, ethernetif0_init,
+    if (netif_add(&this->netif, &this->mcuIp, &this->netmask, &this->gateway,
+                  &ETHERNETIF_CONFIG, ethernetif0_init,
                   ethernet_input) == nullptr) {
         return;
     }
-    netif_set_default(&this->m_netif);
-    netif_set_up(&this->m_netif);
+    netif_set_default(&this->netif);
+    netif_set_up(&this->netif);
 
     PRINTF("\r\n************************************************\r\n");
     PRINTF(" NETIF Initialized\r\n");
     PRINTF("************************************************\r\n");
-    PRINTF(" IPv4 Address     : %u.%u.%u.%u\r\n", ((u8_t *)&this->m_mcuIp)[0],
-           ((u8_t *)&this->m_mcuIp)[1], ((u8_t *)&this->m_mcuIp)[2],
-           ((u8_t *)&this->m_mcuIp)[3]);
-    PRINTF(" IPv4 Subnet mask : %u.%u.%u.%u\r\n", ((u8_t *)&this->m_netmask)[0],
-           ((u8_t *)&this->m_netmask)[1], ((u8_t *)&this->m_netmask)[2],
-           ((u8_t *)&this->m_netmask)[3]);
-    PRINTF(" IPv4 Gateway     : %u.%u.%u.%u\r\n", ((u8_t *)&this->m_gateway)[0],
-           ((u8_t *)&this->m_gateway)[1], ((u8_t *)&this->m_gateway)[2],
-           ((u8_t *)&this->m_gateway)[3]);
+    PRINTF(" IPv4 Address     : %u.%u.%u.%u\r\n", ((u8_t *)&this->mcuIp)[0],
+           ((u8_t *)&this->mcuIp)[1], ((u8_t *)&this->mcuIp)[2],
+           ((u8_t *)&this->mcuIp)[3]);
+    PRINTF(" IPv4 Subnet mask : %u.%u.%u.%u\r\n", ((u8_t *)&this->netmask)[0],
+           ((u8_t *)&this->netmask)[1], ((u8_t *)&this->netmask)[2],
+           ((u8_t *)&this->netmask)[3]);
+    PRINTF(" IPv4 Gateway     : %u.%u.%u.%u\r\n", ((u8_t *)&this->gateway)[0],
+           ((u8_t *)&this->gateway)[1], ((u8_t *)&this->gateway)[2],
+           ((u8_t *)&this->gateway)[3]);
     PRINTF("************************************************\r\n");
 
     for (size_t i = 0; i < Enet::BUFFER_COUNT; ++i) {
-        this->m_pBuffer[i] =
-            pbuf_alloc(PBUF_TRANSPORT, this->m_dataLen, PBUF_REF);
-        this->m_pBuffer[i]->payload = this->m_data[i];
+        this->pBuffer[i] = pbuf_alloc(PBUF_TRANSPORT, this->dataLen, PBUF_REF);
+        this->pBuffer[i]->payload = this->data[i];
     }
 
     PRINTF("\r\nUDP initialize...\r\n");
-    this->m_pcb = udp_new();
-    udp_bind(this->m_pcb, &this->m_mcuIp, port);
-    udp_connect(this->m_pcb, &this->m_pcIp, port);
+    this->pcb = udp_new();
+    udp_bind(this->pcb, &this->mcuIp, port);
+    udp_connect(this->pcb, &this->pcIp, port);
 
-    this->m_initialized = true;
+    this->initialized = true;
 }
 
-void Enet::Send(const void *pData, const uint32_t len) {
-    if (this->m_initialized == false)
+void Enet::send(const void *pData, const uint32_t len) {
+    if (this->initialized == false)
         return;
 
     PRINTF("Sent: %d\r\n", len);
-    bzero(m_data[m_dataIndex], BUFFER_SIZE);
+    bzero(data[dataIndex], BUFFER_SIZE);
 
-    memcpy(this->m_data[this->m_dataIndex], pData,
-           std::min(this->m_dataLen, len));
-    udp_send(this->m_pcb, this->m_pBuffer[this->m_dataIndex]);
+    memcpy(this->data[this->dataIndex], pData, std::min(this->dataLen, len));
+    udp_send(this->pcb, this->pBuffer[this->dataIndex]);
 
-    this->m_dataIndex = (this->m_dataIndex + 1) % Enet::BUFFER_COUNT;
+    this->dataIndex = (this->dataIndex + 1) % Enet::BUFFER_COUNT;
 }
 
-bool Enet::Check() {
-    if (this->m_initialized == false)
+bool Enet::check() {
+    if (this->initialized == false)
         return false;
 
-    ethernetif_input(&this->m_netif); // Maybe some unexpected data
+    ethernetif_input(&this->netif); // Maybe some unexpected data
     sys_check_timeouts(); // Handle all system timeouts for all core protocols
 
     return true;

@@ -7,12 +7,6 @@ PIDData::PIDData(const double p, const double i, const double d)
 
 PIDData::PIDData() : PIDData(.0, .0, .0) {}
 
-PIDData::PIDData(const PIDData &other) : PIDData(other.p, other.i, other.d) {
-    this->input = other.input;
-    this->output = other.output;
-    this->setPoint = other.setPoint;
-}
-
 void PIDData::reset() {
     this->input = 0;
     this->output = 0;
