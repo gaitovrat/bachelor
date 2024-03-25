@@ -5,7 +5,6 @@
 
 #include <QString>
 #include <SDL2/SDL.h>
-#include <SDL_gamecontroller.h>
 
 #include "Shared/Signal.h"
 

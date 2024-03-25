@@ -13,11 +13,11 @@
 namespace Shared {
 template <typename T> union Vec3 {
     struct {
-        T X, Y, Z;
+        T x, y, z;
     };
-    T Values[3];
+    T values[3];
 
-    Vec3(T x, T y, T z) : X(x), Y(y), Z(z) {}
+    Vec3(T x, T y, T z) : x(x), y(y), z(z) {}
 
     Vec3() : Vec3(0, 0, 0) {}
 };

@@ -6,10 +6,9 @@
 
 namespace Shared {
 struct MotorData {
-    MotorState CarMotorState;
-    Mode RideMode;
-    int LeftSpeed;
-    int RightSpeed;
+    MotorState state;
+    int leftSpeed;
+    int rightSpeed;
 };
 } // namespace Shared
 

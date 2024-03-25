@@ -12,11 +12,12 @@
 
 namespace Shared {
 struct Data {
-    CameraData CarCameraData{};
-    MotorData CarMotorData{};
-    SteerData CarSteerData;
-    SensorData CarSensorData;
-    uint64_t Timestamp{};
+    CameraData cameraData;
+    MotorData motorData;
+    SteerData steerData;
+    SensorData sensorData;
+    Mode mode;
+    uint64_t timestamp;
 };
 } // namespace Shared
 

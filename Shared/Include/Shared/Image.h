@@ -6,8 +6,6 @@
 namespace Shared {
 class Image {
   public:
-    enum Type { Raw, Normalized, Thresholded };
-
     static constexpr uint8_t LINE_LENGTH = 128u;
     static constexpr uint8_t COLOR_BLACK = 0x00;
     static constexpr uint8_t COLOR_WHITE = 0xff;
@@ -15,52 +13,55 @@ class Image {
     static constexpr uint8_t LOW_DIVERSITY = 100;
     static constexpr uint8_t BLACK_COUNT = 10;
 
+    enum Type { Raw, Normalized, Thresholded };
+
     using ImageLine = uint16_t (&)[LINE_LENGTH];
     using CImageLine = const uint16_t (&)[LINE_LENGTH];
 
+  protected:
+    uint16_t thresholdedImage[LINE_LENGTH];
+    uint16_t maxValue;
+    uint16_t minValue;
+    uint16_t threshValue;
+    int16_t diversity;
+
+  public:
     Image();
 
     explicit Image(ImageLine rawImage);
 
-    [[nodiscard]] virtual uint16_t At(uint8_t index, Type type) const;
+    virtual uint16_t at(uint8_t index, Type type) const;
 
-    [[nodiscard]] uint8_t AtThresh(uint8_t index) const;
+    uint8_t atThresh(uint8_t index) const;
 
-    [[nodiscard]] uint16_t Min() const;
+    uint16_t getMin() const;
 
-    [[nodiscard]] uint16_t Max() const;
+    uint16_t getMax() const;
 
-    [[nodiscard]] uint16_t ThreshValue() const;
+    uint16_t getThreshValue() const;
 
-    [[nodiscard]] int16_t Diversity() const;
+    int16_t getDiversity() const;
 
-    [[nodiscard]] bool IsLowDiversity() const;
-
-  protected:
-    void ComputeMinMax(CImageLine img);
-
-    void Cut(ImageLine srcImg) const;
-
-    void Normalize(CImageLine srcImg, ImageLine dstImg) const;
-
-    static uint16_t AverageThreshold(CImageLine srcImg);
-
-    void Threshold(CImageLine srcImg, ImageLine dstImg) const;
-
-    static void SlowMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
-
-    static void SlowMedianBlur(ImageLine srcImg, int pixels);
-
-    static void FastMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
-
-    static void FastMedianBlur(ImageLine srcImg, int pixels);
+    bool isLowDiversity() const;
 
   protected:
-    uint16_t m_thresholdedImage[LINE_LENGTH];
-    uint16_t m_max;
-    uint16_t m_min;
-    uint16_t m_threshValue{};
-    int16_t m_diversity{};
+    void computeMinMax(CImageLine img);
+
+    void cut(ImageLine srcImg) const;
+
+    void normalize(CImageLine srcImg, ImageLine dstImg) const;
+
+    static uint16_t averageThreshold(CImageLine srcImg);
+
+    void threshold(CImageLine srcImg, ImageLine dstImg) const;
+
+    static void slowMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
+
+    static void slowMedianBlur(ImageLine srcImg, int pixels);
+
+    static void fastMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
+
+    static void fastMedianBlur(ImageLine srcImg, int pixels);
 };
 } // namespace Shared
 #endif

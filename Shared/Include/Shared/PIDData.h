@@ -7,17 +7,21 @@
 
 namespace Shared {
 struct PIDData {
-    double P;
-    double I;
-    double D;
+    const double p;
+    const double i;
+    const double d;
 
-    double Input;
-    double Output;
-    double SetPoint;
+    double input;
+    double output;
+    double setPoint;
 
     PIDData(double p, double i, double d);
 
     PIDData();
+
+    virtual ~PIDData() = default;
+
+    void reset();
 };
 } // namespace Shared
 

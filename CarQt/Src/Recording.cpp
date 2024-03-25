@@ -10,9 +10,9 @@
 
 using namespace CarQt;
 
-Recording::Recording() : Start(std::chrono::system_clock::now()) {}
+Recording::Recording() : start(std::chrono::system_clock::now()) {}
 
-void Recording::Save(const QString &path) {
+void Recording::save(const QString &path) {
     Json::Value root;
     Json::StreamWriterBuilder writer;
     std::chrono::time_point<std::chrono::system_clock> end(
@@ -22,7 +22,7 @@ void Recording::Save(const QString &path) {
     std::string filename =
         "recordng-" +
         std::to_string(std::chrono::duration_cast<std::chrono::seconds>(
-                           Start.time_since_epoch())
+                           start.time_since_epoch())
                            .count()) +
         "-" +
         std::to_string(std::chrono::duration_cast<std::chrono::seconds>(
@@ -40,47 +40,38 @@ void Recording::Save(const QString &path) {
 
     for (const Entry &entry : entries) {
         Json::Value jsonEntry, jsonData, jsonAccel, jsonMag, jsonGyro,
-            jsonCamera, jsonMotor, jsonSteer, jsonSteerPID, jsonSensor;
+            jsonCamera, jsonMotor, jsonSteer, jsonSensor;
 
-        lines.push_back(entry.data.CarCameraData.Line);
+        lines.push_back(entry.data.cameraData.line);
 
-        jsonCamera["regionsCount"] = entry.data.CarCameraData.RegionsCount;
+        jsonCamera["regionsCount"] = entry.data.cameraData.regionsCount;
         jsonCamera["regionsListSize"] =
-            std::to_string(entry.data.CarCameraData.RegionsListSize);
-        jsonCamera["unchangedLeft"] = entry.data.CarCameraData.UnchangedLeft;
-        jsonCamera["unchangedRight"] = entry.data.CarCameraData.UnchangedRight;
-        jsonCamera["hasLeft"] = entry.data.CarCameraData.HasLeft;
-        jsonCamera["hasRight"] = entry.data.CarCameraData.HasRight;
-        jsonCamera["leftDistance"] = entry.data.CarCameraData.LeftDistance;
-        jsonCamera["rightDistance"] = entry.data.CarCameraData.RightDistance;
+            std::to_string(entry.data.cameraData.regionsListSize);
+        jsonCamera["unchangedLeft"] = entry.data.cameraData.unchangedLeft;
+        jsonCamera["unchangedRight"] = entry.data.cameraData.unchangedRight;
+        jsonCamera["hasLeft"] = entry.data.cameraData.hasLeft;
+        jsonCamera["hasRight"] = entry.data.cameraData.hasRight;
+        jsonCamera["leftDistance"] = entry.data.cameraData.leftDistance;
+        jsonCamera["rightDistance"] = entry.data.cameraData.rightDistance;
 
-        jsonMotor["leftSpeed"] = entry.data.CarMotorData.LeftSpeed;
-        jsonMotor["rightSpeed"] = entry.data.CarMotorData.RightSpeed;
-        jsonMotor["mode"] = entry.data.CarMotorData.RideMode;
-        jsonMotor["state"] = entry.data.CarMotorData.CarMotorState;
+        jsonMotor["leftSpeed"] = entry.data.motorData.leftSpeed;
+        jsonMotor["rightSpeed"] = entry.data.motorData.rightSpeed;
+        jsonMotor["state"] = entry.data.motorData.state;
 
-        jsonSteer["angle"] = entry.data.CarSteerData.Angle;
-        jsonSteer["servoPosition"] = entry.data.CarSteerData.ServoPosition;
-        jsonSteerPID["i"] = entry.data.CarSteerData.SteerPIDData.I;
-        jsonSteerPID["p"] = entry.data.CarSteerData.SteerPIDData.P;
-        jsonSteerPID["d"] = entry.data.CarSteerData.SteerPIDData.D;
-        jsonSteerPID["input"] = entry.data.CarSteerData.SteerPIDData.Input;
-        jsonSteerPID["output"] = entry.data.CarSteerData.SteerPIDData.Output;
-        jsonSteerPID["setPoint"] =
-            entry.data.CarSteerData.SteerPIDData.SetPoint;
-        jsonSteer["pid"] = jsonSteerPID;
+        jsonSteer["angle"] = entry.data.steerData.angle;
+        jsonSteer["servoPosition"] = entry.data.steerData.servoPosition;
 
-        jsonAccel["x"] = entry.data.CarSensorData.accel.X;
-        jsonAccel["y"] = entry.data.CarSensorData.accel.Y;
-        jsonAccel["z"] = entry.data.CarSensorData.accel.Z;
+        jsonAccel["x"] = entry.data.sensorData.accel.x;
+        jsonAccel["y"] = entry.data.sensorData.accel.y;
+        jsonAccel["z"] = entry.data.sensorData.accel.z;
 
-        jsonMag["x"] = entry.data.CarSensorData.mag.X;
-        jsonMag["y"] = entry.data.CarSensorData.mag.Y;
-        jsonMag["z"] = entry.data.CarSensorData.mag.Z;
+        jsonMag["x"] = entry.data.sensorData.mag.x;
+        jsonMag["y"] = entry.data.sensorData.mag.y;
+        jsonMag["z"] = entry.data.sensorData.mag.z;
 
-        jsonGyro["x"] = entry.data.CarSensorData.gyro.X;
-        jsonGyro["y"] = entry.data.CarSensorData.gyro.Y;
-        jsonGyro["z"] = entry.data.CarSensorData.gyro.Z;
+        jsonGyro["x"] = entry.data.sensorData.gyro.x;
+        jsonGyro["y"] = entry.data.sensorData.gyro.y;
+        jsonGyro["z"] = entry.data.sensorData.gyro.z;
 
         jsonSensor["accel"] = jsonAccel;
         jsonSensor["mag"] = jsonMag;
@@ -90,11 +81,11 @@ void Recording::Save(const QString &path) {
         jsonData["motor"] = jsonMotor;
         jsonData["steer"] = jsonSteer;
         jsonData["sensor"] = jsonSensor;
-        jsonData["timestamp"] = entry.data.Timestamp;
+        jsonData["timestamp"] = entry.data.timestamp;
 
         jsonEntry["data"] = jsonData;
         jsonEntry["time"] = std::chrono::duration_cast<std::chrono::seconds>(
-                                entry.Time.time_since_epoch())
+                                entry.time.time_since_epoch())
                                 .count();
 
         root.append(jsonEntry);
@@ -113,9 +104,9 @@ void Recording::Save(const QString &path) {
     cv::imwrite(imageFilepath, image);
 }
 
-void Recording::Add(const Shared::Data &data) {
+void Recording::add(const Shared::Data &data) {
     Entry entry;
-    entry.Time = std::chrono::system_clock::now();
+    entry.time = std::chrono::system_clock::now();
     entry.data = data;
 
     entries.push_back(entry);

@@ -5,26 +5,26 @@
 
 using namespace CarQt;
 
-Image::Image() : RawImage{0}, NormalizedImage{0}, ThresholdedImage{0} {}
+Image::Image() : rawImage{0}, normalizedImage{0}, thresholdedImage{0} {}
 
-Image::Image(CImageLine rawImage) : Image() { SetRawImage(rawImage); }
+Image::Image(CImageLine rawImage) : Image() { setRawImage(rawImage); }
 
 Image::Image(ImageLine rawImage) : Image(const_cast<CImageLine>(rawImage)) {}
 
-void Image::SetRawImage(const uint16_t (&rawImage)[128]) {
-    std::memcpy(RawImage, rawImage, sizeof(rawImage));
-    Process();
+void Image::setRawImage(const uint16_t (&rawImage)[128]) {
+    std::memcpy(this->rawImage, rawImage, sizeof(rawImage));
+    process();
 }
 
-void Image::Process() {
-    ComputeMinMax(RawImage);
-    Cut(RawImage);
-    Normalize(RawImage, NormalizedImage);
-    m_threshValue = AverageThreshold(NormalizedImage);
-    Threshold(NormalizedImage, ThresholdedImage);
+void Image::process() {
+    computeMinMax(rawImage);
+    cut(rawImage);
+    normalize(rawImage, normalizedImage);
+    threshValue = averageThreshold(normalizedImage);
+    threshold(normalizedImage, thresholdedImage);
 }
 
-uint16_t Image::At(const uint8_t index, Type type) const {
+uint16_t Image::at(const uint8_t index, Type type) const {
     if (index >= LINE_LENGTH) {
         std::cerr << "Index out of bounds\n";
         return 0;
@@ -32,11 +32,11 @@ uint16_t Image::At(const uint8_t index, Type type) const {
 
     switch (type) {
     case Raw:
-        return RawImage[index];
+        return rawImage[index];
     case Normalized:
-        return NormalizedImage[index];
+        return normalizedImage[index];
     case Thresholded:
-        return ThresholdedImage[index];
+        return thresholdedImage[index];
     default:
         std::cerr << "Unknown image type\n";
         return 0;

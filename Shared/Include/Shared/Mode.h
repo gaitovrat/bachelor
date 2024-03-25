@@ -2,7 +2,7 @@
 #define MODES_H
 
 namespace Shared {
-enum Mode { RideDefault, RideManual };
+enum Mode { DEFAULT, MANUAL };
 }
 
 #endif // MODES_H

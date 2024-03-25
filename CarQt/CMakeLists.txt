@@ -25,12 +25,8 @@ add_executable(CarQt
     Src/Window/SettingsWindow.h
     Src/Window/SettingsWindow.cpp
     Src/Window/SettingsWindow.ui
-    Src/Client/BaseClient.cpp
-    Src/Client/BaseClient.h
-    Src/Client/UdpClient.h
-    Src/Client/UdpClient.cpp
-    Src/Client/SerialClient.cpp
-    Src/Client/SerialClient.h
+    Src/UdpClient.h
+    Src/UdpClient.cpp
     Src/Utils.h
     Src/Utils.cpp
     Resources/resources.qrc
