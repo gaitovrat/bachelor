@@ -9,17 +9,17 @@
 
 namespace CarQt {
 struct Image : public Shared::Image {
-    uint16_t rawImage[LINE_LENGTH];
-    uint16_t normalizedImage[LINE_LENGTH];
-    uint16_t thresholdedImage[LINE_LENGTH];
+    ImageLine rawImage;
+    ImageLine normalizedImage;
+    ImageLine thresholdedImage;
 
     Image();
 
-    explicit Image(CImageLine rawImage);
+    explicit Image(RefCImageLine rawImage);
 
-    explicit Image(ImageLine rawImage);
+    explicit Image(RefImageLine rawImage);
 
-    void setRawImage(CImageLine rawImage);
+    void setRawImage(RefCImageLine rawImage);
 
     void process();
 

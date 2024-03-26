@@ -21,7 +21,9 @@ using namespace MCU;
 Core::Core()
     : settings(), motorState(Shared::MotorState::Stop),
       tracer(TRACER_HISTORY_SIZE), pidData(settings.pidData),
-      pid(pidData, P_ON_E, DIRECT), ir(tfc) {}
+      pid(pidData, P_ON_E, DIRECT), ir(tfc) {
+    this->pid.SetMode(AUTOMATIC);
+}
 
 void Core::init() {
     tfc.InitAll();
@@ -54,17 +56,17 @@ void Core::calibrate() {
 
         // Workaround for diagnostic purpose only! Do not use it for control!
         // Temporarily enable full servo control
-        tfc_setting_s curset = tfc.m_setting;
-        tfc.m_setting.servo_center[0] = TFC_SERVO_DEFAULT_CENTER + pa;
-        tfc.m_setting.servo_max_lr[0] = TFC_ANDATA_MINMAX;
-        tfc.m_setting.servo_center[1] = TFC_SERVO_DEFAULT_CENTER + pb;
-        tfc.m_setting.servo_max_lr[1] = TFC_ANDATA_MINMAX;
+        tfc_setting_s curset = tfc.setting;
+        tfc.setting.servo_center[0] = TFC_SERVO_DEFAULT_CENTER + pa;
+        tfc.setting.servo_max_lr[0] = TFC_ANDATA_MINMAX;
+        tfc.setting.servo_center[1] = TFC_SERVO_DEFAULT_CENTER + pb;
+        tfc.setting.servo_max_lr[1] = TFC_ANDATA_MINMAX;
 
         tfc.setServo_i(0, 0);
         tfc.setServo_i(1, 0);
 
         // restore safe control
-        tfc.m_setting = curset;
+        tfc.setting = curset;
     } break;
     case 0b010: {
         tfc.MotorPWMOnOff(true);
@@ -77,11 +79,11 @@ void Core::calibrate() {
         PRINTF("Pot1: %5d Pot2: %5d FB-A: %6.2f FB-B: %6.2f\r\n", pa, pb,
                tfc.ReadFB_f(0), tfc.ReadFB_f(1));
 
-        tfc_setting_s curset = tfc.m_setting;
-        tfc.m_setting.pwm_max = HW_TFC_PWM_MAX;
+        tfc_setting_s curset = tfc.setting;
+        tfc.setting.pwm_max = HW_TFC_PWM_MAX;
         tfc.setMotorPWM_i(pa, pb);
 
-        tfc.m_setting = curset;
+        tfc.setting = curset;
     } break;
     case 0b001: {
         tfc.setServo_i(0, 0);
@@ -121,114 +123,67 @@ void Core::calibrate() {
 
 void Core::drive() {
     static uint32_t oldTick = 0;
+    int32_t servoPosition = 0, leftSpeed = 0, rightSpeed = 0;
 
-    enet.check();
+    this->enet.check();
 
-    if (tfc.getPushButton(0) == 1) {
-        if (motorState == Shared::MotorState::Start)
-            motorState = Shared::MotorState::Stop;
+    if (this->tfc.getPushButton(0) == 1) {
+        if (this->motorState == Shared::MotorState::Start)
+            this->motorState = Shared::MotorState::Stop;
         else
-            motorState = Shared::MotorState::Start;
+            this->motorState = Shared::MotorState::Start;
     }
 
     if (HW_TFC_TimeStamp != oldTick) {
-        if (tfc.getDIPSwitch() & 0x01)
-            calibrate();
-        else
-            update();
+        if (this->tfc.getDIPSwitch() & 0x01)
+            this->calibrate();
+        else {
+            this->update(servoPosition, leftSpeed, rightSpeed);
+            this->send();
+        }
+
+        this->tfc.setServo_i(0, servoPosition);
+        this->tfc.setMotorPWM_i(leftSpeed, rightSpeed);
         oldTick = HW_TFC_TimeStamp;
     }
 }
 
-void Core::update() {
-    if (motorState == Shared::MotorState::Start) {
-        tfc.setLEDs(0b1001);
-    } else {
-        tfc.setLEDs(0b0000);
-    }
+void Core::update(int32_t &servoPosition, int32_t &leftSpeed,
+                  int32_t &rightSpeed) {
+    Shared::Image::ImageLine line;
+    float ratio = 0.f, innerSpeed = 0.f, outerSpeed = 0.f, turningAngle = 0.f;
 
-    uint16_t line[Shared::Image::LINE_LENGTH];
-    tfc.getImage(0, line, Shared::Image::LINE_LENGTH);
-    memcpy(data.cameraData.line, line, Shared::Image::LINE_LENGTH);
-    Shared::Image image(line);
-    tracer.addImage(image);
-    data.cameraData.regionsCount =
-        tracer.regions(image, 0, Shared::Image::LINE_LENGTH - 1, false).size();
+    if (this->motorState == Shared::MotorState::Stop) {
+        this->tfc.setLEDs(0);
+        this->reset();
 
-    auto &distances = tracer.distancesPair();
-    data.cameraData.leftDistance = distances.first;
-    data.cameraData.rightDistance = distances.second;
-
-    const int leftDistance = data.cameraData.leftDistance;
-    const int rightDistance =
-        Shared::Image::LINE_LENGTH - data.cameraData.rightDistance;
-
-    const float leftRatio =
-        static_cast<float>(leftDistance) / static_cast<float>(rightDistance);
-    const float rightRatio =
-        static_cast<float>(rightDistance) / static_cast<float>(leftDistance);
-
-    float ratioDiff = rightRatio - leftRatio;
-
-    if (motorState != Shared::MotorState::Stop) {
-        pidData.input = ratioDiff;
-        pid.Compute();
-        steerSetting = static_cast<float>(pidData.output);
-    } else {
-        steerSetting = 0.f;
-    }
-
-    switch (motorState) {
-    case Shared::MotorState::Start: {
-        speed = 100;
-        tfc.setPWMMax(settings.maxSpeed);
-
-        pid.SetMode(AUTOMATIC);
-        servoPosition = static_cast<int16_t>(steerSetting);
-
-        break;
-    }
-    case Shared::MotorState::Stop:
-    default: {
-        speed = 0;
-        pid.SetMode(MANUAL);
         servoPosition = 0;
-        tfc.setMotorPWM_i(0, 0);
-        reset();
+        leftSpeed = 0;
+        rightSpeed = 0;
+
         return;
     }
-    }
 
-    motorState = ir.CheckState(motorState);
-    setRide();
-}
+    this->tfc.setLEDs(0b1001);
+    this->tfc.getImage(0, line, Shared::Image::LINE_LENGTH);
+    this->calculateDistanceRatio(line, ratio);
 
-void Core::reset() {
-    tracer.reset();
+    pidData.input = ratio;
+    pid.Compute();
+    servoPosition = static_cast<int32_t>(pidData.output);
 
-    pidData.reset();
-    pid = PID(pidData, P_ON_E, DIRECT);
-}
+    if (servoPosition > TFC_SERVO_MINMAX)
+        servoPosition = TFC_SERVO_MINMAX;
+    if (servoPosition < -TFC_SERVO_MINMAX)
+        servoPosition = -TFC_SERVO_MINMAX;
 
-void Core::setRide() {
-    if (servoPosition > 1000)
-        servoPosition = 1000;
-    if (servoPosition < -1000)
-        servoPosition = -1000;
-
-    float innerSpeed = 0.f, outerSpeed = 0.f;
-    float baseSpeed = settings.maxSpeed;
-    int leftSpeed = speed, rightSpeed = speed;
-    float turningAngle = servoPosition * 5.85f / 200; // Convert servo to angle
-
-    turningAngle *= PI;
-    turningAngle /= 180.f;
-
+    turningAngle =
+        (servoPosition * 5.85f / 200) * PI / 180.f; // Convert servo to angle
     innerSpeed =
-        baseSpeed *
+        settings.speed *
         (1.f - settings.diffCoef * (1.50f * tanf(turningAngle)) / 2.f * 1.85f);
     outerSpeed =
-        baseSpeed *
+        settings.speed *
         (1.f + settings.diffCoef * (1.50f * tanf(turningAngle)) / 2.f * 1.85f);
 
     if (!(tracer.getUnchangedRight() && tracer.getUnchangedLeft())) {
@@ -245,26 +200,18 @@ void Core::setRide() {
         servoPosition *= 1.5f;
     }
 
-    tfc.setServo_i(0, servoPosition);
-    tfc.setMotorPWM_i(-leftSpeed, -rightSpeed);
-
-    data.steerData.servoPosition = servoPosition;
-    data.steerData.angle = turningAngle;
-    data.motorData.state = motorState;
-    data.motorData.leftSpeed = leftSpeed;
-    data.motorData.rightSpeed = rightSpeed;
-    data.mode = settings.mode;
-
-    sendData();
+    this->motorState = ir.CheckState(this->motorState);
 }
 
-void Core::sendData() {
-    // Line tracer
-    data.cameraData.regionsListSize = tracer.size();
-    data.cameraData.unchangedLeft = tracer.getUnchangedLeft();
-    data.cameraData.unchangedRight = tracer.getUnchangedRight();
-    data.cameraData.hasLeft = tracer.getHasLeft();
-    data.cameraData.hasRight = tracer.getHasRight();
+void Core::reset() {
+    tracer.reset();
+
+    pidData.reset();
+    pid = PID(pidData, P_ON_E, DIRECT);
+}
+
+void Core::send() {
+    Shared::Data data;
     data.timestamp = HW_TFC_TimeStamp;
 
     // Sensors
@@ -281,4 +228,21 @@ void Core::sendData() {
 
     uint8_t *pData = reinterpret_cast<uint8_t *>(&data);
     enet.send(pData, sizeof(data));
+}
+
+void Core::calculateDistanceRatio(Shared::Image::RefImageLine image,
+                                  float &ratio) {
+    this->tracer.addImage(image);
+
+    std::pair<uint8_t, uint8_t> distances = tracer.distancesPair();
+
+    const uint8_t leftDistance = distances.first;
+    const uint8_t rightDistance = Shared::Image::LINE_LENGTH - distances.second;
+
+    const float leftRatio =
+        static_cast<float>(leftDistance) / static_cast<float>(rightDistance);
+    const float rightRatio =
+        static_cast<float>(rightDistance) / static_cast<float>(leftDistance);
+
+    ratio = rightRatio - leftRatio;
 }

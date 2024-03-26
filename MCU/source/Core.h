@@ -19,22 +19,8 @@ class Core {
     Shared::Settings settings;
     Shared::MotorState motorState;
     LineTracer tracer;
-
-    // Motor
     Shared::PIDData pidData;
     PID pid;
-    int speed;
-
-    // Servo
-    float steerSetting;
-    int16_t prevServoPosition;
-    int16_t servoPosition;
-    uint8_t left;
-    uint8_t right;
-
-    Shared::Data data;
-
-    // Sensors
     FXOS8700CQ fxos;
     FXAS21002 fxas;
     IRSensor ir;
@@ -51,13 +37,19 @@ class Core {
     void drive();
 
   private:
-    void update();
+    void update(int32_t &servoPosition, int32_t &leftSpeed,
+                int32_t &rightSpeed);
 
     void reset();
 
     void setRide();
 
-    void sendData();
+    void send();
+
+    void calculateDistanceRatio(Shared::Image::RefImageLine image,
+                                float &ratio);
+
+    uint32_t calculateServoPosition(float ratio);
 };
 } // namespace MCU
 

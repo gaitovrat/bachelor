@@ -16,13 +16,13 @@ void TFC::InitAll() {
 
     HW_TFC_Ticker_OnOff(1);
 
-    m_setting.pwm_max = TFC_PWM_DEFAULT_MAX;
-    m_setting.servo_center[0] = TFC_SERVO_DEFAULT_CENTER;
-    m_setting.servo_center[1] = TFC_SERVO_DEFAULT_CENTER;
-    m_setting.servo_max_lr[0] = TFC_SERVO_DEFAULT_MAX_LR;
-    m_setting.servo_max_lr[1] = TFC_SERVO_DEFAULT_MAX_LR;
+    setting.pwm_max = TFC_PWM_DEFAULT_MAX;
+    setting.servo_center[0] = TFC_SERVO_DEFAULT_CENTER;
+    setting.servo_center[1] = TFC_SERVO_DEFAULT_CENTER;
+    setting.servo_max_lr[0] = TFC_SERVO_DEFAULT_MAX_LR;
+    setting.servo_max_lr[1] = TFC_SERVO_DEFAULT_MAX_LR;
 
-    bzero(&m_control, sizeof(m_control));
+    bzero(&control, sizeof(control));
 }
 
 /****************************************************************************
@@ -32,15 +32,15 @@ void TFC::InitAll() {
 
 void TFC::setLED(uint32_t led, uint32_t val) {
     if (val)
-        m_control.leds |= 1 << led;
+        control.leds |= 1 << led;
     else
-        m_control.leds &= ~(1 << led);
+        control.leds &= ~(1 << led);
 
     HW_TFC_OUTPIN_LED(led, val);
 }
 
 void TFC::setLEDs(uint32_t leds) {
-    m_control.leds = leds;
+    control.leds = leds;
     HW_TFC_OUTPIN_LEDs(leds);
 }
 
@@ -126,36 +126,36 @@ void TFC::getImage(uint32_t channel, uint16_t *img, uint32_t length) {
 
 void TFC::setServoCalibration(uint32_t channel, uint32_t center,
                               uint32_t max_lr) {
-    m_setting.servo_center[channel != 0] =
+    setting.servo_center[channel != 0] =
         MIN(MAX(center, TFC_SERVO_DEFAULT_CENTER - TFC_SERVO_MAX_LR),
             TFC_SERVO_DEFAULT_CENTER + TFC_SERVO_MAX_LR);
-    m_setting.servo_max_lr[channel != 0] = MIN(max_lr, TFC_SERVO_MAX_LR);
+    setting.servo_max_lr[channel != 0] = MIN(max_lr, TFC_SERVO_MAX_LR);
 }
 
 // set maximal PWM duty cycle
 void TFC::setPWMMax(uint32_t max) {
-    m_setting.pwm_max = MIN(max, TFC_PWM_MINMAX);
+    setting.pwm_max = MIN(max, TFC_PWM_MINMAX);
 }
 
 void TFC::ServoOnOff(uint32_t onoff) {
-    m_control.servo_onoff = onoff;
+    control.servo_onoff = onoff;
     HW_TFC_SERVO_OnOff(onoff);
 }
 
 void TFC::setServo_i(uint32_t channel, int32_t position) {
     channel = channel != 0;
-    int32_t servo_center = m_setting.servo_center[channel];
-    int32_t servo_max_lr = m_setting.servo_max_lr[channel];
+    int32_t servo_center = setting.servo_center[channel];
+    int32_t servo_max_lr = setting.servo_max_lr[channel];
     position = MIN(MAX(position, -TFC_SERVO_MINMAX), TFC_SERVO_MINMAX);
 
     uint32_t usec = servo_center + position * servo_max_lr / TFC_SERVO_MINMAX;
     HW_TFC_SERVO_Set(channel, usec);
 
-    m_control.servo_pos[channel] = position;
+    control.servo_pos[channel] = position;
 }
 
 int32_t TFC::getServo_i(uint32_t channel) {
-    return m_control.servo_pos[channel != 0];
+    return control.servo_pos[channel != 0];
 }
 
 void TFC::setServo_f(uint32_t channel, float position) {
@@ -165,21 +165,21 @@ void TFC::setServo_f(uint32_t channel, float position) {
 void TFC::MotorPWMOnOff(uint32_t onoff) {
     HW_TFC_MOTOR_OnOff(onoff);
 
-    m_control.pwm_onoff = onoff;
+    control.pwm_onoff = onoff;
 }
 
 void TFC::setMotorPWM_i(int32_t pwm_a, int32_t pwm_b) {
-    pwm_a = MIN(MAX(pwm_a, -m_setting.pwm_max), m_setting.pwm_max);
-    pwm_b = MIN(MAX(pwm_b, -m_setting.pwm_max), m_setting.pwm_max);
+    pwm_a = MIN(MAX(pwm_a, -setting.pwm_max), setting.pwm_max);
+    pwm_b = MIN(MAX(pwm_b, -setting.pwm_max), setting.pwm_max);
 
     HW_TFC_MOTOR_SetPWM(pwm_a, pwm_b);
 
-    m_control.pwm[0] = pwm_a;
-    m_control.pwm[1] = pwm_b;
+    control.pwm[0] = pwm_a;
+    control.pwm[1] = pwm_b;
 }
 
 int32_t TFC::getMotorPWM_i(uint32_t channel) {
-    return m_control.pwm[channel != 0];
+    return control.pwm[channel != 0];
 }
 
 void TFC::setMotorPWM_f(float a_pwm, float b_pwm) {

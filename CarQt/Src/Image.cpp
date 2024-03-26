@@ -7,11 +7,12 @@ using namespace CarQt;
 
 Image::Image() : rawImage{0}, normalizedImage{0}, thresholdedImage{0} {}
 
-Image::Image(CImageLine rawImage) : Image() { setRawImage(rawImage); }
+Image::Image(RefCImageLine rawImage) : Image() { setRawImage(rawImage); }
 
-Image::Image(ImageLine rawImage) : Image(const_cast<CImageLine>(rawImage)) {}
+Image::Image(RefImageLine rawImage)
+    : Image(const_cast<RefCImageLine>(rawImage)) {}
 
-void Image::setRawImage(const uint16_t (&rawImage)[128]) {
+void Image::setRawImage(RefCImageLine rawImage) {
     std::memcpy(this->rawImage, rawImage, sizeof(rawImage));
     process();
 }
