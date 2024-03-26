@@ -15,8 +15,9 @@ class Image {
 
     enum Type { Raw, Normalized, Thresholded };
 
-    using ImageLine = uint16_t (&)[LINE_LENGTH];
-    using CImageLine = const uint16_t (&)[LINE_LENGTH];
+    using RefImageLine = uint16_t (&)[LINE_LENGTH];
+    using RefCImageLine = const uint16_t (&)[LINE_LENGTH];
+    using ImageLine = uint16_t[LINE_LENGTH];
 
   protected:
     uint16_t thresholdedImage[LINE_LENGTH];
@@ -28,7 +29,7 @@ class Image {
   public:
     Image();
 
-    explicit Image(ImageLine rawImage);
+    Image(RefImageLine rawImage);
 
     virtual uint16_t at(uint8_t index, Type type) const;
 
@@ -45,23 +46,25 @@ class Image {
     bool isLowDiversity() const;
 
   protected:
-    void computeMinMax(CImageLine img);
+    void computeMinMax(RefCImageLine img);
 
-    void cut(ImageLine srcImg) const;
+    void cut(RefImageLine srcImg) const;
 
-    void normalize(CImageLine srcImg, ImageLine dstImg) const;
+    void normalize(RefCImageLine srcImg, RefImageLine dstImg) const;
 
-    static uint16_t averageThreshold(CImageLine srcImg);
+    static uint16_t averageThreshold(RefCImageLine srcImg);
 
-    void threshold(CImageLine srcImg, ImageLine dstImg) const;
+    void threshold(RefCImageLine srcImg, RefImageLine dstImg) const;
 
-    static void slowMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
+    static void slowMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
+                               int pixels);
 
-    static void slowMedianBlur(ImageLine srcImg, int pixels);
+    static void slowMedianBlur(RefImageLine srcImg, int pixels);
 
-    static void fastMedianBlur(CImageLine srcImg, ImageLine dstImg, int pixels);
+    static void fastMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
+                               int pixels);
 
-    static void fastMedianBlur(ImageLine srcImg, int pixels);
+    static void fastMedianBlur(RefImageLine srcImg, int pixels);
 };
 } // namespace Shared
 #endif

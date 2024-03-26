@@ -15,17 +15,20 @@ struct Settings {
     static constexpr float DEFAULT_ERROR = 160.6f;
     static constexpr float DEFAULT_DERIVATIVE = 8.3f;
     static constexpr float DEFAULT_INTEGRAL = 0.5f;
-    static constexpr uint32_t DEFAULT_MAX_SPEED = 1000;
+    static constexpr uint16_t DEFAULT_MAX_SPEED = 1000;
+    static constexpr uint16_t DEFAULT_SPEED = 100;
     static constexpr float DEFAULT_DIFF_COEF = 1.28f;
 
     const PIDData pidData;
     const uint16_t maxSpeed;
+    const uint16_t speed;
     const Mode mode;
     const float diffCoef;
 
     Settings(const PIDData &pidData = PIDData(DEFAULT_ERROR, DEFAULT_INTEGRAL,
                                               DEFAULT_DERIVATIVE),
-             uint16_t maxSpeed = DEFAULT_MAX_SPEED, Mode mode = Mode::DEFAULT,
+             uint16_t maxSpeed = DEFAULT_MAX_SPEED,
+             uint16_t speed = DEFAULT_SPEED, Mode mode = Mode::DEFAULT,
              float diffCoef = DEFAULT_DIFF_COEF);
 };
 } // namespace Shared

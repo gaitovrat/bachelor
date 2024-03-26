@@ -501,11 +501,11 @@ class TFC {
 
     /** The instance variables The calibration of the servos and the set motor
      * limit. */
-    tfc_setting_s m_setting;
+    tfc_setting_s setting;
 
     /** The instance variable used to store current values of LEDs, servos and
      * motors. */
-    tfc_control_s m_control;
+    tfc_control_s control;
 
 #ifdef __TFC_EMBEDED__
 

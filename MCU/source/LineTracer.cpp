@@ -305,7 +305,6 @@ std::vector<Shared::Region> LineTracer::regions(const Shared::Image &image,
 }
 
 std::pair<uint8_t, uint8_t> &LineTracer::distancesPair() {
-    std::pair<uint8_t, uint8_t> currentDistances = {0, 0};
     std::pair<uint16_t, uint16_t> sums = {0, 0};
     std::vector<uint8_t> leftDistances;
     std::vector<uint8_t> rightDistances;
@@ -333,12 +332,6 @@ std::pair<uint8_t, uint8_t> &LineTracer::distancesPair() {
     unchangedRight =
         ((imageRegionList.back().right >= currentAverage.second - TOLERANCE) &&
          (imageRegionList.back().right <= currentAverage.second + TOLERANCE));
-
-    currentDistances.first = imageRegionList.back().left;
-    currentDistances.second = imageRegionList.back().right;
-
-    PRINTF("Current distances: first %d, second %d\r\n", currentDistances.first,
-           currentDistances.second);
 
     return currentAverage;
 }
