@@ -31,7 +31,9 @@ void Core::init() {
     tfc.setLEDs(0b1111);
     enet.init(sizeof(Shared::Data), 5000);
     fxos.init();
+#if 0
     fxas.init();
+#endif
 
     tfc.MotorPWMOnOff(true);
     tfc.ServoOnOff(true);
@@ -219,10 +221,12 @@ void Core::send() {
     data.timestamp = HW_TFC_TimeStamp;
 
     // Sensors
+#if 0
     std::optional<Shared::Vec3<uint16_t>> fxas_data = fxas.read();
     if (fxas_data.has_value()) {
         data.sensorData.gyro = *fxas_data;
     }
+#endif
     std::optional<FXOS8700CQ::Data> fxos_data = fxos.read();
 
     if (fxos_data.has_value()) {

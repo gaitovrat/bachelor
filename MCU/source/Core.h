@@ -4,7 +4,9 @@
 #include "Enet.h"
 #include "LineTracer.h"
 #include "PID.h"
+#if 0
 #include "Sensor/FXAS21002.h"
+#endif
 #include "Sensor/FXOS8700CQ.h"
 #include "Sensor/IRSensor.h"
 #include "Shared/Data.h"
@@ -22,7 +24,9 @@ class Core {
     Shared::PIDData pidData;
     PID pid;
     FXOS8700CQ fxos;
+#if 0
     FXAS21002 fxas;
+#endif
     IRSensor ir;
 
   public:

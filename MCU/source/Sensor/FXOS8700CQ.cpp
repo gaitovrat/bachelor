@@ -9,6 +9,9 @@
 
 #include <pin_mux.h>
 
+#include "fsl_debug_console.h"
+#include "fsl_port.h"
+
 static constexpr uint8_t CTRL_REG_1 = 0x2AU;
 static constexpr uint8_t CTRL_REG_2 = 0x2BU;
 static constexpr uint8_t M_CTRL_REG_1 = 0x5BU;
@@ -20,16 +23,37 @@ static constexpr uint8_t F_SETUP = 0x09;
 
 using namespace MCU;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+void PORTC_IRQHandler(void) {
+    PRINTF("PORTC\r\n");
+
+    PORT_ClearPinsInterruptFlags(PORTC, PORT_GetPinsInterruptFlags(PORTC));
+}
+#ifdef __cplusplus
+}
+#endif
+
 FXOS8700CQ::FXOS8700CQ(FXOS8700CQ::Range range)
     : BaseSensor(I2C0), address(0x1DU), range(range) {}
 
 status_t FXOS8700CQ::init() {
     status_t status = 0;
-    uint8_t value = 0;
-    uint8_t active = 0x01U;
 
     BOARD_InitACCEL_I2CPins();
-    BaseSensor::init();
+    status = BaseSensor::init();
+
+    PORT_ClearPinsInterruptFlags(PORTC, PORT_GetPinsInterruptFlags(PORTC));
+    NVIC_EnableIRQ(PORTC_IRQn);
+
+    return status;
+}
+
+status_t FXOS8700CQ::setupRegisters() {
+    status_t status = 0;
+    uint8_t value = 0;
+    uint8_t active = 0x01U;
 
     // Set standby mode
     status = readRegister(CTRL_REG_1, &value, sizeof(value));
@@ -128,3 +152,11 @@ std::optional<FXOS8700CQ::Data> FXOS8700CQ::read() const {
 }
 
 uint8_t FXOS8700CQ::deviceAddress() const { return this->address; }
+
+uint8_t FXOS8700CQ::getDataRegister() const { return STATUS + 1; }
+
+uint8_t *FXOS8700CQ::getData() {
+    return reinterpret_cast<uint8_t *>(&this->data);
+}
+
+uint32_t FXOS8700CQ::getDataSize() const { return sizeof(FXOS8700CQ::Data); }

@@ -27,6 +27,7 @@ class FXOS8700CQ : public BaseSensor {
   private:
     uint8_t address;
     Range range;
+    Data data;
 
   public:
     FXOS8700CQ(FXOS8700CQ::Range range = Range::G_4);
@@ -38,6 +39,14 @@ class FXOS8700CQ : public BaseSensor {
     uint8_t deviceAddress() const override;
 
     std::optional<FXOS8700CQ::Data> read() const;
+
+    uint8_t getDataRegister() const override;
+
+    uint8_t *getData() override;
+
+    uint32_t getDataSize() const override;
+
+    status_t setupRegisters() override;
 };
 } // namespace MCU
 
