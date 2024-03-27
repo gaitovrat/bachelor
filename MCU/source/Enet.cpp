@@ -16,6 +16,8 @@
 #include "fsl_phyksz8081.h"
 #include "pin_mux.h"
 
+#include "Shared/Network.h"
+
 static mdio_handle_t MDIO_HANDLE = {.ops = &enet_ops};
 static phy_handle_t PHY_HANDLE = {.phyAddr = BOARD_ENET0_PHY_ADDRESS,
                                   .mdioHandle = &MDIO_HANDLE,
@@ -23,11 +25,6 @@ static phy_handle_t PHY_HANDLE = {.phyAddr = BOARD_ENET0_PHY_ADDRESS,
 static ethernetif_config_t ETHERNETIF_CONFIG = {
     .phyHandle = &PHY_HANDLE,
     .macAddress = {0x02, 0x12, 0x13, 0x10, 0x15, 0x11}};
-
-static constexpr u8_t MCU_IP[4] = {192, 168, 99, 101};
-static constexpr u8_t NETMASK[4] = {255, 255, 255, 0};
-static constexpr u8_t GATEWAY[4] = {192, 168, 99, 100};
-static constexpr u8_t PC_IP[4] = {192, 168, 99, 255};
 
 using namespace MCU;
 
@@ -98,6 +95,7 @@ void Enet::init(const size_t bufferSize, const uint16_t port) {
     this->pcb = udp_new();
     udp_bind(this->pcb, &this->mcuIp, port);
     udp_connect(this->pcb, &this->pcIp, port);
+    udp_recv(this->pcb, Enet::recv, this);
 
     this->initialized = true;
 }
@@ -106,7 +104,6 @@ void Enet::send(const void *pData, const uint32_t len) {
     if (this->initialized == false)
         return;
 
-    PRINTF("Sent: %d\r\n", len);
     bzero(data[dataIndex], BUFFER_SIZE);
 
     memcpy(this->data[this->dataIndex], pData, std::min(this->dataLen, len));
@@ -123,4 +120,13 @@ bool Enet::check() {
     sys_check_timeouts(); // Handle all system timeouts for all core protocols
 
     return true;
+}
+
+void Enet::recv(void *arg, struct udp_pcb *pcb, struct pbuf *p,
+                const ip_addr_t *addr, u16_t port) {
+    char *msg = reinterpret_cast<char *>(p->payload);
+    uint16_t len = p->len;
+    if (msg[len] != 0)
+        msg[len] = 0;
+    PRINTF("%s, %d\r\n", msg, port);
 }

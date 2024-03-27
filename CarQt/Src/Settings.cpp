@@ -5,11 +5,14 @@
 
 #include <json/json.h>
 
+#include "Shared/Network.h"
 #include "Utils.h"
 
 using namespace CarQt;
 
-Settings::Network::Network() : address(QHostAddress::Any), port(5000u) {}
+Settings::Network::Network()
+    : pcAddress(Utils::ipv4ToString(PC_IP)),
+      mcuAddress(Utils::ipv4ToString(MCU_IP)), port(5000u) {}
 
 Settings::Settings() : network(), recordDestination(".") {}
 
@@ -23,7 +26,10 @@ void Settings::save(const char *filename) const {
         return;
     }
 
-    network["address"] = this->network.address.toString().toUtf8().constData();
+    network["pcAddress"] =
+        this->network.pcAddress.toString().toUtf8().constData();
+    network["mcuAddress"] =
+        this->network.mcuAddress.toString().toUtf8().constData();
     network["port"] = this->network.port;
 
     root["serial"] = serial;
@@ -52,9 +58,12 @@ Settings Settings::load(const char *filename) {
 
     Json::Value networkValue =
         Utils::jsonGetKey(root, "network", Json::Value());
-    QHostAddress address(QString::fromStdString(
-        Utils::jsonGetKey<std::string>(networkValue, "address", "")));
-    network.address = address;
+    QHostAddress pcAddress(QString::fromStdString(
+        Utils::jsonGetKey<std::string>(networkValue, "pcAddress", "")));
+    QHostAddress mcuAddress(QString::fromStdString(
+        Utils::jsonGetKey<std::string>(networkValue, "mcuAddress", "")));
+    network.pcAddress = pcAddress;
+    network.mcuAddress = mcuAddress;
     network.port = Utils::jsonGetKey<uint32_t>(networkValue, "port", 0u);
 
     settings.recordDestination = QString::fromStdString(

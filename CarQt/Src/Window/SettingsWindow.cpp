@@ -15,7 +15,8 @@ SettingsWindow::SettingsWindow(QWidget *parent)
     ui->setupUi(this);
     Settings settings = Settings::load(SettingsWindow::FILENAME);
 
-    ui->leNetworkAddress->setText(settings.network.address.toString());
+    ui->lePCNetworkAddress->setText(settings.network.pcAddress.toString());
+    ui->leMCUNetworkAddress->setText(settings.network.mcuAddress.toString());
     ui->leNetworkPort->setText(QString::number(settings.network.port));
 
     ui->leDestination->setText(settings.recordDestination);
@@ -41,7 +42,8 @@ std::optional<Settings> SettingsWindow::execute() {
 Settings SettingsWindow::getSettings() const {
     Settings settings;
 
-    settings.network.address = QHostAddress(ui->leNetworkAddress->text());
+    settings.network.pcAddress = QHostAddress(ui->lePCNetworkAddress->text());
+    settings.network.mcuAddress = QHostAddress(ui->leMCUNetworkAddress->text());
     settings.network.port = ui->leNetworkPort->text().toUInt();
 
     settings.recordDestination = ui->leDestination->text();

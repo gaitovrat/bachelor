@@ -6,6 +6,8 @@
 #include <json/json.h>
 #include <opencv2/core/mat.hpp>
 
+#include "Shared/Network.h"
+
 namespace CarQt::Utils {
 template <typename T>
 inline T jsonGetKey(const Json::Value &root, const char *key,
@@ -41,5 +43,8 @@ inline QString toQString(bool value) { return value ? "true" : "false"; }
 void setComboBox(QComboBox &comboBox, const QString &value);
 
 void showMat(QGraphicsView *graphicsView, const cv::Mat &mat);
+
+QString ipv4ToString(RefIPv4 address);
 } // namespace CarQt::Utils
+
 #endif // UTILS_H

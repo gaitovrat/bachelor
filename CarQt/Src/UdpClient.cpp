@@ -3,7 +3,8 @@
 using namespace CarQt;
 
 UDPClient::UDPClient(const struct Settings::Network &settings, QObject *parent)
-    : port(settings.port), socket(parent), address(settings.address) {
+    : port(settings.port), socket(parent), address(settings.pcAddress),
+      targetAddress(settings.mcuAddress) {
     connect(&this->socket, &QUdpSocket::readyRead, this, &UDPClient::read);
 }
 
@@ -44,4 +45,9 @@ void UDPClient::read() {
     if (data.has_value()) {
         emit dataReady(*data);
     }
+}
+void UDPClient::send(const Shared::Signal &signal) {
+    const char *buffer = reinterpret_cast<const char *>(&signal);
+    this->socket.writeDatagram(buffer, sizeof(Shared::Signal),
+                               this->targetAddress, this->port);
 }

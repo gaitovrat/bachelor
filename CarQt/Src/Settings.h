@@ -10,7 +10,8 @@ namespace CarQt {
 struct Settings {
   public:
     struct Network {
-        QHostAddress address;
+        QHostAddress pcAddress;
+        QHostAddress mcuAddress;
         uint32_t port;
 
         Network();

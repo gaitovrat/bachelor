@@ -32,6 +32,9 @@ class Enet {
 
     void send(const void *pData, const uint32_t len);
 
+    static void recv(void *arg, struct udp_pcb *pcb, struct pbuf *p,
+                     const ip_addr_t *addr, u16_t port);
+
     bool check();
 };
 } // namespace MCU

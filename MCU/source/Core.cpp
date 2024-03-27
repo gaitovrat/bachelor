@@ -138,8 +138,12 @@ void Core::drive() {
         if (this->tfc.getDIPSwitch() & 0x01)
             this->calibrate();
         else {
+#if 0
             this->update(servoPosition, leftSpeed, rightSpeed);
             this->send();
+#endif
+            const char msg[] = "hello world from mcu";
+            this->enet.send(msg, sizeof(msg));
         }
 
         this->tfc.setServo_i(0, servoPosition);

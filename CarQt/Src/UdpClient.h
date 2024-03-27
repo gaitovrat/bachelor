@@ -8,6 +8,7 @@
 
 #include "Settings.h"
 #include "Shared/Data.h"
+#include "Shared/Signal.h"
 
 namespace CarQt {
 class UDPClient : public QObject {
@@ -16,6 +17,7 @@ class UDPClient : public QObject {
     uint32_t port;
     QUdpSocket socket;
     QHostAddress address;
+    QHostAddress targetAddress;
 
   public:
     UDPClient(const struct Settings::Network &settings,
@@ -29,6 +31,7 @@ class UDPClient : public QObject {
 
     void bind();
 
+    void send(const Shared::Signal &signal);
   public slots:
     void read();
 
