@@ -29,12 +29,26 @@
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Address</string>
+        <string>PC Address</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="leNetworkAddress"/>
+      <widget class="QLineEdit" name="lePCNetworkAddress"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>MCU Address</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="leMCUNetworkAddress"/>
      </item>
     </layout>
    </item>
