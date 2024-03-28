@@ -138,12 +138,8 @@ void Core::drive() {
         if (this->tfc.getDIPSwitch() & 0x01)
             this->calibrate();
         else {
-#if 0
             this->update(servoPosition, leftSpeed, rightSpeed);
             this->send();
-#endif
-            const char msg[] = "hello world from mcu";
-            this->enet.send(msg, sizeof(msg));
         }
 
         this->tfc.setServo_i(0, servoPosition);
@@ -250,3 +246,7 @@ void Core::calculateDistanceRatio(Shared::Image::RefImageLine image,
 
     ratio = rightRatio - leftRatio;
 }
+
+void Core::start() { this->motorState = Shared::MotorState::Start; }
+
+void Core::stop() { this->motorState = Shared::MotorState::Stop; }
