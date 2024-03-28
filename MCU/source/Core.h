@@ -36,6 +36,10 @@ class Core {
 
     void drive();
 
+    void start();
+
+    void stop();
+
   private:
     void update(int32_t &servoPosition, int32_t &leftSpeed,
                 int32_t &rightSpeed);

@@ -51,13 +51,13 @@ Shared::Signal GameController::getSignal() const {
 
         switch (button) {
         case SDL_CONTROLLER_AXIS_TRIGGERRIGHT:
-            signal.type = Shared::Signal::Type::INCREASE_SPEED;
+            signal.type = Shared::SignalType::INCREASE_SPEED;
             break;
         case SDL_CONTROLLER_AXIS_TRIGGERLEFT:
-            signal.type = Shared::Signal::Type::DECREASE_SPEED;
+            signal.type = Shared::SignalType::DECREASE_SPEED;
             break;
         case SDL_CONTROLLER_AXIS_LEFTX:
-            signal.type = Shared::Signal::Type::TURN;
+            signal.type = Shared::SignalType::TURN;
             break;
         default:
             break;

@@ -2,5 +2,5 @@
 
 using namespace Shared;
 
-Signal::Signal(const Type type, const int16_t value)
+Signal::Signal(const SignalType type, const int16_t value)
     : type(type), value(value) {}
