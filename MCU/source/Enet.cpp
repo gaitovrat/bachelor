@@ -48,13 +48,6 @@ static constexpr void makeIp4Address(ip4_addr_t &address, const u8_t parts[4]) {
 Enet::Enet() : initialized(false) {}
 
 void Enet::init(const size_t bufferSize, const uint16_t port) {
-    /* Disable SYSMPU. */
-    SYSMPU->CESR &= ~SYSMPU_CESR_VLD_MASK;
-    /* Set RMII clock src. */
-    SIM->SOPT2 |= SIM_SOPT2_RMIISRC_MASK;
-
-    BOARD_InitENETPins();
-
     MDIO_HANDLE.resource.csrClock_Hz = CLOCK_GetFreq(kCLOCK_CoreSysClk);
 
     makeIp4Address(this->gateway, GATEWAY);

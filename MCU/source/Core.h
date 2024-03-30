@@ -4,9 +4,11 @@
 #include "Enet.h"
 #include "LineTracer.h"
 #include "PID.h"
+#if 0
 #include "Sensor/FXAS21002.h"
 #include "Sensor/FXOS8700CQ.h"
-#include "Sensor/IRSensor.h"
+#endif
+#include "IMU.h"
 #include "Shared/Data.h"
 #include "Shared/MotorState.h"
 #include "Shared/Settings.h"
@@ -15,15 +17,15 @@
 namespace MCU {
 class Core {
     TFC tfc;
+#ifdef USE_ENET
     Enet enet;
+#endif
     Shared::Settings settings;
     Shared::MotorState motorState;
     LineTracer tracer;
     Shared::PIDData pidData;
     PID pid;
-    FXOS8700CQ fxos;
-    FXAS21002 fxas;
-    IRSensor ir;
+    IMU imu;
 
   public:
     Core();
@@ -36,6 +38,8 @@ class Core {
 
     void drive();
 
+    IMU &getIMU();
+  
     void start();
 
     void stop();

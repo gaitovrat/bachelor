@@ -21,7 +21,7 @@ using namespace MCU;
 Core::Core()
     : settings(), motorState(Shared::MotorState::Stop),
       tracer(TRACER_HISTORY_SIZE), pidData(settings.pidData),
-      pid(pidData, P_ON_E, DIRECT), ir(tfc) {
+      pid(pidData, P_ON_E, DIRECT) {
     this->pid.SetMode(AUTOMATIC);
 }
 
@@ -29,9 +29,14 @@ void Core::init() {
     tfc.InitAll();
 
     tfc.setLEDs(0b1111);
+#ifdef USE_ENET
     enet.init(sizeof(Shared::Data), 5000);
+#endif
+#if 0
     fxos.init();
     fxas.init();
+#endif
+    imu.init();
 
     tfc.MotorPWMOnOff(true);
     tfc.ServoOnOff(true);
@@ -124,8 +129,9 @@ void Core::calibrate() {
 void Core::drive() {
     static uint32_t oldTick = 0;
     int32_t servoPosition = 0, leftSpeed = 0, rightSpeed = 0;
-
+#ifdef USE_ENET
     this->enet.check();
+#endif
 
     if (this->tfc.getPushButton(0) == 1) {
         if (this->motorState == Shared::MotorState::Start)
@@ -135,12 +141,16 @@ void Core::drive() {
     }
 
     if (HW_TFC_TimeStamp != oldTick) {
+#ifdef USE_TFC
         if (this->tfc.getDIPSwitch() & 0x01)
             this->calibrate();
         else {
+#endif
             this->update(servoPosition, leftSpeed, rightSpeed);
             this->send();
+#ifdef USE_TFC
         }
+#endif
 
         this->tfc.setServo_i(0, servoPosition);
         this->tfc.setMotorPWM_i(leftSpeed, rightSpeed);
@@ -199,8 +209,6 @@ void Core::update(int32_t &servoPosition, int32_t &leftSpeed,
         rightSpeed *= 0.75f;
         servoPosition *= 1.5f;
     }
-
-    this->motorState = ir.CheckState(this->motorState);
 }
 
 void Core::reset() {
@@ -215,19 +223,20 @@ void Core::send() {
     data.timestamp = HW_TFC_TimeStamp;
 
     // Sensors
-    std::optional<Shared::Vec3<uint16_t>> fxas_data = fxas.read();
-    if (fxas_data.has_value()) {
-        data.sensorData.gyro = *fxas_data;
-    }
-    std::optional<FXOS8700CQ::Data> fxos_data = fxos.read();
+    data.sensorData.accel = imu.getAccel();
+    data.sensorData.mag = imu.getMag();
+    data.sensorData.gyro = imu.getGyro();
 
-    if (fxos_data.has_value()) {
-        data.sensorData.mag = fxos_data->mag;
-        data.sensorData.accel = fxos_data->accel;
-    }
-
+#ifdef USE_ENET
     uint8_t *pData = reinterpret_cast<uint8_t *>(&data);
     enet.send(pData, sizeof(data));
+#else
+    PRINTF("Accel: %d,%d,%d; Mag: %d,%d,%d; Gyro: %d,%d,%d\r\n",
+           data.sensorData.accel.x, data.sensorData.accel.y,
+           data.sensorData.accel.z, data.sensorData.mag.x,
+           data.sensorData.mag.y, data.sensorData.mag.z, data.sensorData.gyro.x,
+           data.sensorData.gyro.y, data.sensorData.gyro.z);
+#endif
 }
 
 void Core::calculateDistanceRatio(Shared::Image::RefImageLine image,
@@ -246,6 +255,9 @@ void Core::calculateDistanceRatio(Shared::Image::RefImageLine image,
 
     ratio = rightRatio - leftRatio;
 }
+
+
+IMU &Core::getIMU() { return this->imu; }
 
 void Core::start() { this->motorState = Shared::MotorState::Start; }
 

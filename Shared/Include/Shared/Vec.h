@@ -11,15 +11,24 @@
 #include <cstdint>
 
 namespace Shared {
-template <typename T> union Vec3 {
-    struct {
-        T x, y, z;
-    };
-    T values[3];
+template <typename T> struct Vec3 {
+    T x, y, z;
 
     Vec3(T x, T y, T z) : x(x), y(y), z(z) {}
 
     Vec3() : Vec3(0, 0, 0) {}
+
+    Vec3(const Vec3<T> &other) : x(other.x), y(other.y), z(other.z) {}
+
+    Vec3(Vec3<T> &&other) : x(other.x), y(other.y), z(other.z) {}
+
+    Shared::Vec3<T> &operator=(const Shared::Vec3<T> &other) {
+        x = other.x;
+        y = other.y;
+        z = other.z;
+
+        return *this;
+    }
 };
 } // namespace Shared
 
