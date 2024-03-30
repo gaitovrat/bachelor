@@ -9,7 +9,6 @@
 #include "Sensor/FXOS8700CQ.h"
 #endif
 #include "IMU.h"
-#include "Sensor/IRSensor.h"
 #include "Shared/Data.h"
 #include "Shared/MotorState.h"
 #include "Shared/Settings.h"
@@ -27,11 +26,6 @@ class Core {
     Shared::PIDData pidData;
     PID pid;
     IMU imu;
-#if 0
-    FXOS8700CQ fxos;
-    FXAS21002 fxas;
-#endif
-    IRSensor ir;
 
   public:
     Core();
@@ -43,6 +37,8 @@ class Core {
     void calibrate();
 
     void drive();
+
+    IMU &getIMU();
 
   private:
     void update(int32_t &servoPosition, int32_t &leftSpeed,
