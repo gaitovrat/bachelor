@@ -6,8 +6,9 @@
 #include "PID.h"
 #if 0
 #include "Sensor/FXAS21002.h"
-#endif
 #include "Sensor/FXOS8700CQ.h"
+#endif
+#include "IMU.h"
 #include "Sensor/IRSensor.h"
 #include "Shared/Data.h"
 #include "Shared/MotorState.h"
@@ -17,14 +18,17 @@
 namespace MCU {
 class Core {
     TFC tfc;
+#ifdef USE_ENET
     Enet enet;
+#endif
     Shared::Settings settings;
     Shared::MotorState motorState;
     LineTracer tracer;
     Shared::PIDData pidData;
     PID pid;
-    FXOS8700CQ fxos;
+    IMU imu;
 #if 0
+    FXOS8700CQ fxos;
     FXAS21002 fxas;
 #endif
     IRSensor ir;

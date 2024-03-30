@@ -9,17 +9,9 @@
 
 #include <pin_mux.h>
 
+#if 0
 #include "fsl_debug_console.h"
 #include "fsl_port.h"
-
-static constexpr uint8_t CTRL_REG_1 = 0x2AU;
-static constexpr uint8_t CTRL_REG_2 = 0x2BU;
-static constexpr uint8_t M_CTRL_REG_1 = 0x5BU;
-static constexpr uint8_t M_CTRL_REG_2 = 0x5CU;
-static constexpr uint8_t XYZ_DATA_CFG = 0x0EU;
-static constexpr uint8_t STATUS = 0x00U;
-static constexpr uint8_t M_STATUS = 0x32U;
-static constexpr uint8_t F_SETUP = 0x09;
 
 using namespace MCU;
 
@@ -41,7 +33,6 @@ FXOS8700CQ::FXOS8700CQ(FXOS8700CQ::Range range)
 status_t FXOS8700CQ::init() {
     status_t status = 0;
 
-    BOARD_InitACCEL_I2CPins();
     status = BaseSensor::init();
 
     PORT_ClearPinsInterruptFlags(PORTC, PORT_GetPinsInterruptFlags(PORTC));
@@ -160,3 +151,4 @@ uint8_t *FXOS8700CQ::getData() {
 }
 
 uint32_t FXOS8700CQ::getDataSize() const { return sizeof(FXOS8700CQ::Data); }
+#endif

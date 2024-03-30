@@ -12,6 +12,7 @@
 
 #include <fsl_i2c.h>
 
+#if 0
 namespace MCU {
 class BaseSensor {
     static bool initialized;
@@ -47,4 +48,5 @@ class BaseSensor {
 };
 } // namespace MCU
 
+#endif
 #endif /* SENSORS_BASESENSOR_H_ */

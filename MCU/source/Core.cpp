@@ -29,11 +29,14 @@ void Core::init() {
     tfc.InitAll();
 
     tfc.setLEDs(0b1111);
+#ifdef USE_ENET
     enet.init(sizeof(Shared::Data), 5000);
-    fxos.init();
+#endif
 #if 0
+    fxos.init();
     fxas.init();
 #endif
+    imu.init();
 
     tfc.MotorPWMOnOff(true);
     tfc.ServoOnOff(true);
@@ -124,10 +127,13 @@ void Core::calibrate() {
 }
 
 void Core::drive() {
+    PRINTF("drive\r\n");
+    return;
     static uint32_t oldTick = 0;
     int32_t servoPosition = 0, leftSpeed = 0, rightSpeed = 0;
-
+#ifdef USE_ENET
     this->enet.check();
+#endif
 
     if (this->tfc.getPushButton(0) == 1) {
         if (this->motorState == Shared::MotorState::Start)
@@ -140,12 +146,8 @@ void Core::drive() {
         if (this->tfc.getDIPSwitch() & 0x01)
             this->calibrate();
         else {
-#if 0
             this->update(servoPosition, leftSpeed, rightSpeed);
             this->send();
-#endif
-            const char msg[] = "hello world from mcu";
-            this->enet.send(msg, sizeof(msg));
         }
 
         this->tfc.setServo_i(0, servoPosition);
@@ -226,16 +228,18 @@ void Core::send() {
     if (fxas_data.has_value()) {
         data.sensorData.gyro = *fxas_data;
     }
-#endif
     std::optional<FXOS8700CQ::Data> fxos_data = fxos.read();
 
     if (fxos_data.has_value()) {
         data.sensorData.mag = fxos_data->mag;
         data.sensorData.accel = fxos_data->accel;
     }
+#endif
 
+#ifdef USE_ENET
     uint8_t *pData = reinterpret_cast<uint8_t *>(&data);
     enet.send(pData, sizeof(data));
+#endif
 }
 
 void Core::calculateDistanceRatio(Shared::Image::RefImageLine image,

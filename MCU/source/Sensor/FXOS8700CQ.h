@@ -14,8 +14,9 @@
 #include "Sensor/BaseSensor.h"
 #include "Shared/Vec.h"
 
+#if 0
 namespace MCU {
-class FXOS8700CQ : public BaseSensor {
+class FXOS8700CQ {
   public:
     enum Range { G_2 = 0, G_4, G_8 };
 
@@ -49,5 +50,5 @@ class FXOS8700CQ : public BaseSensor {
     status_t setupRegisters() override;
 };
 } // namespace MCU
-
+#endif
 #endif /* SENSORS_FXOS8700CQ_H_ */
