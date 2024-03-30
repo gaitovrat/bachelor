@@ -70,7 +70,10 @@ MainWindow::MainWindow(const QString &name, QWidget *parent)
     connect(viewSensorsChartAction, &QAction::triggered, this,
             &MainWindow::openSensorsDialog);
 
-    this->timer.start();
+    connect(this->ui->bStartCar, &QPushButton::clicked, this,
+            &MainWindow::startCar);
+
+    //    this->timer.start();
 }
 
 MainWindow::~MainWindow() {
@@ -283,4 +286,18 @@ void MainWindow::openSensorsDialog() {
             &MainWindow::destroySensorsDialog);
 
     sensorsDialog->show();
+}
+void MainWindow::startCar() {
+    QString buttonText = this->ui->bStartCar->text();
+    Shared::Signal signal;
+
+    if (buttonText == "Start") {
+        this->ui->bStartCar->setText("Stop");
+        signal.type = Shared::SignalType::START;
+    } else {
+        this->ui->bStartCar->setText("Start");
+        signal.type = Shared::SignalType::STOP;
+    }
+
+    this->client->send(signal);
 }

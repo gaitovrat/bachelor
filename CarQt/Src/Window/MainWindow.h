@@ -69,6 +69,8 @@ class MainWindow : public QMainWindow {
 
     void destroySensorsDialog();
 
+    void startCar();
+
   private:
     void updateClient(const Settings &settings);
 };

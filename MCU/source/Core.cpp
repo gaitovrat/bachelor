@@ -256,4 +256,9 @@ void Core::calculateDistanceRatio(Shared::Image::RefImageLine image,
     ratio = rightRatio - leftRatio;
 }
 
+
 IMU &Core::getIMU() { return this->imu; }
+
+void Core::start() { this->motorState = Shared::MotorState::Start; }
+
+void Core::stop() { this->motorState = Shared::MotorState::Stop; }

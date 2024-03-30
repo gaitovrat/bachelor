@@ -1,10 +1,12 @@
 \documentclass[czech,bachelor]{diploma}
 
-\usepackage[autostyle=true,czech=quotes]{csquotes} 
+\usepackage[autostyle=true,czech=quotes]{csquotes}
 \usepackage[backend=biber, style=iso-numeric, alldates=iso]{biblatex}
 \usepackage{dcolumn}
 \usepackage{subfig}
 \usepackage[cpp]{diplomalst}
+
+\addbibresource{biblatex.bib}
 
 \ThesisAuthor{Ratmir Gaitov}
 \ThesisSupervisor{Ing. Petr Olivka, Ph.D.}
@@ -27,6 +29,8 @@ Tests of different sensor and signal filters are performed, from which the best 
 These selected signal filters are then implemented in combination with suitable sensors.}
 \EnglishKeywords{Automatic speed control; Signal filters; NXP Cup; FRDM-K66F}
 
+\AddAcronym{MCU}{Micro Controller Unit}
+
 \newcolumntype{d}[1]{D{,}{,}{#1}}
 
 \begin{document}
@@ -39,4 +43,8 @@ These selected signal filters are then implemented in combination with suitable 
 \clearpage
 
 \input{Chapters/Introduction.tex}
+\input{Chapters/CarModel.tex}
+
+\printbibliography[title={Seznam použité literatury}]
+\addcontentsline{toc}{chapter}{Seznam použité literatury}
 \end{document}

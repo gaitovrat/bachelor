@@ -17,6 +17,9 @@
 #include "pin_mux.h"
 
 #include "Shared/Network.h"
+#include "Shared/Signal.h"
+
+#include "Core.h"
 
 static mdio_handle_t MDIO_HANDLE = {.ops = &enet_ops};
 static phy_handle_t PHY_HANDLE = {.phyAddr = BOARD_ENET0_PHY_ADDRESS,
@@ -27,6 +30,8 @@ static ethernetif_config_t ETHERNETIF_CONFIG = {
     .macAddress = {0x02, 0x12, 0x13, 0x10, 0x15, 0x11}};
 
 using namespace MCU;
+
+extern Core core;
 
 #ifdef __cplusplus
 extern "C" {
@@ -117,9 +122,16 @@ bool Enet::check() {
 
 void Enet::recv(void *arg, struct udp_pcb *pcb, struct pbuf *p,
                 const ip_addr_t *addr, u16_t port) {
-    char *msg = reinterpret_cast<char *>(p->payload);
-    uint16_t len = p->len;
-    if (msg[len] != 0)
-        msg[len] = 0;
-    PRINTF("%s, %d\r\n", msg, port);
+    Shared::SignalType *signalType =
+        reinterpret_cast<Shared::SignalType *>(p->payload);
+
+    switch (*signalType) {
+    case Shared::SignalType::START:
+        core.start();
+        break;
+    case Shared::SignalType::STOP:
+    default:
+        core.stop();
+        break;
+    }
 }

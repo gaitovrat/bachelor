@@ -4,24 +4,24 @@
 #include <cstdint>
 
 namespace Shared {
+enum SignalType {
+    None,
+
+    // Joystick signals
+    INCREASE_SPEED,
+    DECREASE_SPEED,
+    TURN,
+
+    // CarQt signals
+    START,
+    STOP
+};
+
 struct Signal {
-    enum Type {
-        None,
-
-        // Joystick signals
-        INCREASE_SPEED,
-        DECREASE_SPEED,
-        TURN,
-
-        // CarQt signals
-        START,
-        STOP
-    };
-
-    Type type;
+    SignalType type;
     int16_t value;
 
-    Signal(Type type = None, int16_t value = 0);
+    Signal(SignalType type = None, int16_t value = 0);
 
     virtual ~Signal() = default;
 };

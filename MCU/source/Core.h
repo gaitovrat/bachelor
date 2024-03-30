@@ -39,6 +39,10 @@ class Core {
     void drive();
 
     IMU &getIMU();
+  
+    void start();
+
+    void stop();
 
   private:
     void update(int32_t &servoPosition, int32_t &leftSpeed,

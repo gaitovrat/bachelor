@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1213</width>
-    <height>631</height>
+    <height>643</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,6 +19,13 @@
      <widget class="QPushButton" name="ui_recordingButton">
       <property name="text">
        <string>Start Recording</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="bStartCar">
+      <property name="text">
+       <string>Start</string>
       </property>
      </widget>
     </item>
@@ -1264,7 +1271,7 @@
      <x>0</x>
      <y>0</y>
      <width>1213</width>
-     <height>24</height>
+     <height>36</height>
     </rect>
    </property>
   </widget>
