@@ -76,20 +76,17 @@ void Filter::reset() {
 }
 
 int16_t Filter::singlePoleRecursive() {
+    static float lastOutput = .0f;
     uint32_t size = buffer.size();
     float output, input;
 
     if (size < 1)
         return 0;
 
-    if (size < 2) {
-        return buffer.back();
-    }
+    output = singlePoleX * lastOutput +
+             (1.f - singlePoleX) * static_cast<float>(buffer[size - 1]);
 
-    input = static_cast<float>(buffer[size - 1]);
-
-    output = singlePoleX * input +
-             (1.f - singlePoleX) * static_cast<float>(buffer[size - 2]);
+    lastOutput = output;
 
     return static_cast<int16_t>(output);
 }
