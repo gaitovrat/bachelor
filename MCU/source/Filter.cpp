@@ -11,7 +11,8 @@
 using namespace MCU;
 
 Filter::Filter(uint32_t bufferSize)
-    : N(std::max(bufferSize, M)), averageSum(0) {
+    : fourStageOutputs(4, .0f), chebyshev2Outputs(2, .0f),
+      chebyshev4Outputs(4, .0f), N(std::max(bufferSize, M)), averageSum(0) {
     const float fc = 4.0f / FREQUENCY;
     const float pi = 3.14159265358979323846f;
     float fvalue;
@@ -75,8 +76,6 @@ void Filter::reset() {
 }
 
 int16_t Filter::singlePoleRecursive() {
-    static constexpr float alpha = 0.85f;
-
     uint32_t size = buffer.size();
     float output, input;
 
@@ -96,13 +95,6 @@ int16_t Filter::singlePoleRecursive() {
 }
 
 int16_t Filter::recursiveFourStageLowPass() {
-    static constexpr float a0 = 0.60f;
-    static constexpr float b1 = 4.0f * a0;
-    static const float b2 = -6.0f * powf(a0, 2.0f);
-    static const float b3 = 4.0f * powf(a0, 3.0f);
-    static const float b4 = -1.0f * powf(a0, 4.0f);
-    static std::vector<float> pastOutputs(4, .0f);
-
     uint32_t size = buffer.size();
     float output = 0.f;
 
@@ -110,24 +102,19 @@ int16_t Filter::recursiveFourStageLowPass() {
         return 0;
     }
 
-    output = buffer.back() * a0 + pastOutputs[0] * b1 + pastOutputs[1] * b2 +
-             pastOutputs[2] * b3 + pastOutputs[3] * b4;
+    output = buffer.back() * fourStageA0 + fourStageOutputs[0] * fourStageB1 +
+             fourStageOutputs[1] * fourStageB2 +
+             fourStageOutputs[2] * fourStageB3 +
+             fourStageOutputs[3] * fourStageB4;
 
-    pastOutputs.insert(pastOutputs.begin(), output);
-    if (pastOutputs.size() > 4)
-        pastOutputs.pop_back();
+    fourStageOutputs.insert(fourStageOutputs.begin(), output);
+    if (fourStageOutputs.size() > 4)
+        fourStageOutputs.pop_back();
 
     return static_cast<int16_t>(output);
 }
 
 uint16_t Filter::lowPassChebyshev2pole() {
-    static constexpr float a0 = 3.869430E-02f;
-    static constexpr float a1 = 7.738860E-02f;
-    static constexpr float a2 = 3.869430E-02f;
-    static constexpr float b1 = 1.392667E+00f;
-    static constexpr float b2 = -5.474446E-01;
-    static std::vector<float> pastOutputs(2, 0.0f);
-
     uint32_t size = buffer.size();
     float output = 0.f;
 
@@ -135,31 +122,20 @@ uint16_t Filter::lowPassChebyshev2pole() {
         return 0;
     }
 
-    output += a0 * buffer[size - 1];
-    output += a1 * buffer[size - 2];
-    output += a2 * buffer[size - 3];
+    output += chebyshev2A0 * buffer[size - 1];
+    output += chebyshev2A1 * buffer[size - 2];
+    output += chebyshev2A2 * buffer[size - 3];
 
-    output += b1 * pastOutputs[1];
-    output += b2 * pastOutputs[0];
+    output += chebyshev2B1 * chebyshev2Outputs[1];
+    output += chebyshev2B2 * chebyshev2Outputs[0];
 
-    pastOutputs[0] = pastOutputs[1];
-    pastOutputs[1] = output;
+    chebyshev2Outputs[0] = chebyshev2Outputs[1];
+    chebyshev2Outputs[1] = output;
 
     return static_cast<int16_t>(output);
 }
 
 uint16_t Filter::lowPassChebyshev4spole() {
-    static constexpr float a0 = 9.726342E-04f;
-    static constexpr float a1 = 3.890537E-03f;
-    static constexpr float a2 = 5.835806E-03f;
-    static constexpr float a3 = 3.890537E-03f;
-    static constexpr float a4 = 9.726342E-04f;
-    static constexpr float b1 = 3.103944E+00f;
-    static constexpr float b2 = -3.774453E+00f;
-    static constexpr float b3 = 2.111238E+00f;
-    static constexpr float b4 = -4.562908E-01f;
-
-    static std::vector<float> pastOutputs(4, 0.0f);
     uint32_t size = buffer.size();
 
     if (size < 5) {
@@ -167,13 +143,16 @@ uint16_t Filter::lowPassChebyshev4spole() {
     }
 
     float output =
-        a0 * buffer[size - 1] + a1 * buffer[size - 2] + a2 * buffer[size - 3] +
-        a3 * buffer[size - 4] + a4 * buffer[size - 5] + b1 * pastOutputs[0] +
-        b2 * pastOutputs[1] + b3 * pastOutputs[2] + b4 * pastOutputs[3];
+        chebyshev4A0 * buffer[size - 1] + chebyshev4A1 * buffer[size - 2] +
+        chebyshev4A2 * buffer[size - 3] + chebyshev4A3 * buffer[size - 4] +
+        chebyshev4A4 * buffer[size - 5] + chebyshev4B1 * chebyshev4Outputs[0] +
+        chebyshev4B2 * chebyshev4Outputs[1] +
+        chebyshev4B3 * chebyshev4Outputs[2] +
+        chebyshev4B4 * chebyshev4Outputs[3];
 
-    pastOutputs.insert(pastOutputs.begin(), output);
-    if (pastOutputs.size() > 4)
-        pastOutputs.pop_back();
+    chebyshev4Outputs.insert(chebyshev4Outputs.begin(), output);
+    if (chebyshev4Outputs.size() > 4)
+        chebyshev4Outputs.pop_back();
 
     return static_cast<uint16_t>(output);
 }
