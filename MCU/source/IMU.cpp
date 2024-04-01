@@ -81,6 +81,7 @@ void PORTA_IRQHandler(void) {
 IMU::IMU(FXOSRange fxosRange, FXASRange fxasRange)
     : fxosRange(fxosRange), fxasRange(fxasRange) {
     memset(this->fxosBuffer, 0, sizeof(this->fxosBuffer));
+    memset(this->fxasBuffer, 0, sizeof(this->fxasBuffer));
 }
 
 status_t IMU::init() {
