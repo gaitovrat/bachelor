@@ -8,7 +8,7 @@
 #ifndef FILTER_H_
 #define FILTER_H_
 
-#include <cmath>
+#include "Utils.h"
 #include <cstdint>
 #include <vector>
 
@@ -16,14 +16,15 @@
 
 namespace MCU {
 class Filter {
-    static constexpr float alpha = 0.85f;
+    static constexpr float singlePoleX = 0.85f;
 
     // Four stage coefficients
-    static constexpr float fourStageA0 = 0.60f;
-    static constexpr float fourStageB1 = 4.0f * a0;
-    static const float fourStageB2 = -6.0f * powf(a0, 2.0f);
-    static const float fourStageB3 = 4.0f * powf(a0, 3.0f);
-    static const float fourStageB4 = -1.0f * powf(a0, 4.0f);
+    static constexpr float fourStageX = 0.6f;
+    static constexpr float fourStageA0 = pow(1 - fourStageX, 4);
+    static constexpr float fourStageB1 = 4.0f * fourStageX;
+    static constexpr float fourStageB2 = -6.0f * pow(fourStageX, 2);
+    static constexpr float fourStageB3 = 4.0f * pow(fourStageX, 3);
+    static constexpr float fourStageB4 = -1.0f * pow(fourStageX, 4);
     std::vector<float> fourStageOutputs;
 
     // Chebyshev 2 coefficients

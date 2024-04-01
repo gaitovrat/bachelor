@@ -88,8 +88,8 @@ int16_t Filter::singlePoleRecursive() {
 
     input = static_cast<float>(buffer[size - 1]);
 
-    output =
-        alpha * input + (1.f - alpha) * static_cast<float>(buffer[size - 2]);
+    output = singlePoleX * input +
+             (1.f - singlePoleX) * static_cast<float>(buffer[size - 2]);
 
     return static_cast<int16_t>(output);
 }
