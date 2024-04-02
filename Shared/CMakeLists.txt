@@ -2,25 +2,16 @@ set(SOURCES
     Src/Image.cpp
     Src/PIDData.cpp
     Src/Region.cpp
-    Src/Settings.cpp
-    Src/Signal.cpp
 )
 
 add_library(Shared STATIC
     ${SOURCES}
-    Include/Shared/Signal.h
-    Include/Shared/CameraData.h
     Include/Shared/Utils.h
     Include/Shared/Data.h
     Include/Shared/Image.h
     Include/Shared/Mode.h
-    Include/Shared/MotorData.h
-    Include/Shared/MotorState.h
     Include/Shared/PIDData.h
     Include/Shared/Region.h
-    Include/Shared/SensorData.h
-    Include/Shared/Settings.h
-    Include/Shared/SteerData.h
     Include/Shared/Vec.h)
 
 if (MCU)

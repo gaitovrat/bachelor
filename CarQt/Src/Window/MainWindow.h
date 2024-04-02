@@ -6,12 +6,10 @@
 #include <QTimer>
 #include <memory>
 
-#include "GameController.h"
 #include "Image.h"
 #include "Recording.h"
 #include "Settings.h"
 #include "UdpClient.h"
-#include "Window/SensorsDialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -26,24 +24,15 @@ class MainWindow : public QMainWindow {
     static constexpr const char *LABEL_TX_FORMAT = "TX: %lldB";
     static constexpr const char *LABEL_RX_FORMAT = "RX: %lldB";
 
-    union {
-        struct {
-            QLabel *labelConnected;
-            QLabel *labelJoystickConnected;
-            QLabel *labelTXBytes;
-            QLabel *labelRXBytes;
-        };
-        QLabel *labels[4]{};
-    };
+    QLabel *labelConnected;
+    QLabel *labelTXBytes;
+    QLabel *labelRXBytes;
 
-    QTimer timer;
-    GameController joystick;
     Ui::MainWindow *ui;
     Recording *recording;
     QString recordingPath;
     UDPClient *client;
     std::list<Image> images;
-    SensorsDialog *sensorsDialog;
 
   public:
     explicit MainWindow(const QString &name, QWidget *parent = nullptr);
@@ -55,21 +44,15 @@ class MainWindow : public QMainWindow {
 
     void receivedSize(qint64 size) const;
 
+    void transmitSize(qint64 size) const;
+
     void openPreferences();
 
     void reconnect();
 
     void record();
 
-    void updateJoystick();
-
-    void handleJoystick() const;
-
-    void openSensorsDialog();
-
-    void destroySensorsDialog();
-
-    void startCar();
+    void setMode(int index);
 
   private:
     void updateClient(const Settings &settings);

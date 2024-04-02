@@ -46,8 +46,10 @@ void UDPClient::read() {
         emit dataReady(*data);
     }
 }
-void UDPClient::send(const Shared::Signal &signal) {
-    const char *buffer = reinterpret_cast<const char *>(&signal.type);
-    this->socket.writeDatagram(buffer, sizeof(Shared::SignalType),
-                               this->targetAddress, this->port);
+void UDPClient::send(Shared::Mode mode) {
+    uint64_t size = sizeof(uint8_t);
+    const char *buffer = reinterpret_cast<const char *>(&mode);
+    this->socket.writeDatagram(buffer, size, this->targetAddress, this->port);
+
+    emit dataTransmitted(size);
 }

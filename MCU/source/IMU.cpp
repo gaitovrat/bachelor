@@ -87,6 +87,9 @@ IMU::IMU(FXOSRange fxosRange, FXASRange fxasRange)
 status_t IMU::init() {
     status_t status;
 
+    NVIC_DisableIRQ(PORTC_IRQn);
+    NVIC_DisableIRQ(PORTA_IRQn);
+
     this->initMaster();
     status = this->initFXOS();
     status = this->initFXAS();
@@ -96,13 +99,13 @@ status_t IMU::init() {
     PORT_ClearPinsInterruptFlags(PORTC, 1U << 13);
     PORT_ClearPinsInterruptFlags(PORTA, 1U << 29);
 
-    status = this->startFXOS();
-    status = this->startFXAS();
-
     NVIC_EnableIRQ(PORTC_IRQn);
     NVIC_EnableIRQ(PORTA_IRQn);
     NVIC_SetPriority(PORTC_IRQn, 0);
     NVIC_SetPriority(PORTA_IRQn, 0);
+
+    status = this->startFXOS();
+    status = this->startFXAS();
 
     return status;
 }
@@ -187,7 +190,7 @@ status_t IMU::initFXOS() {
 status_t IMU::startFXOS() {
     // Active, low noise, ODR 400 Hz
     uint8_t active = 0x01U;
-    uint8_t dr = 0x00U;
+    uint8_t dr = 0x18U;
     uint8_t lnoise = 0x04U;
 
     if (fxosRange == FXOSRange::G_8) {
@@ -285,9 +288,9 @@ status_t IMU::initFXAS() {
 }
 
 status_t IMU::startFXAS() {
-    // Active mode, 400 Hz data rate
+    // Active mode, 50 Hz data rate
     uint8_t active = 0x03U;
-    uint8_t dr = 0x04U;
+    uint8_t dr = 0x10U;
     uint8_t value = dr | active;
 
     return I2C::writeRegister(FXAS_ADDRESS, FXAS_CTRL_REG1, &value);

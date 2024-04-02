@@ -2,30 +2,31 @@
 #define CORE_H_
 
 #include "Enet.h"
+#include "IMU.h"
 #include "LineTracer.h"
 #include "PID.h"
-#if 0
-#include "Sensor/FXAS21002.h"
-#include "Sensor/FXOS8700CQ.h"
-#endif
-#include "IMU.h"
 #include "Shared/Data.h"
-#include "Shared/MotorState.h"
-#include "Shared/Settings.h"
 #include "tfc.h"
 
 namespace MCU {
 class Core {
+    static constexpr float ERROR = 160.6f;
+    static constexpr float DERIVATIVE = 8.3f;
+    static constexpr float INTEGRAL = 0.5f;
+    static constexpr float DIFF_COEF = 1.28f;
+    static constexpr uint16_t MAX_SPEED = 1000;
+    static constexpr uint16_t SPEED = 100;
+    static constexpr uint32_t TRACER_HISTORY_SIZE = 5;
+
     TFC tfc;
-#ifdef USE_ENET
     Enet enet;
-#endif
-    Shared::Settings settings;
-    Shared::MotorState motorState;
+    IMU imu;
     LineTracer tracer;
+
     Shared::PIDData pidData;
     PID pid;
-    IMU imu;
+
+    Shared::Data data;
 
   public:
     Core();
@@ -39,14 +40,13 @@ class Core {
     void drive();
 
     IMU &getIMU();
-  
-    void start();
 
-    void stop();
+    void setMode(Shared::Mode mode);
 
   private:
-    void update(int32_t &servoPosition, int32_t &leftSpeed,
-                int32_t &rightSpeed);
+    void update();
+
+    void manual();
 
     void reset();
 
@@ -54,8 +54,7 @@ class Core {
 
     void send();
 
-    void calculateDistanceRatio(Shared::Image::RefImageLine image,
-                                float &ratio);
+    float calculateDistanceRatio();
 
     uint32_t calculateServoPosition(float ratio);
 };

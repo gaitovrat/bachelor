@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1213</width>
+    <width>1062</width>
     <height>643</height>
    </rect>
   </property>
@@ -23,10 +23,22 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="bStartCar">
-      <property name="text">
-       <string>Start</string>
-      </property>
+     <widget class="QComboBox" name="modeComboBox">
+      <item>
+       <property name="text">
+        <string>None</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Auto</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Manual</string>
+       </property>
+      </item>
      </widget>
     </item>
     <item>
@@ -760,7 +772,7 @@
                       <string notr="true">font-size: 12px;</string>
                      </property>
                      <property name="text">
-                      <string>400</string>
+                      <string>-65555</string>
                      </property>
                      <property name="textFormat">
                       <enum>Qt::PlainText</enum>
@@ -808,7 +820,7 @@
                       <string notr="true">font-size: 12px;</string>
                      </property>
                      <property name="text">
-                      <string>400</string>
+                      <string>-65555</string>
                      </property>
                      <property name="textFormat">
                       <enum>Qt::PlainText</enum>
@@ -856,7 +868,7 @@
                       <string notr="true">font-size: 12px;</string>
                      </property>
                      <property name="text">
-                      <string>400</string>
+                      <string>-65555</string>
                      </property>
                      <property name="textFormat">
                       <enum>Qt::PlainText</enum>
@@ -948,7 +960,7 @@
                       <string notr="true">font-size: 12px;</string>
                      </property>
                      <property name="text">
-                      <string>400</string>
+                      <string>-65555</string>
                      </property>
                      <property name="textFormat">
                       <enum>Qt::PlainText</enum>
@@ -996,7 +1008,7 @@
                       <string notr="true">font-size: 12px;</string>
                      </property>
                      <property name="text">
-                      <string>400</string>
+                      <string>-65555</string>
                      </property>
                      <property name="textFormat">
                       <enum>Qt::PlainText</enum>
@@ -1044,7 +1056,7 @@
                       <string notr="true">font-size: 12px;</string>
                      </property>
                      <property name="text">
-                      <string>400</string>
+                      <string>-65555</string>
                      </property>
                      <property name="textFormat">
                       <enum>Qt::PlainText</enum>
@@ -1136,7 +1148,7 @@
                       <string notr="true">font-size: 12px;</string>
                      </property>
                      <property name="text">
-                      <string>400</string>
+                      <string>-65555</string>
                      </property>
                      <property name="textFormat">
                       <enum>Qt::PlainText</enum>
@@ -1184,7 +1196,7 @@
                       <string notr="true">font-size: 12px;</string>
                      </property>
                      <property name="text">
-                      <string>400</string>
+                      <string>-65555</string>
                      </property>
                      <property name="textFormat">
                       <enum>Qt::PlainText</enum>
@@ -1232,7 +1244,7 @@
                       <string notr="true">font-size: 12px;</string>
                      </property>
                      <property name="text">
-                      <string>400</string>
+                      <string>-65555</string>
                      </property>
                      <property name="textFormat">
                       <enum>Qt::PlainText</enum>
@@ -1270,7 +1282,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1213</width>
+     <width>1062</width>
      <height>36</height>
     </rect>
    </property>

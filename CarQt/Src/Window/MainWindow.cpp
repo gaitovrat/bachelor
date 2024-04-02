@@ -6,9 +6,7 @@
 
 #include "./ui_MainWindow.h"
 #include "Image.h"
-#include "Shared/Signal.h"
 #include "Utils.h"
-#include "Window/SensorsDialog.h"
 #include "Window/SettingsWindow.h"
 
 using namespace CarQt;
@@ -16,12 +14,11 @@ using namespace CarQt;
 MainWindow::MainWindow(const QString &name, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), client(nullptr),
       labelConnected(new QLabel("Connected", this)),
-      labelJoystickConnected(new QLabel("Connected", this)),
       labelTXBytes(new QLabel(
           QString::asprintf(MainWindow::LABEL_TX_FORMAT, 0ll), this)),
       labelRXBytes(new QLabel(
           QString::asprintf(MainWindow::LABEL_RX_FORMAT, 0ll), this)),
-      recording(nullptr), sensorsDialog(nullptr), timer(this) {
+      recording(nullptr) {
     this->ui->setupUi(this);
 #ifdef __APPLE__
     auto *fileMenu = new QMenu(name, this);
@@ -29,102 +26,67 @@ MainWindow::MainWindow(const QString &name, QWidget *parent)
     auto *fileMenu = new QMenu("File", this);
 #endif
     auto *clientMenu = new QMenu("Client", this);
-    auto *viewMenu = new QMenu("View", this);
     auto *preferenceAction = new QAction("Preferences", this);
     auto *reconnectAction = new QAction("Reconnect MCU", this);
-    auto *reconnectJoystickAction = new QAction("Reconnect Joystick", this);
-    auto *viewSensorsChartAction = new QAction("Sensors Chart", this);
 
     fileMenu->addAction(preferenceAction);
     clientMenu->addAction(reconnectAction);
-    clientMenu->addAction(reconnectJoystickAction);
-    viewMenu->addAction(viewSensorsChartAction);
     this->ui->menubar->addMenu(fileMenu);
     this->ui->menubar->addMenu(clientMenu);
-    this->ui->menubar->addMenu(viewMenu);
     this->ui->ui_originalGraphics->setScene(new QGraphicsScene);
     this->ui->ui_normalizedView->setScene(new QGraphicsScene);
     this->ui->ui_thresholdedGraphics->setScene(new QGraphicsScene);
 
-    for (QLabel *label : labels)
-        this->ui->statusbar->addWidget(label);
-
-    this->timer.setInterval(10);
+    this->ui->statusbar->addWidget(labelConnected);
+    this->ui->statusbar->addWidget(labelRXBytes);
+    this->ui->statusbar->addWidget(labelTXBytes);
 
     Settings settings = Settings::load(SettingsWindow::FILENAME);
 
     updateClient(settings);
-    updateJoystick();
 
-    connect(this->client, &UDPClient::dataReady, this, &MainWindow::update);
-    connect(this->client, &UDPClient::dataReceived, this,
-            &MainWindow::receivedSize);
     connect(preferenceAction, &QAction::triggered, this,
             &MainWindow::openPreferences);
     connect(reconnectAction, &QAction::triggered, this, &MainWindow::reconnect);
     connect(this->ui->ui_recordingButton, &QPushButton::clicked, this,
             &MainWindow::record);
-    connect(&this->timer, &QTimer::timeout, this, &MainWindow::handleJoystick);
-    connect(reconnectJoystickAction, &QAction::triggered, this,
-            &MainWindow::updateJoystick);
-    connect(viewSensorsChartAction, &QAction::triggered, this,
-            &MainWindow::openSensorsDialog);
-
-    connect(this->ui->bStartCar, &QPushButton::clicked, this,
-            &MainWindow::startCar);
-
-    //    this->timer.start();
+    connect(this->ui->modeComboBox, &QComboBox::currentIndexChanged, this,
+            &MainWindow::setMode);
 }
 
 MainWindow::~MainWindow() {
-    this->timer.stop();
-
-    for (QLabel *label : labels)
-        delete label;
-
-    if (client) {
-        delete client;
-    }
-
-    if (recording) {
-        delete recording;
-    }
-
+    delete labelConnected;
+    delete labelRXBytes;
+    delete labelTXBytes;
+    delete client;
+    delete recording;
     delete ui;
 }
 
 void MainWindow::update(const Shared::Data &data) {
     // Motor
-    this->ui->ui_leftPwmValue->setText(
-        QString::number(data.motorData.leftSpeed));
-    this->ui->ui_rightPwmValue->setText(
-        QString::number(data.motorData.rightSpeed));
+    this->ui->ui_leftPwmValue->setText(QString::number(data.leftSpeed));
+    this->ui->ui_rightPwmValue->setText(QString::number(data.rightSpeed));
 
     // Servo
     this->ui->ui_servoPositionValue->setText(
-        QString::number(data.steerData.servoPosition));
-    this->ui->ui_servoAngleValue->setText(
-        QString::number(data.steerData.angle));
+        QString::number(data.servoPosition));
+    this->ui->ui_servoAngleValue->setText(QString::number(data.angle));
 
     // Camera
     this->ui->ui_regsionsListSizeValue->setText(
-        QString::number(data.cameraData.regionsListSize));
-    this->ui->ui_regionsCountValue->setText(
-        QString::number(data.cameraData.regionsCount));
+        QString::number(data.regionsListSize));
+    this->ui->ui_regionsCountValue->setText(QString::number(data.regionsCount));
     this->ui->ui_unchangedLeftValue->setText(
-        Utils::toQString(data.cameraData.unchangedLeft));
+        Utils::toQString(data.unchangedLeft));
     this->ui->ui_unchangedRightValue->setText(
-        Utils::toQString(data.cameraData.unchangedRight));
-    this->ui->ui_hasLeftValue->setText(
-        Utils::toQString(data.cameraData.hasLeft));
-    this->ui->ui_hasRightValue->setText(
-        Utils::toQString(data.cameraData.hasRight));
-    this->ui->ui_leftDistance->setText(
-        QString::number(data.cameraData.leftDistance));
-    this->ui->ui_rightDistance->setText(
-        QString::number(data.cameraData.rightDistance));
+        Utils::toQString(data.unchangedRight));
+    this->ui->ui_hasLeftValue->setText(Utils::toQString(data.hasLeft));
+    this->ui->ui_hasRightValue->setText(Utils::toQString(data.hasRight));
+    this->ui->ui_leftDistance->setText(QString::number(data.leftDistance));
+    this->ui->ui_rightDistance->setText(QString::number(data.rightDistance));
 
-    images.emplace_front(data.cameraData.line);
+    images.emplace_front(data.line);
     int historySize = this->ui->ui_originalGraphics->size().height();
     if (images.size() > historySize) {
         images.pop_back();
@@ -171,33 +133,20 @@ void MainWindow::update(const Shared::Data &data) {
     Utils::showMat(this->ui->ui_normalizedView, imageNormalized);
     Utils::showMat(this->ui->ui_thresholdedGraphics, imageThresholded);
 
-    this->ui->ui_accelerometerXValue->setText(
-        QString::number(data.sensorData.accel.x));
-    this->ui->ui_accelerometerYValue->setText(
-        QString::number(data.sensorData.accel.y));
-    this->ui->ui_accelerometerZValue->setText(
-        QString::number(data.sensorData.accel.z));
+    this->ui->ui_accelerometerXValue->setText(QString::number(data.accel.x));
+    this->ui->ui_accelerometerYValue->setText(QString::number(data.accel.y));
+    this->ui->ui_accelerometerZValue->setText(QString::number(data.accel.z));
 
-    this->ui->ui_gyroscopeXValue->setText(
-        QString::number(data.sensorData.gyro.x));
-    this->ui->ui_gyroscopeYValue->setText(
-        QString::number(data.sensorData.gyro.y));
-    this->ui->ui_gyroscopeZValue->setText(
-        QString::number(data.sensorData.gyro.z));
+    this->ui->ui_gyroscopeXValue->setText(QString::number(data.gyro.x));
+    this->ui->ui_gyroscopeYValue->setText(QString::number(data.gyro.y));
+    this->ui->ui_gyroscopeZValue->setText(QString::number(data.gyro.z));
 
-    this->ui->ui_magnetometerXValue->setText(
-        QString::number(data.sensorData.mag.x));
-    this->ui->ui_magnetometerYValue->setText(
-        QString::number(data.sensorData.mag.y));
-    this->ui->ui_magnetometerZValue->setText(
-        QString::number(data.sensorData.mag.z));
+    this->ui->ui_magnetometerXValue->setText(QString::number(data.mag.x));
+    this->ui->ui_magnetometerYValue->setText(QString::number(data.mag.y));
+    this->ui->ui_magnetometerZValue->setText(QString::number(data.mag.z));
 
     if (recording) {
         recording->add(data);
-    }
-
-    if (sensorsDialog) {
-        sensorsDialog->add(data.sensorData, data.timestamp);
     }
 }
 
@@ -214,9 +163,8 @@ void MainWindow::openPreferences() {
 
 void MainWindow::updateClient(const Settings &settings) {
     this->recordingPath = settings.recordDestination;
-    if (this->client) {
-        delete this->client;
-    }
+    delete this->client;
+
     this->client = new UDPClient(settings.network, this);
     reconnect();
 }
@@ -229,6 +177,12 @@ void MainWindow::reconnect() {
 
     labelConnected->setProperty("class", value);
     labelConnected->setText(value);
+
+    connect(this->client, &UDPClient::dataReady, this, &MainWindow::update);
+    connect(this->client, &UDPClient::dataReceived, this,
+            &MainWindow::receivedSize);
+    connect(this->client, &UDPClient::dataTransmitted, this,
+            &MainWindow::transmitSize);
 }
 
 void MainWindow::record() {
@@ -247,57 +201,10 @@ void MainWindow::receivedSize(const qint64 size) const {
     labelRXBytes->setText(QString::asprintf(MainWindow::LABEL_RX_FORMAT, size));
 }
 
-void MainWindow::updateJoystick() {
-    bool opened = this->joystick.opened();
-
-    if (!opened) {
-        opened = this->joystick.open();
-    }
-
-    QString qssClass = opened ? "Connected" : "Disconnected";
-    QString text = opened ? this->joystick.getName() : "No gamepad found";
-
-    this->labelJoystickConnected->setProperty("class", qssClass);
-    this->labelJoystickConnected->setText(text);
+void MainWindow::transmitSize(qint64 size) const {
+    labelTXBytes->setText(QString::asprintf(MainWindow::LABEL_TX_FORMAT, size));
 }
 
-void MainWindow::handleJoystick() const {
-    Shared::Signal signal = this->joystick.getSignal();
-    qDebug() << "Joystick signal: " << signal.type << " " << signal.value;
-}
-
-void MainWindow::destroySensorsDialog() {
-    if (!this->sensorsDialog) {
-        return;
-    }
-
-    this->sensorsDialog->deleteLater();
-    this->sensorsDialog = nullptr;
-}
-
-void MainWindow::openSensorsDialog() {
-    if (this->sensorsDialog) {
-        return;
-    }
-
-    this->sensorsDialog = new SensorsDialog(this);
-
-    connect(this->sensorsDialog, &SensorsDialog::finished, this,
-            &MainWindow::destroySensorsDialog);
-
-    sensorsDialog->show();
-}
-void MainWindow::startCar() {
-    QString buttonText = this->ui->bStartCar->text();
-    Shared::Signal signal;
-
-    if (buttonText == "Start") {
-        this->ui->bStartCar->setText("Stop");
-        signal.type = Shared::SignalType::START;
-    } else {
-        this->ui->bStartCar->setText("Start");
-        signal.type = Shared::SignalType::STOP;
-    }
-
-    this->client->send(signal);
+void MainWindow::setMode(int index) {
+    this->client->send(static_cast<Shared::Mode>(index));
 }

@@ -8,7 +8,6 @@
 
 #include "Settings.h"
 #include "Shared/Data.h"
-#include "Shared/Signal.h"
 
 namespace CarQt {
 class UDPClient : public QObject {
@@ -31,7 +30,7 @@ class UDPClient : public QObject {
 
     void bind();
 
-    void send(const Shared::Signal &signal);
+    void send(Shared::Mode mode);
   public slots:
     void read();
 
@@ -39,6 +38,8 @@ class UDPClient : public QObject {
     void dataReady(const Shared::Data &data);
 
     void dataReceived(uint64_t size);
+
+    void dataTransmitted(uint64_t size);
 };
 } // namespace CarQt
 
