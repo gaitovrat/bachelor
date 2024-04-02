@@ -16,8 +16,8 @@
 #include "fsl_phyksz8081.h"
 #include "pin_mux.h"
 
+#include "Shared/Mode.h"
 #include "Shared/Network.h"
-#include "Shared/Signal.h"
 
 #include "Core.h"
 
@@ -122,16 +122,7 @@ bool Enet::check() {
 
 void Enet::recv(void *arg, struct udp_pcb *pcb, struct pbuf *p,
                 const ip_addr_t *addr, u16_t port) {
-    Shared::SignalType *signalType =
-        reinterpret_cast<Shared::SignalType *>(p->payload);
+    Shared::Mode *mode = reinterpret_cast<Shared::Mode *>(p->payload);
 
-    switch (*signalType) {
-    case Shared::SignalType::START:
-        core.start();
-        break;
-    case Shared::SignalType::STOP:
-    default:
-        core.stop();
-        break;
-    }
+    core.setMode(*mode);
 }

@@ -14,33 +14,26 @@
 #define PI 3.14
 #endif
 
-static constexpr uint32_t TRACER_HISTORY_SIZE = 5;
-
 using namespace MCU;
 
 Core::Core()
-    : settings(), motorState(Shared::MotorState::Stop),
-      tracer(TRACER_HISTORY_SIZE), pidData(settings.pidData),
+    : tracer(TRACER_HISTORY_SIZE), pidData(ERROR, INTEGRAL, DERIVATIVE),
       pid(pidData, P_ON_E, DIRECT) {
     this->pid.SetMode(AUTOMATIC);
 }
 
 void Core::init() {
     tfc.InitAll();
+    tfc.InitRC();
 
     tfc.setLEDs(0b1111);
-#ifdef USE_ENET
     enet.init(sizeof(Shared::Data), 5000);
-#endif
-#if 0
-    fxos.init();
-    fxas.init();
-#endif
     imu.init();
 
     tfc.MotorPWMOnOff(true);
     tfc.ServoOnOff(true);
-    tfc.setPWMMax(settings.maxSpeed);
+    tfc.RCOnOff(true);
+    tfc.setPWMMax(MAX_SPEED);
 
     tfc.setLEDs(0);
 }
@@ -127,87 +120,61 @@ void Core::calibrate() {
 }
 
 void Core::drive() {
-    static uint32_t oldTick = 0;
-    int32_t servoPosition = 0, leftSpeed = 0, rightSpeed = 0;
-#ifdef USE_ENET
     this->enet.check();
-#endif
+    this->tfc.setLEDs(this->data.mode);
 
-    if (this->tfc.getPushButton(0) == 1) {
-        if (this->motorState == Shared::MotorState::Start)
-            this->motorState = Shared::MotorState::Stop;
-        else
-            this->motorState = Shared::MotorState::Start;
-    }
-
-    if (HW_TFC_TimeStamp != oldTick) {
-#ifdef USE_TFC
+    if (HW_TFC_TimeStamp != this->data.timestamp) {
         if (this->tfc.getDIPSwitch() & 0x01)
             this->calibrate();
-        else {
-#endif
-            this->update(servoPosition, leftSpeed, rightSpeed);
-            this->send();
-#ifdef USE_TFC
+        else if (this->data.mode == Shared::Mode::Manual) {
+            this->manual();
+        } else if (this->data.mode == Shared::Mode::Auto) {
+            this->update();
+        } else {
+            this->reset();
         }
-#endif
 
-        this->tfc.setServo_i(0, servoPosition);
-        this->tfc.setMotorPWM_i(leftSpeed, rightSpeed);
-        oldTick = HW_TFC_TimeStamp;
+        this->send();
+        this->tfc.setServo_i(0, this->data.servoPosition);
+        this->tfc.setMotorPWM_i(this->data.leftSpeed, this->data.rightSpeed);
+
+        this->data.timestamp = HW_TFC_TimeStamp;
     }
 }
 
-void Core::update(int32_t &servoPosition, int32_t &leftSpeed,
-                  int32_t &rightSpeed) {
-    Shared::Image::ImageLine line;
-    float ratio = 0.f, innerSpeed = 0.f, outerSpeed = 0.f, turningAngle = 0.f;
+void Core::update() {
+    float ratio, innerSpeed, outerSpeed;
 
-    if (this->motorState == Shared::MotorState::Stop) {
-        this->tfc.setLEDs(0);
-        this->reset();
-
-        servoPosition = 0;
-        leftSpeed = 0;
-        rightSpeed = 0;
-
-        return;
-    }
-
-    this->tfc.setLEDs(0b1001);
-    this->tfc.getImage(0, line, Shared::Image::LINE_LENGTH);
-    this->calculateDistanceRatio(line, ratio);
+    ratio = this->calculateDistanceRatio();
 
     pidData.input = ratio;
     pid.Compute();
-    servoPosition = static_cast<int32_t>(pidData.output);
+    data.servoPosition = static_cast<int32_t>(pidData.output);
 
-    if (servoPosition > TFC_SERVO_MINMAX)
-        servoPosition = TFC_SERVO_MINMAX;
-    if (servoPosition < -TFC_SERVO_MINMAX)
-        servoPosition = -TFC_SERVO_MINMAX;
+    if (data.servoPosition > TFC_SERVO_MINMAX)
+        data.servoPosition = TFC_SERVO_MINMAX;
+    if (data.servoPosition < -TFC_SERVO_MINMAX)
+        data.servoPosition = -TFC_SERVO_MINMAX;
 
-    turningAngle =
-        (servoPosition * 5.85f / 200) * PI / 180.f; // Convert servo to angle
+    data.angle = (data.servoPosition * 5.85f / 200) * PI /
+                 180.f; // Convert servo to angle
     innerSpeed =
-        settings.speed *
-        (1.f - settings.diffCoef * (1.50f * tanf(turningAngle)) / 2.f * 1.85f);
+        SPEED * (1.f - DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
     outerSpeed =
-        settings.speed *
-        (1.f + settings.diffCoef * (1.50f * tanf(turningAngle)) / 2.f * 1.85f);
+        SPEED * (1.f + DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
 
     if (!(tracer.getUnchangedRight() && tracer.getUnchangedLeft())) {
-        if (turningAngle > 0.f) {
-            rightSpeed = innerSpeed;
-            leftSpeed = outerSpeed;
+        if (data.angle > 0.f) {
+            data.rightSpeed = innerSpeed;
+            data.leftSpeed = outerSpeed;
         } else {
-            leftSpeed = innerSpeed;
-            rightSpeed = outerSpeed;
+            data.leftSpeed = innerSpeed;
+            data.rightSpeed = outerSpeed;
         }
 
-        leftSpeed *= 0.75f;
-        rightSpeed *= 0.75f;
-        servoPosition *= 1.5f;
+        data.leftSpeed *= 0.75f;
+        data.rightSpeed *= 0.75f;
+        data.servoPosition *= 1.5f;
     }
 }
 
@@ -216,49 +183,65 @@ void Core::reset() {
 
     pidData.reset();
     pid = PID(pidData, P_ON_E, DIRECT);
+
+    uint32_t timestamp = data.timestamp;
+    data = Shared::Data();
+    data.timestamp = timestamp;
 }
 
 void Core::send() {
-    Shared::Data data;
-    data.timestamp = HW_TFC_TimeStamp;
+    data.accel = imu.getAccel();
+    data.mag = imu.getMag();
+    data.gyro = imu.getGyro();
 
-    // Sensors
-    data.sensorData.accel = imu.getAccel();
-    data.sensorData.mag = imu.getMag();
-    data.sensorData.gyro = imu.getGyro();
-
-#ifdef USE_ENET
     uint8_t *pData = reinterpret_cast<uint8_t *>(&data);
     enet.send(pData, sizeof(data));
-#else
-    PRINTF("Accel: %d,%d,%d; Mag: %d,%d,%d; Gyro: %d,%d,%d\r\n",
-           data.sensorData.accel.x, data.sensorData.accel.y,
-           data.sensorData.accel.z, data.sensorData.mag.x,
-           data.sensorData.mag.y, data.sensorData.mag.z, data.sensorData.gyro.x,
-           data.sensorData.gyro.y, data.sensorData.gyro.z);
-#endif
 }
 
-void Core::calculateDistanceRatio(Shared::Image::RefImageLine image,
-                                  float &ratio) {
-    this->tracer.addImage(image);
+float Core::calculateDistanceRatio() {
+    this->tfc.getImage(0, data.line, Shared::Image::LINE_LENGTH);
+    this->tracer.addImage(data.line);
 
     std::pair<uint8_t, uint8_t> distances = tracer.distancesPair();
 
-    const uint8_t leftDistance = distances.first;
-    const uint8_t rightDistance = Shared::Image::LINE_LENGTH - distances.second;
+    data.leftDistance = distances.first;
+    data.rightDistance = Shared::Image::LINE_LENGTH - distances.second;
 
-    const float leftRatio =
-        static_cast<float>(leftDistance) / static_cast<float>(rightDistance);
-    const float rightRatio =
-        static_cast<float>(rightDistance) / static_cast<float>(leftDistance);
+    const float leftRatio = static_cast<float>(data.leftDistance) /
+                            static_cast<float>(data.rightDistance);
+    const float rightRatio = static_cast<float>(data.rightDistance) /
+                             static_cast<float>(data.leftDistance);
 
-    ratio = rightRatio - leftRatio;
+    data.regionsCount =
+        tracer.regions(data.line, 0, TFC_CAMERA_LINE_LENGTH - 1, false).size();
+    data.regionsListSize = tracer.size();
+    data.unchangedLeft = tracer.getUnchangedLeft();
+    data.unchangedRight = tracer.getUnchangedRight();
+    data.hasLeft = tracer.getHasLeft();
+    data.hasRight = tracer.getHasRight();
+
+    return rightRatio - leftRatio;
 }
-
 
 IMU &Core::getIMU() { return this->imu; }
 
-void Core::start() { this->motorState = Shared::MotorState::Start; }
+void Core::manual() {
+    int32_t servo = this->tfc.getRCPulse(0);
+    int32_t speed = this->tfc.getRCPulse(1);
 
-void Core::stop() { this->motorState = Shared::MotorState::Stop; }
+    if (!servo || !speed)
+        return;
+
+    float servof = servo / 100.f - 15;
+    float speedf = speed / 100.f - 15;
+    servof *= 2;
+    speedf *= 2;
+
+    int32_t newSpeed = this->tfc.setting.pwm_max * (speedf / 10.f) * -1;
+
+    this->data.servoPosition = TFC_SERVO_MINMAX * (servof / 10.f);
+    this->data.leftSpeed = newSpeed;
+    this->data.rightSpeed = newSpeed;
+}
+
+void Core::setMode(Shared::Mode mode) { this->data.mode = mode; }

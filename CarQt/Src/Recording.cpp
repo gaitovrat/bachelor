@@ -1,5 +1,4 @@
 #include "Recording.h"
-#include "Shared/CameraData.h"
 
 #include <fstream>
 
@@ -42,36 +41,35 @@ void Recording::save(const QString &path) {
         Json::Value jsonEntry, jsonData, jsonAccel, jsonMag, jsonGyro,
             jsonCamera, jsonMotor, jsonSteer, jsonSensor;
 
-        lines.push_back(entry.data.cameraData.line);
+        lines.push_back(entry.data.line);
 
-        jsonCamera["regionsCount"] = entry.data.cameraData.regionsCount;
+        jsonCamera["regionsCount"] = entry.data.regionsCount;
         jsonCamera["regionsListSize"] =
-            std::to_string(entry.data.cameraData.regionsListSize);
-        jsonCamera["unchangedLeft"] = entry.data.cameraData.unchangedLeft;
-        jsonCamera["unchangedRight"] = entry.data.cameraData.unchangedRight;
-        jsonCamera["hasLeft"] = entry.data.cameraData.hasLeft;
-        jsonCamera["hasRight"] = entry.data.cameraData.hasRight;
-        jsonCamera["leftDistance"] = entry.data.cameraData.leftDistance;
-        jsonCamera["rightDistance"] = entry.data.cameraData.rightDistance;
+            std::to_string(entry.data.regionsListSize);
+        jsonCamera["unchangedLeft"] = entry.data.unchangedLeft;
+        jsonCamera["unchangedRight"] = entry.data.unchangedRight;
+        jsonCamera["hasLeft"] = entry.data.hasLeft;
+        jsonCamera["hasRight"] = entry.data.hasRight;
+        jsonCamera["leftDistance"] = entry.data.leftDistance;
+        jsonCamera["rightDistance"] = entry.data.rightDistance;
 
-        jsonMotor["leftSpeed"] = entry.data.motorData.leftSpeed;
-        jsonMotor["rightSpeed"] = entry.data.motorData.rightSpeed;
-        jsonMotor["state"] = entry.data.motorData.state;
+        jsonMotor["leftSpeed"] = entry.data.leftSpeed;
+        jsonMotor["rightSpeed"] = entry.data.rightSpeed;
 
-        jsonSteer["angle"] = entry.data.steerData.angle;
-        jsonSteer["servoPosition"] = entry.data.steerData.servoPosition;
+        jsonSteer["angle"] = entry.data.angle;
+        jsonSteer["servoPosition"] = entry.data.servoPosition;
 
-        jsonAccel["x"] = entry.data.sensorData.accel.x;
-        jsonAccel["y"] = entry.data.sensorData.accel.y;
-        jsonAccel["z"] = entry.data.sensorData.accel.z;
+        jsonAccel["x"] = entry.data.accel.x;
+        jsonAccel["y"] = entry.data.accel.y;
+        jsonAccel["z"] = entry.data.accel.z;
 
-        jsonMag["x"] = entry.data.sensorData.mag.x;
-        jsonMag["y"] = entry.data.sensorData.mag.y;
-        jsonMag["z"] = entry.data.sensorData.mag.z;
+        jsonMag["x"] = entry.data.mag.x;
+        jsonMag["y"] = entry.data.mag.y;
+        jsonMag["z"] = entry.data.mag.z;
 
-        jsonGyro["x"] = entry.data.sensorData.gyro.x;
-        jsonGyro["y"] = entry.data.sensorData.gyro.y;
-        jsonGyro["z"] = entry.data.sensorData.gyro.z;
+        jsonGyro["x"] = entry.data.gyro.x;
+        jsonGyro["y"] = entry.data.gyro.y;
+        jsonGyro["z"] = entry.data.gyro.z;
 
         jsonSensor["accel"] = jsonAccel;
         jsonSensor["mag"] = jsonMag;
@@ -81,6 +79,7 @@ void Recording::save(const QString &path) {
         jsonData["motor"] = jsonMotor;
         jsonData["steer"] = jsonSteer;
         jsonData["sensor"] = jsonSensor;
+        jsonData["mode"] = entry.data.mode;
         jsonData["timestamp"] = entry.data.timestamp;
 
         jsonEntry["data"] = jsonData;
