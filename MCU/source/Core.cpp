@@ -30,9 +30,6 @@ void Core::init() {
     enet.init(sizeof(Shared::Data), 5000);
     imu.init();
 
-    tfc.MotorPWMOnOff(true);
-    tfc.ServoOnOff(true);
-    tfc.RCOnOff(true);
     tfc.setPWMMax(MAX_SPEED);
 
     tfc.setLEDs(0);
@@ -122,6 +119,7 @@ void Core::calibrate() {
 void Core::drive() {
     this->enet.check();
     this->tfc.setLEDs(this->data.mode);
+    this->imu.start();
 
     if (HW_TFC_TimeStamp != this->data.timestamp) {
         if (this->tfc.getDIPSwitch() & 0x01)
@@ -145,6 +143,10 @@ void Core::drive() {
 void Core::update() {
     float ratio, innerSpeed, outerSpeed;
 
+    tfc.MotorPWMOnOff(true);
+    tfc.ServoOnOff(true);
+    tfc.RCOnOff(false);
+
     ratio = this->calculateDistanceRatio();
 
     pidData.input = ratio;
@@ -163,22 +165,24 @@ void Core::update() {
     outerSpeed =
         SPEED * (1.f + DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
 
-    if (!(tracer.getUnchangedRight() && tracer.getUnchangedLeft())) {
-        if (data.angle > 0.f) {
-            data.rightSpeed = innerSpeed;
-            data.leftSpeed = outerSpeed;
-        } else {
-            data.leftSpeed = innerSpeed;
-            data.rightSpeed = outerSpeed;
-        }
-
-        data.leftSpeed *= 0.75f;
-        data.rightSpeed *= 0.75f;
-        data.servoPosition *= 1.5f;
+    if (data.angle > 0.f) {
+        data.rightSpeed = -innerSpeed;
+        data.leftSpeed = -outerSpeed;
+    } else {
+        data.leftSpeed = -innerSpeed;
+        data.rightSpeed = -outerSpeed;
     }
+
+    data.leftSpeed *= 0.75f;
+    data.rightSpeed *= 0.75f;
+    data.servoPosition *= 1.5f;
 }
 
 void Core::reset() {
+    tfc.MotorPWMOnOff(false);
+    tfc.ServoOnOff(false);
+    tfc.RCOnOff(false);
+
     tracer.reset();
 
     pidData.reset();
@@ -226,6 +230,10 @@ float Core::calculateDistanceRatio() {
 IMU &Core::getIMU() { return this->imu; }
 
 void Core::manual() {
+    tfc.MotorPWMOnOff(true);
+    tfc.ServoOnOff(true);
+    tfc.RCOnOff(true);
+
     int32_t servo = this->tfc.getRCPulse(0);
     int32_t speed = this->tfc.getRCPulse(1);
 
