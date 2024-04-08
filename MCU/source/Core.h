@@ -15,7 +15,7 @@ class Core {
     static constexpr float INTEGRAL = 0.5f;
     static constexpr float DIFF_COEF = 1.28f;
     static constexpr uint16_t MAX_SPEED = 1000;
-    static constexpr uint16_t SPEED = 100;
+    static constexpr uint16_t SPEED = 300;
     static constexpr uint32_t TRACER_HISTORY_SIZE = 5;
 
     TFC tfc;

@@ -31,8 +31,6 @@ static ethernetif_config_t ETHERNETIF_CONFIG = {
 
 using namespace MCU;
 
-extern Core core;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -93,7 +91,7 @@ void Enet::init(const size_t bufferSize, const uint16_t port) {
     this->pcb = udp_new();
     udp_bind(this->pcb, &this->mcuIp, port);
     udp_connect(this->pcb, &this->pcIp, port);
-    udp_recv(this->pcb, Enet::recv, this);
+    udp_recv(this->pcb, &Enet::recv, this);
 
     this->initialized = true;
 }
@@ -124,5 +122,5 @@ void Enet::recv(void *arg, struct udp_pcb *pcb, struct pbuf *p,
                 const ip_addr_t *addr, u16_t port) {
     Shared::Mode *mode = reinterpret_cast<Shared::Mode *>(p->payload);
 
-    core.setMode(*mode);
+    PRINTF("%d\r\n", *mode);
 }

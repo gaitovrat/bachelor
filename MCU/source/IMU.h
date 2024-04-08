@@ -25,9 +25,6 @@ class IMU {
   private:
     const FXOSRange fxosRange;
     const FXASRange fxasRange;
-    i2c_master_handle_t handle;
-    uint8_t fxosBuffer[12];
-    uint8_t fxasBuffer[6];
     Shared::Vec3<int16_t> accel;
     Shared::Vec3<int16_t> mag;
     Shared::Vec3<int16_t> gyro;
@@ -39,25 +36,13 @@ class IMU {
 
     status_t init();
 
-    i2c_master_handle_t &getHandle();
-
-    uint8_t *getFXOSBuffer();
-
-    uint8_t *getFXASBuffer();
-
-    inline constexpr uint32_t getFXOSBufferSize() const {
-        return sizeof(fxosBuffer);
-    }
-
-    inline constexpr uint32_t getFXASBufferSize() const {
-        return sizeof(fxasBuffer);
-    }
-
     Shared::Vec3<int16_t> getAccel() const;
 
     Shared::Vec3<int16_t> getMag() const;
 
     Shared::Vec3<int16_t> getGyro() const;
+
+    void start();
 
   private:
     status_t initFXOS();
