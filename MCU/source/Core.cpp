@@ -18,7 +18,7 @@ using namespace MCU;
 
 Core::Core()
     : tracer(TRACER_HISTORY_SIZE), pidData(ERROR, INTEGRAL, DERIVATIVE),
-      pid(pidData, P_ON_E, DIRECT) {
+      pid(pidData, P_ON_E, DIRECT), previousButtonState(false) {
     this->pid.SetMode(AUTOMATIC);
 }
 
@@ -40,7 +40,7 @@ void Core::init() {
 
     tfc.setLEDs(0);
 
-    PRINTF("Initialized");
+    PRINTF("Initialized\r\n");
 }
 
 void Core::calibrate() {
@@ -125,11 +125,14 @@ void Core::calibrate() {
 }
 
 void Core::drive() {
-    this->enet.check();
-    this->tfc.setLEDs(this->data.mode);
-    this->imu.start();
-
     if (HW_TFC_TimeStamp != this->data.timestamp) {
+		bool buttonState = this->tfc.getPushButton(0);
+
+		this->enet.check();
+		this->imu.start();
+		this->tfc.getImage(0, data.line, Shared::Image::LINE_LENGTH);
+		this->tfc.setLEDs(1 << this->data.mode);
+
 #if 0
         if (this->tfc.getDIPSwitch() & 0x01)
             this->calibrate();
@@ -145,13 +148,11 @@ void Core::drive() {
         this->tfc.setServo_i(0, this->data.servoPosition);
         this->tfc.setMotorPWM_i(this->data.leftSpeed, this->data.rightSpeed);
 #endif
-        this->data.accel = this->imu.getAccel();
-        this->data.mag = this->imu.getMag();
-        this->data.gyro = this->imu.getGyro();
-
-        PRINTF("%d %d %d\r\n", this->data.accel.x, this->data.accel.y, this->data.accel.z);
+        if (previousButtonState && !buttonState)
+        	this->data.mode = (this->data.mode + 1) % 3;
 
         this->data.timestamp = HW_TFC_TimeStamp;
+        this->previousButtonState = buttonState;
     }
 }
 
@@ -218,7 +219,6 @@ void Core::send() {
 }
 
 float Core::calculateDistanceRatio() {
-    this->tfc.getImage(0, data.line, Shared::Image::LINE_LENGTH);
     this->tracer.addImage(data.line);
 
     std::pair<uint8_t, uint8_t> distances = tracer.distancesPair();
@@ -266,5 +266,3 @@ void Core::manual() {
     this->data.leftSpeed = newSpeed;
     this->data.rightSpeed = newSpeed;
 }
-
-void Core::setMode(Shared::Mode mode) { this->data.mode = mode; }

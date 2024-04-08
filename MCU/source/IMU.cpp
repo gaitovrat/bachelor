@@ -103,22 +103,18 @@ void PORTA_IRQHandler(void) {
 #endif
 
 IMU::IMU(FXOSRange fxosRange, FXASRange fxasRange)
-    : fxosRange(fxosRange), fxasRange(fxasRange) {
+    : fxosRange(fxosRange), fxasRange(fxasRange), started(false) {
     memset(fxosBuffer, 0, sizeof(fxosBuffer));
     memset(fxasBuffer, 0, sizeof(fxasBuffer));
 }
 
 status_t IMU::init() {
-    status_t status;
-
     NVIC_DisableIRQ(PORTC_IRQn);
     NVIC_DisableIRQ(PORTA_IRQn);
 
     this->initMaster();
-    status = this->initFXOS();
-    status = this->initFXAS();
-    status = this->startFXOS();
-    status = this->startFXAS();
+    this->initFXOS();
+    this->initFXAS();
 
     PORT_SetPinInterruptConfig(PORTC, 13, kPORT_InterruptLogicZero);
     PORT_SetPinInterruptConfig(PORTA, 29, kPORT_InterruptFallingEdge);
@@ -276,8 +272,17 @@ Shared::Vec3<int16_t> IMU::getMag() const { return this->mag; }
 Shared::Vec3<int16_t> IMU::getGyro() const { return this->gyro; }
 
 void IMU::start() {
+	if (started) {
+		return;
+	}
+
+	this->startFXOS();
+	this->startFXAS();
+
     NVIC_EnableIRQ(PORTC_IRQn);
     NVIC_EnableIRQ(PORTA_IRQn);
+
+    started = true;
 }
 
 void IMU::setAccel(const Shared::Vec3<int16_t>& vec) {

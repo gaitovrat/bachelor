@@ -28,6 +28,8 @@ class Core {
 
     Shared::Data data;
 
+    bool previousButtonState;
+
   public:
     Core();
 
@@ -41,16 +43,12 @@ class Core {
 
     IMU &getIMU();
 
-    void setMode(Shared::Mode mode);
-
   private:
     void update();
 
     void manual();
 
     void reset();
-
-    void setRide();
 
     void send();
 

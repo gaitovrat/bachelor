@@ -22,12 +22,14 @@ class IMU {
     static constexpr uint8_t FXOS_ADDRESS = 0x1DU;
     static constexpr uint8_t FXAS_ADDRESS = 0x21U;
 
+
   private:
     const FXOSRange fxosRange;
     const FXASRange fxasRange;
     Shared::Vec3<int16_t> accel;
     Shared::Vec3<int16_t> mag;
     Shared::Vec3<int16_t> gyro;
+    bool started;
 
   public:
     IMU(FXOSRange fxosRange = G_4, FXASRange fxasRange = DPS_1000);
