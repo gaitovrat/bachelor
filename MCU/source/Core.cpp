@@ -23,16 +23,22 @@ Core::Core()
 }
 
 void Core::init() {
+	PRINTF("Init TFC...\r\n");
     tfc.InitAll();
     tfc.InitRC();
 
     tfc.setLEDs(0b1111);
+
+    PRINTF("Init ENET...\r\n");
     enet.init(sizeof(Shared::Data), 5000);
+    PRINTF("Init IMU...\r\n");
     imu.init();
 
     tfc.setPWMMax(MAX_SPEED);
 
     tfc.setLEDs(0);
+
+    PRINTF("Initialized");
 }
 
 void Core::calibrate() {

@@ -78,7 +78,7 @@ void Filter::reset() {
 int16_t Filter::singlePoleRecursive() {
     static float lastOutput = .0f;
     uint32_t size = buffer.size();
-    float output, input;
+    float output;
 
     if (size < 1)
         return 0;

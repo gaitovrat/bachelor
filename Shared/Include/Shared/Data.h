@@ -35,7 +35,7 @@ struct Data {
     Vec3<int16_t> gyro = {0, 0, 0};
 
     uint32_t timestamp = 0;
-    uint8_t mode = Mode::None;
+    uint8_t mode = Mode::Auto;
 };
 } // namespace Shared
 

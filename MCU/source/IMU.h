@@ -42,6 +42,12 @@ class IMU {
 
     Shared::Vec3<int16_t> getGyro() const;
 
+    void setAccel(const Shared::Vec3<int16_t>& vec);
+
+    void setMag(const Shared::Vec3<int16_t>& vec);
+
+    void setGyro(const Shared::Vec3<int16_t>& vec);
+
     void start();
 
   private:
