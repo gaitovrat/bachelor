@@ -26,7 +26,8 @@ void Core::init() {
 	PRINTF("Init TFC...\r\n");
     tfc.InitAll();
     tfc.InitRC();
-
+    tfc.setServoCalibration(0, SERVO_CENTER, SERVO_LR);
+    tfc.setPWMMax(MAX_SPEED);
     tfc.setLEDs(0b1111);
 
 #if 0
@@ -36,10 +37,7 @@ void Core::init() {
     PRINTF("Init IMU...\r\n");
     imu.init();
 
-    tfc.setPWMMax(MAX_SPEED);
-
     tfc.setLEDs(0);
-
     PRINTF("Initialized\r\n");
 }
 
@@ -177,9 +175,9 @@ void Core::update() {
     data.angle = (data.servoPosition * 5.85f / 200) * PI /
                  180.f; // Convert servo to angle
     innerSpeed =
-        SPEED * (1.f - DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
+        MAX_SPEED * (1.f - DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
     outerSpeed =
-        SPEED * (1.f + DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
+        MAX_SPEED * (1.f + DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
 
     if (data.angle > 0.f) {
         data.rightSpeed = -innerSpeed;
