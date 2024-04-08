@@ -29,8 +29,10 @@ void Core::init() {
 
     tfc.setLEDs(0b1111);
 
+#if 0
     PRINTF("Init ENET...\r\n");
     enet.init(sizeof(Shared::Data), 5000);
+#endif
     PRINTF("Init IMU...\r\n");
     imu.init();
 
@@ -128,6 +130,7 @@ void Core::drive() {
     this->imu.start();
 
     if (HW_TFC_TimeStamp != this->data.timestamp) {
+#if 0
         if (this->tfc.getDIPSwitch() & 0x01)
             this->calibrate();
         else if (this->data.mode == Shared::Mode::Manual) {
@@ -141,6 +144,12 @@ void Core::drive() {
         this->send();
         this->tfc.setServo_i(0, this->data.servoPosition);
         this->tfc.setMotorPWM_i(this->data.leftSpeed, this->data.rightSpeed);
+#endif
+        this->data.accel = this->imu.getAccel();
+        this->data.mag = this->imu.getMag();
+        this->data.gyro = this->imu.getGyro();
+
+        PRINTF("%d %d %d\r\n", this->data.accel.x, this->data.accel.y, this->data.accel.z);
 
         this->data.timestamp = HW_TFC_TimeStamp;
     }

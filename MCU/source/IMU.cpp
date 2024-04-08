@@ -51,13 +51,13 @@ void PORTC_IRQHandler(void) {
     if (status == kStatus_Success) {
 		accel.x =
 			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[0] << 8) |
-								 static_cast<uint16_t>(fxosBuffer[1]));
+								 static_cast<uint16_t>(fxosBuffer[1])) >> 2;
 		accel.y =
 			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[2] << 8) |
-								 static_cast<uint16_t>(fxosBuffer[3]));
+								 static_cast<uint16_t>(fxosBuffer[3])) >> 2;
 		accel.z =
 			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[4] << 8) |
-								 static_cast<uint16_t>(fxosBuffer[5]));
+								 static_cast<uint16_t>(fxosBuffer[5])) >> 2;
 
 		mag.x =
 			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[6] << 8) |
