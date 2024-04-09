@@ -8,24 +8,24 @@
 #ifndef FILTER_H_
 #define FILTER_H_
 
-#include "Utils.h"
 #include <cstdint>
 #include <vector>
 
+#include "Shared/Utils.h"
+
 #define FREQUENCY 400
 
-namespace MCU {
+namespace Shared {
 class Filter {
     static constexpr float singlePoleX = 0.85f;
 
     // Four stage coefficients
     static constexpr float fourStageX = 0.6f;
-    static constexpr float fourStageA0 = pow(1 - fourStageX, 4);
+    static constexpr float fourStageA0 = Utils::pow(1 - fourStageX, 4);
     static constexpr float fourStageB1 = 4.0f * fourStageX;
-    static constexpr float fourStageB2 = -6.0f * pow(fourStageX, 2);
-    static constexpr float fourStageB3 = 4.0f * pow(fourStageX, 3);
-    static constexpr float fourStageB4 = -1.0f * pow(fourStageX, 4);
-    std::vector<float> fourStageOutputs;
+    static constexpr float fourStageB2 = -6.0f * Utils::pow(fourStageX, 2);
+    static constexpr float fourStageB3 = 4.0f * Utils::pow(fourStageX, 3);
+    static constexpr float fourStageB4 = -1.0f * Utils::pow(fourStageX, 4);
 
     // Chebyshev 2 coefficients
     static constexpr float chebyshev2A0 = 3.869430E-02f;
@@ -33,7 +33,6 @@ class Filter {
     static constexpr float chebyshev2A2 = 3.869430E-02f;
     static constexpr float chebyshev2B1 = 1.392667E+00f;
     static constexpr float chebyshev2B2 = -5.474446E-01;
-    std::vector<float> chebyshev2Outputs;
 
     // Chebyshev 4 coefficients
     static constexpr float chebyshev4A0 = 9.726342E-04f;
@@ -45,7 +44,6 @@ class Filter {
     static constexpr float chebyshev4B2 = -3.774453E+00f;
     static constexpr float chebyshev4B3 = 2.111238E+00f;
     static constexpr float chebyshev4B4 = -4.562908E-01f;
-    std::vector<float> chebyshev4Outputs;
 
 #if (FREQUENCY / 2) % 2 == 0
     float kernel[(FREQUENCY / 2) + 1];
@@ -55,13 +53,14 @@ class Filter {
     constexpr uint32_t M = (FREQUENCY / 2) - 1;
 #endif
 
-    const uint32_t N;
-    std::vector<int16_t> buffer;
+    static constexpr uint32_t N = 1024;
+    std::vector<int16_t> xBuffer;
+    std::vector<int16_t> yBuffer;
 
-    int averageSum;
+    uint64_t averageSum;
 
   public:
-    Filter(uint32_t bufferSize);
+    Filter();
 
     void add(int16_t value);
 
@@ -79,6 +78,6 @@ class Filter {
 
     uint16_t lowPassChebyshev4spole();
 };
-} // namespace MCU
+} // namespace Shared
 
 #endif /* FILTER_H_ */
