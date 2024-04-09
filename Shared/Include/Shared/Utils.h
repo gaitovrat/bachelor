@@ -12,6 +12,10 @@
 #include <cstdint>
 #include <vector>
 
+#include <json/json.h>
+
+#include "Shared/Data.h"
+
 namespace Shared::Utils {
 template <class T> inline T median(std::vector<T> v) {
     size_t n = v.size() / 2;
@@ -25,6 +29,25 @@ template <class T> inline T median(std::vector<T> v) {
     std::nth_element(v.begin(), v.begin() + n - 1, v.end());
     return static_cast<T>(0.5 * (vn + v[n - 1]));
 }
+constexpr float pow(const float base, const int exponent) {
+    float result = 1.0f;
+    if (exponent > 0) {
+        for (int i = 0; i < exponent; ++i) {
+            result *= base;
+        }
+    } else {
+        for (int i = 0; i < -exponent; ++i) {
+            result /= base;
+        }
+    }
+    return result;
+}
+
+Json::Value dataToJson(const std::vector<Shared::Data> &data);
+
+Json::Value dataToJson(const Shared::Data &data);
+
+std::vector<Shared::Data> jsonToData(const Json::Value &json);
 } // namespace Shared::Utils
 
 #endif /* CAR_MATH_H_ */

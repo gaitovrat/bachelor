@@ -7,6 +7,8 @@
 #include <qdebug.h>
 #include <string>
 
+#include "Shared/Utils.h"
+
 using namespace CarQt;
 
 Recording::Recording() : start(std::chrono::system_clock::now()) {}
@@ -38,51 +40,11 @@ void Recording::save(const QString &path) {
     }
 
     for (const Entry &entry : entries) {
-        Json::Value jsonEntry, jsonData, jsonAccel, jsonMag, jsonGyro,
-            jsonCamera, jsonMotor, jsonSteer, jsonSensor;
+        Json::Value jsonEntry;
 
         lines.push_back(entry.data.line);
 
-        jsonCamera["regionsCount"] = entry.data.regionsCount;
-        jsonCamera["regionsListSize"] =
-            std::to_string(entry.data.regionsListSize);
-        jsonCamera["unchangedLeft"] = entry.data.unchangedLeft;
-        jsonCamera["unchangedRight"] = entry.data.unchangedRight;
-        jsonCamera["hasLeft"] = entry.data.hasLeft;
-        jsonCamera["hasRight"] = entry.data.hasRight;
-        jsonCamera["leftDistance"] = entry.data.leftDistance;
-        jsonCamera["rightDistance"] = entry.data.rightDistance;
-
-        jsonMotor["leftSpeed"] = entry.data.leftSpeed;
-        jsonMotor["rightSpeed"] = entry.data.rightSpeed;
-
-        jsonSteer["angle"] = entry.data.angle;
-        jsonSteer["servoPosition"] = entry.data.servoPosition;
-
-        jsonAccel["x"] = entry.data.accel.x;
-        jsonAccel["y"] = entry.data.accel.y;
-        jsonAccel["z"] = entry.data.accel.z;
-
-        jsonMag["x"] = entry.data.mag.x;
-        jsonMag["y"] = entry.data.mag.y;
-        jsonMag["z"] = entry.data.mag.z;
-
-        jsonGyro["x"] = entry.data.gyro.x;
-        jsonGyro["y"] = entry.data.gyro.y;
-        jsonGyro["z"] = entry.data.gyro.z;
-
-        jsonSensor["accel"] = jsonAccel;
-        jsonSensor["mag"] = jsonMag;
-        jsonSensor["gyro"] = jsonGyro;
-
-        jsonData["camera"] = jsonCamera;
-        jsonData["motor"] = jsonMotor;
-        jsonData["steer"] = jsonSteer;
-        jsonData["sensor"] = jsonSensor;
-        jsonData["mode"] = entry.data.mode;
-        jsonData["timestamp"] = entry.data.timestamp;
-
-        jsonEntry["data"] = jsonData;
+        jsonEntry["data"] = Shared::Utils::dataToJson(entry.data);
         jsonEntry["time"] = std::chrono::duration_cast<std::chrono::seconds>(
                                 entry.time.time_since_epoch())
                                 .count();

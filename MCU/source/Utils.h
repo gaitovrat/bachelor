@@ -37,20 +37,6 @@ constexpr uint8_t ledCenter(const int pot) {
 
     return 0x3;
 }
-
-constexpr float pow(float base, int exponent) {
-    float result = 1.0f;
-    if (exponent > 0) {
-        for (int i = 0; i < exponent; ++i) {
-            result *= base;
-        }
-    } else {
-        for (int i = 0; i < -exponent; ++i) {
-            result /= base;
-        }
-    }
-    return result;
-}
 } // namespace MCU
 
 #endif /* UTILS_H_ */

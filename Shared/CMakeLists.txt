@@ -2,6 +2,8 @@ set(SOURCES
     Src/Image.cpp
     Src/PIDData.cpp
     Src/Region.cpp
+    Src/Filter.cpp
+    Src/Utils.cpp
 )
 
 add_library(Shared STATIC
@@ -12,7 +14,8 @@ add_library(Shared STATIC
     Include/Shared/Mode.h
     Include/Shared/PIDData.h
     Include/Shared/Region.h
-    Include/Shared/Vec.h)
+    Include/Shared/Vec.h
+    Include/Shared/Filter.h)
 
 if (MCU)
     target_compile_definitions(Shared PRIVATE -D__CODE_RED -D__NEWLIB__ -DDEBUG)
@@ -35,7 +38,8 @@ if (MCU)
         -mthumb
         -fstack-usage
         -specs=nano.specs)
-
+else()
+    target_link_libraries(Shared PUBLIC jsoncpp_static)
 endif()
 
 target_include_directories(Shared PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Include)
