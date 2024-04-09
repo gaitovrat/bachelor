@@ -2,6 +2,8 @@
 
 using namespace Shared;
 
+#ifdef PC
+
 Json::Value Utils::dataToJson(const Shared::Data &data) {
     Json::Value jsonData, jsonAccel, jsonMag, jsonGyro, jsonCamera, jsonMotor,
         jsonSteer, jsonSensor;
@@ -111,3 +113,5 @@ std::vector<Shared::Data> Utils::jsonToData(const Json::Value &json) {
 
     return out;
 }
+
+#endif

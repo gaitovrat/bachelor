@@ -12,9 +12,11 @@
 #include <cstdint>
 #include <vector>
 
+#ifdef PC
 #include <json/json.h>
 
 #include "Shared/Data.h"
+#endif
 
 namespace Shared::Utils {
 template <class T> inline T median(std::vector<T> v) {
@@ -43,11 +45,13 @@ constexpr float pow(const float base, const int exponent) {
     return result;
 }
 
+#ifdef PC
 Json::Value dataToJson(const std::vector<Shared::Data> &data);
 
 Json::Value dataToJson(const Shared::Data &data);
 
 std::vector<Shared::Data> jsonToData(const Json::Value &json);
+#endif
 } // namespace Shared::Utils
 
 #endif /* CAR_MATH_H_ */

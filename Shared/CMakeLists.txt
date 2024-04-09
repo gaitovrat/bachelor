@@ -39,6 +39,7 @@ if (MCU)
         -fstack-usage
         -specs=nano.specs)
 else()
+    target_compile_definitions(Shared PUBLIC -DPC)
     target_link_libraries(Shared PUBLIC jsoncpp_static)
 endif()
 
