@@ -108,7 +108,7 @@ IMU::IMU(FXOSRange fxosRange, FXASRange fxasRange)
     memset(fxasBuffer, 0, sizeof(fxasBuffer));
 }
 
-status_t IMU::init() {
+void IMU::init() {
     NVIC_DisableIRQ(PORTC_IRQn);
     NVIC_DisableIRQ(PORTA_IRQn);
 
@@ -123,8 +123,6 @@ status_t IMU::init() {
 
     NVIC_SetPriority(PORTC_IRQn, 2);
     NVIC_SetPriority(PORTA_IRQn, 2);
-
-    return status;
 }
 
 void IMU::initMaster() {

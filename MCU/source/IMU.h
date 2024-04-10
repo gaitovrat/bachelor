@@ -36,7 +36,7 @@ class IMU {
 
     virtual ~IMU() = default;
 
-    status_t init();
+    void init();
 
     Shared::Vec3<int16_t> getAccel() const;
 
