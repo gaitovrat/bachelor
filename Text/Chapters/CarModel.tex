@@ -29,7 +29,7 @@ Celý model je zobrazen na obrázku \ref{fig:car}.
     \label{fig:car}
 \end{figure}
 
-\section{Mikrokontroler FRDM-K66F}
+\section{FRDM-K66F}
 \label{sec:FRDM-K66F}\
 
 FRDM-K66F je vývojová platforma od společnosti NXP určená pro MCU řady Kinetis K66 a K26.
@@ -71,5 +71,32 @@ Shield je zobrazen na obrazku \ref{fig:POLI-TFC}.
 
 \section{IMU}
 \label{sec:IMU}\
+V dnešní době jsou inerciální měřicí jednotky (IMU)
+nezbytnou součástí mnoha technologických aplikací,
+od mobilních telefonů a herních ovladačů až po pokročilé robotické systémy
+a autonomní vozidla. IMU poskytují cenné informace o pohybu
+a orientaci zařízení v prostoru, což umožňuje vývojářům implementovat
+sofistikované funkce jako je navigace, sledování pohybu, stabilizace obrazu a mnoho dalších.
+
+Deska FRDM-K66F obsahuje dva komponentů IMU jednotky - FXOS8700CQ a FXAS21002.\cite{frdmk66UserGuide}
+
+\subsection{FXOS8700CQ}\
+
+FXOS8700CQ je pokročilý 6-osý senzor, který kombinuje funkce 3-osého akcelerometru
+a 3-osého magnetometru do jednoho čipu. Akcelerometr v senzoru FXOS8700CQ má
+nastavitelné rozsahy ±2 g, ±4 g, ±8 g s 14-bitovým rozlišením, zatímco magnetometr
+poskytuje 16-bitové rozlišení s rozsahem ±1200 µT na osu. Pro komunikaci podporuje
+I2C a SPI rozhraní. Má dva piny pro přerušení a podporuje odesílat data rychlosti
+až 800 Hz pro každý senzor a až 400 Hz v hybridnim režimu.
+Tato integrace umožňuje zařízení zachytit komplexní data o svém pohybu a
+orientaci vůči zemskému gravitačnímu a magnetickému poli.\cite{FXOS8700CQ}
+
+\subsection{FXAS21002}\
+
+FXAS21002 je vysoce výkonný 3-osy senzor, který poskytuje data o úhlové rychlosti
+zrychlení. Tento senzor má nastavitelné rozsahy ±250, ±500, ±1000, a ±2000 stupňů za sekundu
+s 16-bitovým rozlišením. Pro komunikaci podporuje I2C a SPI rozhraní.
+Má dva piny pro přerušení a podporuje odesílat data rychlosti až 800 Hz.
+To umožňuje zařízení detekovat rotace kolem svych os.\cite{FXAS21002}
 
 \endinput
