@@ -50,8 +50,6 @@ MainWindow::MainWindow(const QString &name, QWidget *parent)
     connect(reconnectAction, &QAction::triggered, this, &MainWindow::reconnect);
     connect(this->ui->ui_recordingButton, &QPushButton::clicked, this,
             &MainWindow::record);
-    connect(this->ui->modeComboBox, &QComboBox::currentIndexChanged, this,
-            &MainWindow::setMode);
 }
 
 MainWindow::~MainWindow() {
@@ -203,8 +201,4 @@ void MainWindow::receivedSize(const qint64 size) const {
 
 void MainWindow::transmitSize(qint64 size) const {
     labelTXBytes->setText(QString::asprintf(MainWindow::LABEL_TX_FORMAT, size));
-}
-
-void MainWindow::setMode(int index) {
-    this->client->send(static_cast<Shared::Mode>(index));
 }

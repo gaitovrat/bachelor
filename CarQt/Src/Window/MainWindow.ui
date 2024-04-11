@@ -23,25 +23,6 @@
      </widget>
     </item>
     <item>
-     <widget class="QComboBox" name="modeComboBox">
-      <item>
-       <property name="text">
-        <string>None</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Auto</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Manual</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item>
      <layout class="QHBoxLayout" name="baseLayout">
       <item>
        <layout class="QVBoxLayout" name="originalImageLayout">
@@ -768,6 +749,12 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="ui_gyroscopeXValue">
+                     <property name="minimumSize">
+                      <size>
+                       <width>35</width>
+                       <height>0</height>
+                      </size>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true">font-size: 12px;</string>
                      </property>
@@ -816,6 +803,12 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="ui_gyroscopeYValue">
+                     <property name="minimumSize">
+                      <size>
+                       <width>35</width>
+                       <height>0</height>
+                      </size>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true">font-size: 12px;</string>
                      </property>
@@ -864,6 +857,12 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="ui_gyroscopeZValue">
+                     <property name="minimumSize">
+                      <size>
+                       <width>35</width>
+                       <height>0</height>
+                      </size>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true">font-size: 12px;</string>
                      </property>
@@ -956,6 +955,12 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="ui_magnetometerXValue">
+                     <property name="minimumSize">
+                      <size>
+                       <width>35</width>
+                       <height>0</height>
+                      </size>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true">font-size: 12px;</string>
                      </property>
@@ -1004,6 +1009,12 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="ui_magnetometerYValue">
+                     <property name="minimumSize">
+                      <size>
+                       <width>35</width>
+                       <height>0</height>
+                      </size>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true">font-size: 12px;</string>
                      </property>
@@ -1052,6 +1063,12 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="ui_magnetometerZValue">
+                     <property name="minimumSize">
+                      <size>
+                       <width>35</width>
+                       <height>0</height>
+                      </size>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true">font-size: 12px;</string>
                      </property>
@@ -1144,6 +1161,12 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="ui_accelerometerXValue">
+                     <property name="minimumSize">
+                      <size>
+                       <width>35</width>
+                       <height>0</height>
+                      </size>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true">font-size: 12px;</string>
                      </property>
@@ -1192,6 +1215,12 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="ui_accelerometerYValue">
+                     <property name="minimumSize">
+                      <size>
+                       <width>35</width>
+                       <height>0</height>
+                      </size>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true">font-size: 12px;</string>
                      </property>
@@ -1240,6 +1269,12 @@
                    </item>
                    <item>
                     <widget class="QLabel" name="ui_accelerometerZValue">
+                     <property name="minimumSize">
+                      <size>
+                       <width>35</width>
+                       <height>0</height>
+                      </size>
+                     </property>
                      <property name="styleSheet">
                       <string notr="true">font-size: 12px;</string>
                      </property>
@@ -1283,7 +1318,7 @@
      <x>0</x>
      <y>0</y>
      <width>1062</width>
-     <height>36</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

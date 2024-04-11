@@ -52,8 +52,6 @@ class MainWindow : public QMainWindow {
 
     void record();
 
-    void setMode(int index);
-
   private:
     void updateClient(const Settings &settings);
 };

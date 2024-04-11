@@ -36,50 +36,65 @@ using namespace MCU;
 
 static uint8_t fxosBuffer[12];
 static uint8_t fxasBuffer[6];
-static i2c_master_handle_t handle;
-static bool runningTransfer = false;
+
+extern Core core;
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 void PORTC_IRQHandler(void) {
-    i2c_master_transfer_t masterXfer;
+    Shared::Vec3<int16_t> accel, mag;
+    IMU &imu = core.getIMU();
 
-    memset(&masterXfer, 0, sizeof(masterXfer));
-    masterXfer.slaveAddress = IMU::FXOS_ADDRESS;
-    masterXfer.direction = kI2C_Read;
-    masterXfer.subaddress = FXOS_OUT_X_MSB;
-    masterXfer.subaddressSize = 1;
-    masterXfer.data = fxosBuffer;
-    masterXfer.dataSize = sizeof(fxosBuffer);
-    masterXfer.flags = kI2C_TransferDefaultFlag;
+    status_t status = I2C::readRegister(IMU::FXOS_ADDRESS, FXOS_OUT_X_MSB, fxosBuffer, sizeof(fxosBuffer));
 
-    if (runningTransfer)
-        return;
+    if (status == kStatus_Success) {
+		accel.x =
+			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[0] << 8) |
+								 static_cast<uint16_t>(fxosBuffer[1])) >> 2;
+		accel.y =
+			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[2] << 8) |
+								 static_cast<uint16_t>(fxosBuffer[3])) >> 2;
+		accel.z =
+			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[4] << 8) |
+								 static_cast<uint16_t>(fxosBuffer[5])) >> 2;
 
-    runningTransfer = true;
-    I2C_MasterTransferNonBlocking(I2C0, &handle, &masterXfer);
+		mag.x =
+			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[6] << 8) |
+								 static_cast<uint16_t>(fxosBuffer[7]));
+		mag.y =
+			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[8] << 8) |
+								 static_cast<uint16_t>(fxosBuffer[9]));
+		mag.z =
+			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[10] << 8) |
+								 static_cast<uint16_t>(fxosBuffer[11]));
+
+		imu.setAccel(accel);
+		imu.setMag(mag);
+    }
 
     PORT_ClearPinsInterruptFlags(PORTC, 1U << 13);
 }
 
 void PORTA_IRQHandler(void) {
-    i2c_master_transfer_t masterXfer;
+	Shared::Vec3<int16_t> gyro;
+	IMU& imu = core.getIMU();
 
-    memset(&masterXfer, 0, sizeof(masterXfer));
-    masterXfer.slaveAddress = IMU::FXAS_ADDRESS;
-    masterXfer.direction = kI2C_Read;
-    masterXfer.subaddress = FXAS_OUT_X_MSB;
-    masterXfer.subaddressSize = 1;
-    masterXfer.data = fxasBuffer;
-    masterXfer.dataSize = sizeof(fxasBuffer);
-    masterXfer.flags = kI2C_TransferDefaultFlag;
+    status_t status = I2C::readRegister(IMU::FXAS_ADDRESS, FXAS_OUT_X_MSB, fxasBuffer, sizeof(fxasBuffer));
 
-    if (runningTransfer)
-        return;
+    if (status == kStatus_Success) {
+		gyro.x =
+			static_cast<int16_t>(static_cast<uint16_t>(fxasBuffer[0] << 8) |
+								 static_cast<uint16_t>(fxasBuffer[1]));
+		gyro.y =
+			static_cast<int16_t>(static_cast<uint16_t>(fxasBuffer[2] << 8) |
+								 static_cast<uint16_t>(fxasBuffer[3]));
+		gyro.z =
+			static_cast<int16_t>(static_cast<uint16_t>(fxasBuffer[4] << 8) |
+								 static_cast<uint16_t>(fxasBuffer[5]));
 
-    runningTransfer = true;
-    I2C_MasterTransferNonBlocking(I2C0, &handle, &masterXfer);
+		imu.setGyro(gyro);
+    }
 
     PORT_ClearPinsInterruptFlags(PORTA, 1U << 29);
 }
@@ -88,22 +103,18 @@ void PORTA_IRQHandler(void) {
 #endif
 
 IMU::IMU(FXOSRange fxosRange, FXASRange fxasRange)
-    : fxosRange(fxosRange), fxasRange(fxasRange) {
+    : fxosRange(fxosRange), fxasRange(fxasRange), started(false) {
     memset(fxosBuffer, 0, sizeof(fxosBuffer));
     memset(fxasBuffer, 0, sizeof(fxasBuffer));
 }
 
-status_t IMU::init() {
-    status_t status;
-
+void IMU::init() {
     NVIC_DisableIRQ(PORTC_IRQn);
     NVIC_DisableIRQ(PORTA_IRQn);
 
     this->initMaster();
-    status = this->initFXOS();
-    status = this->initFXAS();
-    status = this->startFXOS();
-    status = this->startFXAS();
+    this->initFXOS();
+    this->initFXAS();
 
     PORT_SetPinInterruptConfig(PORTC, 13, kPORT_InterruptLogicZero);
     PORT_SetPinInterruptConfig(PORTA, 29, kPORT_InterruptFallingEdge);
@@ -112,8 +123,6 @@ status_t IMU::init() {
 
     NVIC_SetPriority(PORTC_IRQn, 2);
     NVIC_SetPriority(PORTA_IRQn, 2);
-
-    return status;
 }
 
 void IMU::initMaster() {
@@ -123,7 +132,6 @@ void IMU::initMaster() {
     I2C_MasterGetDefaultConfig(&masterConfig);
     masterConfig.baudRate_Bps = BAUDRATE;
     I2C_MasterInit(I2C0, &masterConfig, sourceClock);
-    I2C_MasterTransferCreateHandle(I2C0, &handle, &callback, this);
 }
 
 status_t IMU::initFXOS() {
@@ -209,48 +217,6 @@ status_t IMU::startFXOS() {
     return I2C::writeRegister(FXOS_ADDRESS, FXOS_CTRL_REG_1, &value);
 }
 
-void IMU::callback(I2C_Type *base, i2c_master_handle_t *handle, status_t status,
-                   void *userData) {
-    IMU *imu = reinterpret_cast<IMU *>(userData);
-    if (handle->transfer.slaveAddress == FXOS_ADDRESS) {
-        uint8_t *buffer = fxosBuffer;
-
-        imu->accel.x =
-            static_cast<int16_t>(static_cast<uint16_t>(buffer[0] << 8) |
-                                 static_cast<uint16_t>(buffer[1]));
-        imu->accel.y =
-            static_cast<int16_t>(static_cast<uint16_t>(buffer[2] << 8) |
-                                 static_cast<uint16_t>(buffer[3]));
-        imu->accel.z =
-            static_cast<int16_t>(static_cast<uint16_t>(buffer[4] << 8) |
-                                 static_cast<uint16_t>(buffer[5]));
-
-        imu->mag.x =
-            static_cast<int16_t>(static_cast<uint16_t>(buffer[6] << 8) |
-                                 static_cast<uint16_t>(buffer[7]));
-        imu->mag.y =
-            static_cast<int16_t>(static_cast<uint16_t>(buffer[8] << 8) |
-                                 static_cast<uint16_t>(buffer[9]));
-        imu->mag.z =
-            static_cast<int16_t>(static_cast<uint16_t>(buffer[10] << 8) |
-                                 static_cast<uint16_t>(buffer[11]));
-    } else {
-        uint8_t *buffer = fxasBuffer;
-
-        imu->gyro.x =
-            static_cast<int16_t>(static_cast<uint16_t>(buffer[0] << 8) |
-                                 static_cast<uint16_t>(buffer[1]));
-        imu->gyro.y =
-            static_cast<int16_t>(static_cast<uint16_t>(buffer[2] << 8) |
-                                 static_cast<uint16_t>(buffer[3]));
-        imu->gyro.z =
-            static_cast<int16_t>(static_cast<uint16_t>(buffer[4] << 8) |
-                                 static_cast<uint16_t>(buffer[5]));
-    }
-
-    runningTransfer = false;
-}
-
 status_t IMU::initFXAS() {
     status_t status;
     uint8_t value = 0;
@@ -304,6 +270,27 @@ Shared::Vec3<int16_t> IMU::getMag() const { return this->mag; }
 Shared::Vec3<int16_t> IMU::getGyro() const { return this->gyro; }
 
 void IMU::start() {
+	if (started) {
+		return;
+	}
+
+	this->startFXOS();
+	this->startFXAS();
+
     NVIC_EnableIRQ(PORTC_IRQn);
     NVIC_EnableIRQ(PORTA_IRQn);
+
+    started = true;
+}
+
+void IMU::setAccel(const Shared::Vec3<int16_t>& vec) {
+	this->accel = vec;
+}
+
+void IMU::setMag(const Shared::Vec3<int16_t>& vec) {
+	this->mag = vec;
+}
+
+void IMU::setGyro(const Shared::Vec3<int16_t>& vec) {
+	this->gyro = vec;
 }
