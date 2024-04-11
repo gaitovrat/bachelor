@@ -9,7 +9,7 @@ Json::Value Utils::dataToJson(const Shared::Data &data) {
         jsonSteer, jsonSensor;
 
     jsonCamera["regionsCount"] = data.regionsCount;
-    jsonCamera["regionsListSize"] = data.regionsListSize;
+    jsonCamera["regionsListSize"] = std::to_string(data.regionsListSize);
     jsonCamera["unchangedLeft"] = data.unchangedLeft;
     jsonCamera["unchangedRight"] = data.unchangedRight;
     jsonCamera["hasLeft"] = data.hasLeft;

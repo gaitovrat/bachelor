@@ -204,7 +204,7 @@ status_t IMU::initFXOS() {
 }
 
 status_t IMU::startFXOS() {
-    // Active, low noise, ODR 400 Hz
+    // Active, low noise, ODR 50 Hz
     uint8_t active = 0x01U;
     uint8_t dr = 0x18U;
     uint8_t lnoise = 0x04U;

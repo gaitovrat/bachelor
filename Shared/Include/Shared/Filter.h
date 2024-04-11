@@ -13,7 +13,7 @@
 
 #include "Shared/Utils.h"
 
-#define FREQUENCY 400
+#define FREQUENCY 50
 
 namespace Shared {
 class Filter {
@@ -50,14 +50,14 @@ class Filter {
     static constexpr uint32_t M = FREQUENCY / 2;
 #else
     float kernel[(FREQUENCY / 2)];
-    constexpr uint32_t M = (FREQUENCY / 2) - 1;
+    static constexpr uint32_t M = (FREQUENCY / 2) - 1;
 #endif
 
     static constexpr uint32_t N = 1024;
     std::vector<int16_t> xBuffer;
     std::vector<int16_t> yBuffer;
 
-    uint64_t averageSum;
+    int64_t averageSum;
 
   public:
     Filter();

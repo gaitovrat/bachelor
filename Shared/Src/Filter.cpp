@@ -7,6 +7,7 @@
 #include "Shared/Filter.h"
 
 #include <cmath>
+#include <iostream>
 
 using namespace Shared;
 
@@ -37,10 +38,11 @@ Filter::Filter() : yBuffer(4, 0), averageSum(0) {
 int16_t Filter::movingAverage() {
     uint32_t size = xBuffer.size();
 
-    if (size < 1)
+    if (size < 1) {
         return 0;
+    }
 
-    return static_cast<int16_t>(averageSum / xBuffer.size());
+    return static_cast<int16_t>(averageSum / (float)size);
 }
 
 int16_t Filter::windowedSinc() {
