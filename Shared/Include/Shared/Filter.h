@@ -53,7 +53,7 @@ class Filter {
     static constexpr uint32_t M = (FREQUENCY / 2) - 1;
 #endif
 
-    static constexpr uint32_t N = 1024;
+    static constexpr uint32_t N = 300;
     std::vector<int16_t> xBuffer;
     std::vector<int16_t> yBuffer;
 
