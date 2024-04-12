@@ -15,12 +15,15 @@
 #endif
 
 #define MAX_SERVO_CHANGE 2000
+#define OFFSET 115
+#define MAX_ACCEL 0.2f
 
 using namespace MCU;
 
 Core::Core()
     : tracer(TRACER_HISTORY_SIZE), pidData(ERROR, INTEGRAL, DERIVATIVE),
-      pid(pidData, P_ON_E, DIRECT), previousButtonState(false) {
+      pid(pidData, P_ON_E, DIRECT), previousButtonState(false), prevServoPosition(0), speed(MAX_SPEED)
+{
     this->pid.SetMode(AUTOMATIC);
 }
 
@@ -131,6 +134,13 @@ void Core::drive() {
 		this->tfc.getImage(0, data.line, Shared::Image::LINE_LENGTH);
 		this->tfc.setLEDs(1 << this->data.mode);
 
+		this->data.accel = imu.getAccel();
+		this->data.gyro = imu.getGyro();
+		this->data.mag = imu.getMag();
+
+		data.gyro.z = this->gyroFilter.lowPassChebyshev2pole();
+		data.accel.y = this->accelFilter.lowPassChebyshev2pole() + OFFSET;
+
         if (this->tfc.getDIPSwitch() & 0x01)
             this->calibrate();
         else if (this->data.mode == Shared::Mode::Manual) {
@@ -156,54 +166,60 @@ void Core::drive() {
 
 void Core::update() {
     float ratio, innerSpeed, outerSpeed;
-    static int32_t prevServoPosition = 0;
+    float accelY, gyroZ, r;
 
     tfc.MotorPWMOnOff(true);
-    tfc.ServoOnOff(true);
-    tfc.RCOnOff(false);
-
-    prevServoPosition = data.servoPosition;
+	tfc.ServoOnOff(true);
+	tfc.RCOnOff(false);
 
     ratio = this->calculateDistanceRatio();
 
     pidData.input = ratio;
     pid.Compute();
 	data.servoPosition = static_cast<int32_t>(pidData.output);
-    data.leftSpeed = MAX_SPEED;
-    data.rightSpeed = MAX_SPEED;
 
-    if (data.servoPosition == 0) {
-    	pidData.reset();
+	if (data.servoPosition == 0) {
+		pidData.reset();
 		pid = PID(pidData, P_ON_E, DIRECT);
 		pid.SetMode(AUTOMATIC);
-		tracer.reset();
-    }
-
-    int16_t servoChange = abs(MAX(data.servoPosition, prevServoPosition) - MIN(data.servoPosition, prevServoPosition));
-    if (data.servoPosition > prevServoPosition) {
-		if (servoChange > MAX_SERVO_CHANGE) {
-			data.servoPosition = prevServoPosition + MAX_SERVO_CHANGE;
-		}
-
-	} else if (data.servoPosition < prevServoPosition) {
-		if (servoChange > MAX_SERVO_CHANGE) {
-			data.servoPosition = prevServoPosition - MAX_SERVO_CHANGE;
-		}
 	}
 
-    if (data.servoPosition > TFC_SERVO_MINMAX)
-        data.servoPosition = TFC_SERVO_MINMAX;
-    if (data.servoPosition < -TFC_SERVO_MINMAX)
-        data.servoPosition = -TFC_SERVO_MINMAX;
+    gyroZ = (abs(data.gyro.z) * 0.03125f) * (PI / 180.f);
+	accelY = abs(data.accel.y) * (4.f / 8191);
+	if (gyroZ > 0.01) {
+		r = speed / gyroZ;
 
-    data.angle = (data.servoPosition * 5.85f / 200) * PI /
-                 180.f; // Convert servo to angle
+		if (accelY > MAX_ACCEL) {
+			speed -= sqrt(MAX_ACCEL * r);
+		} else if (accelY < MAX_ACCEL) {
+			speed += sqrt(MAX_ACCEL * r);
+		}
+
+		speed = MIN(MAX(speed, MIN_SPEED), MAX_SPEED);
+	}
+
+	data.leftSpeed = speed;
+	data.rightSpeed = speed;
+
+	int16_t servoChange = abs(MAX(data.servoPosition, prevServoPosition) - MIN(data.servoPosition, prevServoPosition));
+	if (data.servoPosition > prevServoPosition && servoChange > MAX_SERVO_CHANGE) {
+		data.servoPosition = prevServoPosition + MAX_SERVO_CHANGE;
+	} else if (data.servoPosition < prevServoPosition && servoChange > MAX_SERVO_CHANGE) {
+		data.servoPosition = prevServoPosition - MAX_SERVO_CHANGE;
+	}
+
+	if (data.servoPosition > TFC_SERVO_MINMAX)
+		data.servoPosition = TFC_SERVO_MINMAX;
+	if (data.servoPosition < -TFC_SERVO_MINMAX)
+		data.servoPosition = -TFC_SERVO_MINMAX;
+	data.angle = (data.servoPosition * 5.85f / 200) * PI /
+	                 180.f; // Convert servo to angle
 
     if (!(this->tracer.unchangedLeft_ && this->tracer.unchangedRight_)) {
 		innerSpeed =
-			MAX_SPEED * (1.f - DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
+			speed * (1.f - DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
 		outerSpeed =
-			MAX_SPEED * (1.f + DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
+			speed * (1.f + DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
 
 		if (data.angle > 0.f) {
 			data.rightSpeed = innerSpeed;
@@ -233,13 +249,11 @@ void Core::reset() {
     data.leftSpeed = 0;
     data.rightSpeed = 0;
     data.servoPosition = 0;
+
+    speed = MAX_SPEED;
 }
 
 void Core::send() {
-    data.accel = imu.getAccel();
-    data.mag = imu.getMag();
-    data.gyro = imu.getGyro();
-
     uint8_t *pData = reinterpret_cast<uint8_t *>(&data);
     enet.send(pData, sizeof(data));
 }
@@ -290,4 +304,12 @@ void Core::manual() {
 	this->data.servoPosition = TFC_SERVO_MINMAX * (servof / 10.f);
 	this->data.leftSpeed = newSpeed;
 	this->data.rightSpeed = newSpeed;
+}
+
+Shared::Filter &Core::getGyroFilter() {
+	return this->gyroFilter;
+}
+
+Shared::Filter &Core::getAccelFilter() {
+	return this->accelFilter;
 }

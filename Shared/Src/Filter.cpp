@@ -7,6 +7,7 @@
 #include "Shared/Filter.h"
 
 #include <cmath>
+#include <iostream>
 
 using namespace Shared;
 
@@ -35,17 +36,18 @@ Filter::Filter() : yBuffer(4, 0), averageSum(0) {
 }
 
 int16_t Filter::movingAverage() {
-    uint32_t size = xBuffer.size();
+    int32_t size = xBuffer.size();
 
-    if (size < 1)
+    if (size < 1) {
         return 0;
+    }
 
-    return static_cast<int16_t>(averageSum / xBuffer.size());
+    return static_cast<int16_t>(averageSum / (float)size);
 }
 
 int16_t Filter::windowedSinc() {
     float output = 0;
-    uint32_t i = xBuffer.size() - 1;
+    int32_t i = xBuffer.size() - 1;
 
     if (xBuffer.size() < M) {
         return xBuffer[i];
@@ -75,7 +77,7 @@ void Filter::reset() {
 }
 
 int16_t Filter::singlePoleRecursive() {
-    uint32_t n = xBuffer.size() - 1;
+    int32_t n = xBuffer.size() - 1;
     float output;
 
     if (n < 1)
@@ -90,7 +92,7 @@ int16_t Filter::singlePoleRecursive() {
 }
 
 int16_t Filter::recursiveFourStageLowPass() {
-    uint32_t n = xBuffer.size() - 1;
+    int32_t n = xBuffer.size() - 1;
     float output = 0.f;
 
     if (n < 0)
@@ -108,9 +110,12 @@ int16_t Filter::recursiveFourStageLowPass() {
 }
 
 uint16_t Filter::lowPassChebyshev2pole() {
-    uint32_t n = xBuffer.size() - 1;
+    int32_t n = xBuffer.size() - 1;
     float output = 0.f;
 
+    if (n <= 0) {
+    	return 0;
+    }
     if (n < 2) {
         return xBuffer[n];
     }
@@ -129,7 +134,7 @@ uint16_t Filter::lowPassChebyshev2pole() {
 }
 
 uint16_t Filter::lowPassChebyshev4spole() {
-    uint32_t n = xBuffer.size() - 1;
+    int32_t n = xBuffer.size() - 1;
 
     if (n < 4) {
         return xBuffer[n];

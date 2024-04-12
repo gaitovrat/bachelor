@@ -43,6 +43,8 @@ extern Core core;
 extern "C" {
 #endif
 void PORTC_IRQHandler(void) {
+	PORT_ClearPinsInterruptFlags(PORTC, 1U << 13);
+
     Shared::Vec3<int16_t> accel, mag;
     IMU &imu = core.getIMU();
 
@@ -71,12 +73,14 @@ void PORTC_IRQHandler(void) {
 
 		imu.setAccel(accel);
 		imu.setMag(mag);
-    }
 
-    PORT_ClearPinsInterruptFlags(PORTC, 1U << 13);
+		core.getAccelFilter().add(accel.y);
+    }
 }
 
 void PORTA_IRQHandler(void) {
+	PORT_ClearPinsInterruptFlags(PORTA, 1U << 29);
+
 	Shared::Vec3<int16_t> gyro;
 	IMU& imu = core.getIMU();
 
@@ -94,9 +98,8 @@ void PORTA_IRQHandler(void) {
 								 static_cast<uint16_t>(fxasBuffer[5]));
 
 		imu.setGyro(gyro);
+		core.getGyroFilter().add(gyro.z);
     }
-
-    PORT_ClearPinsInterruptFlags(PORTA, 1U << 29);
 }
 #if defined(__cplusplus)
 }
@@ -204,7 +207,7 @@ status_t IMU::initFXOS() {
 }
 
 status_t IMU::startFXOS() {
-    // Active, low noise, ODR 400 Hz
+    // Active, low noise, ODR 50 Hz
     uint8_t active = 0x01U;
     uint8_t dr = 0x18U;
     uint8_t lnoise = 0x04U;

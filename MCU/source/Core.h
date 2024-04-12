@@ -6,6 +6,7 @@
 #include "LineTracer.h"
 #include "PID.h"
 #include "Shared/Data.h"
+#include "Shared/Filter.h"
 #include "tfc.h"
 
 namespace MCU {
@@ -14,10 +15,12 @@ class Core {
     static constexpr float DERIVATIVE = 8.3f;
     static constexpr float INTEGRAL = 0.5f;
     static constexpr float DIFF_COEF = 1.28f;
-    static constexpr uint16_t MAX_SPEED = 200;
+    static constexpr uint16_t MAX_SPEED = 280;
+    static constexpr uint16_t MIN_SPEED = 200;
     static constexpr uint32_t TRACER_HISTORY_SIZE = 5;
     static constexpr uint32_t SERVO_CENTER = 1500;
     static constexpr uint32_t SERVO_LR = 500;
+    static constexpr uint32_t PWM_STEP = 10;
 
     TFC tfc;
     Enet enet;
@@ -31,6 +34,13 @@ class Core {
 
     bool previousButtonState;
 
+    Shared::Filter gyroFilter;
+    Shared::Filter accelFilter;
+
+    int32_t prevServoPosition;
+    float prevGyro;
+    float speed;
+
   public:
     Core();
 
@@ -43,6 +53,10 @@ class Core {
     void drive();
 
     IMU &getIMU();
+
+    Shared::Filter &getGyroFilter();
+
+    Shared::Filter &getAccelFilter();
 
   private:
     void update();
