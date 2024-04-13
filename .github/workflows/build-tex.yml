@@ -27,7 +27,7 @@ jobs:
       run: |
           cd Text
           pdflatex BachelorThesis.tex
-          bibtex BachelorThesis.tex
+          biber BachelorThesis
           pdflatex BachelorThesis.tex
           pdflatex BachelorThesis.tex
 
