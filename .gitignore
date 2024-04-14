@@ -43,6 +43,7 @@ Text/BachelorThesis.pdf
 *.blg
 *.fdb_latexmk
 *.synctex.gz
+*.lol
 
 venv
 

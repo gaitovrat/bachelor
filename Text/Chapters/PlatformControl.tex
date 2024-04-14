@@ -1,0 +1,169 @@
+\chapter{Řízení platformy}
+\label{sec:PlatformControl}
+\vspace{-20pt}
+
+\section{Dráha}
+Testování řízení platformy bylo provedeno na draze ve tvaru osmičky.
+Dráha je na obrázku \ref{fig:Road}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width = 0.5\linewidth]{Figures/Road.png}
+    \caption{Dráha.}
+    \label{fig:Road}
+\end{figure}
+
+\section{Rozpoznání dráhy}\
+
+Pro získání obrazu dráhy se používá řádková kamera. Dále v programu
+je použitá třída TFC\cite{draha}, která vrací data ve formátu 1D pole typu uint16\_t
+(16 bitové celá čísla bez znaménka) v intervalu <0, 4095>.
+
+Obraz zpracovává v následujících krocích:
+\begin{enumerate}
+	\item Filtrování mediánem;
+	\item Normalizace obrazu;
+	\item Prahování průměrem.
+\end{enumerate}
+
+\subsection{Filtrování mediánem}\
+
+Filtrování mediánem je užitečné pro odstranění malých artefaktu v obraze.
+Filtr pracuje s pixelem a jeho okolím, proto potřebné uložit všichni okolní
+pixely. Algoritmus je ve výpisu \ref{lst:slowMedianBlur}\cite{draha}\cite{robot}.
+
+\begin{lstlisting}[caption=Filtrování mediánem, label=lst:slowMedianBlur]
+// Image.cpp
+void Image::slowMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
+                           int pixels) {
+    memcpy(dstImg, srcImg, LINE_LENGTH);
+    std::vector<uint16_t> blurBuffer;
+
+    for (int i = pixels; i < LINE_LENGTH - pixels; i++) {
+        for (int j = -pixels; j <= pixels; j++) {
+            blurBuffer.emplace_back(srcImg[i - j]);
+        }
+        std::sort(blurBuffer.begin(), blurBuffer.end());
+        dstImg[i] = blurBuffer.at(pixels + 1);
+        blurBuffer.clear();
+    }
+}
+\end{lstlisting}
+
+
+\subsection{Normalizace obrazu}\
+
+Pro normalizace obrazu je potřebně najít hodnotu minimalního a maximalního bodu v celém
+obraze. Normalizuje se každý bod z intervalu <min, max> do intervalu
+<0, 255>.
+
+Díky normalizace obrazu auto je schopno přizpůsobit k různým světelným podmínkám.
+Algoritmus normalizace je ve výpisu \ref{lst:normalize}\cite{robot}.
+\begin{lstlisting}[caption=Normalizace obrazu, label=lst:normalize]
+// Image.cpp
+void Image::normalize(RefCImageLine srcImg, RefImageLine dstImg) const {
+    for (int i = 0; i < LINE_LENGTH; i++) {
+        auto pixel = static_cast<float>(srcImg[i]);
+        pixel -= this->minValue;
+        pixel *= COLOR_WHITE;
+        pixel /= (this->maxValue - this->minValue);
+        dstImg[i] = static_cast<uint16_t>(pixel);
+    }
+}
+\end{lstlisting}
+
+\subsection{Prahování průměrem}\
+
+Pomocí prahování obraz se převadí do binárního, skládající z pouze dvou hodnot (0 a 1).
+K tomu je nutno určit hodnotu prahu, se kterou se bude srovnávat každý pixel.
+Pokud pixel je nižší než práh, je nastaven na 0, jinak nastaven na 1 nebo 255.
+Algoritmus prahování průměrem je ve výpisu \ref{lst:threshold}\cite{robot}.
+\begin{lstlisting}[caption=Prahování průměrem, label=lst:threshold]
+// Image.cpp
+void Image::threshold(RefCImageLine srcImg, RefImageLine dstImg) const {
+    for (int i = 0; i < LINE_LENGTH; i++) {
+        if (srcImg[i] < this->threshValue)
+            dstImg[i] = COLOR_BLACK;
+        else
+            dstImg[i] = COLOR_WHITE;
+    }
+}
+\end{lstlisting}
+
+\section{Kontrola servomotoru}\
+
+Pro kontrolu pozice servomotoru se používá PID regulátor. PID reguluje
+zařízení tak, aby odchylka byla od nastavené hodnoty co nejmenší. Má 3 složky: proporcionální, integrační, derivativní\cite{PID}.
+
+Pro proporcionální složku se používá rozdíl poměru vzdálenosti čar od okrajů obrazu.
+\begin{lstlisting}[
+	caption=Kalkulace poměru vzdálenosti čar,
+	label=lst:calculateDistanceRatio
+]
+// Core.cpp
+float Core::calculateDistanceRatio() {
+    this->tracer.addImage(data.line);
+
+    std::pair<uint8_t, uint8_t> distances = tracer.getDistancesPair();
+
+    data.leftDistance = distances.first;
+    data.rightDistance = Shared::Image::LINE_LENGTH - distances.second;
+
+    const float leftRatio = static_cast<float>(data.leftDistance) /
+                            static_cast<float>(data.rightDistance);
+    const float rightRatio = static_cast<float>(data.rightDistance) /
+                             static_cast<float>(data.leftDistance);
+
+    data.regionsCount =
+        tracer.getRegions(data.line, 0, TFC_CAMERA_LINE_LENGTH - 1, false).size();
+    data.regionsListSize = tracer.listSize_;
+    data.unchangedLeft = tracer.unchangedLeft_;
+    data.unchangedRight = tracer.unchangedRight_;
+    data.hasLeft = tracer.hasLeft_;
+    data.hasRight = tracer.hasRight_;
+
+    return rightRatio - leftRatio;
+}
+\end{lstlisting}
+
+Hledaní těch čar implementováno pomocí algoritmu hledání tzv. Regionu.
+Region je v podstatě struktura, která uchovává indexy okrajů oblastí jedné barvy.
+Algoritmus hledá regiony v smyčce, která si pamatuje barvu a porovná ji s barvou bodu.
+Pokud barva se změnila, znamená to konec jednoho regionu a začátek nového.
+Algoritmus je ve výpisu \ref{lst:getRegions}\cite{robot}.
+\begin{lstlisting}[
+	caption=Algoritmus hledání regionu,
+	label=lst:getRegions
+]
+// LineTracer.cpp
+std::vector<Shared::Region> LineTracer::getRegions(const Shared::Image &image, uint8_t searchLeftIdx, uint8_t searchRightIdx, bool saveToClass ) {
+	std::vector<Shared::Region> foundRegions;
+
+	uint8_t currentColor = static_cast<uint8_t>(image.atThresh(searchLeftIdx));
+	foundRegions.emplace_back(Shared::Region({searchLeftIdx, searchLeftIdx, currentColor}));
+
+	for (uint8_t i = searchLeftIdx; i <= searchRightIdx; i++) {
+		if (currentColor != image.atThresh(i)) {
+			if (foundRegions.size() > MAX_REGIONS_COUNT) {
+				break;
+			}
+			foundRegions.at(foundRegions.size() - 1).right = i;
+			foundRegions.emplace_back(Shared::Region({i, i, image.atThresh(i)}));
+		}
+		currentColor = static_cast<uint8_t>(image.atThresh(i));
+	}
+
+	if(saveToClass){
+		currentRegions_ = foundRegions;
+	}
+
+	return foundRegions;
+}
+\end{lstlisting}
+
+\section{Kontrola PWM motorů}\
+
+TBD.
+
+
+\endinput
