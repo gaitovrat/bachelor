@@ -1,11 +1,12 @@
 \chapter{Současný stav řešené problematiky}
+\label{sec:Theory}
 \vspace{-20pt}
 
 \section{Krokoměr s mikropočítačem ARM}\
 
 Tato práce se zabývala vývojem krokoměru s využitím desky NXP FRDM-K64F, která je založená na jádře ARM© Cortex®-M4. Hlavním cílem práce bylo vytvoření krokoměru, který by byl schopen detekovat a počítat kroky uživatele.
 
-V práci byly vybírány různé MEMS akcelerometry podle několika kritérií: možnosti integrace na plošný spoj, cenové dostupnosti, schopnosti komunikovat s mikrokontrolérem prostřednictvím rozhraní I2C nebo SPI, přičemž byly vybírány výhradně tříosé akcelerometry.
+V práci byly vybírány různé MEMS akcelerometry podle několika kritérií: možnosti integrace na plošný spoj, cenové dostupnosti, schopnosti komunikovat s mikrokontrolérem prostřednictvím rozhraní $I^2C$ nebo SPI, přičemž byly vybírány výhradně tříosé akcelerometry.
 
 Akcelerometry byly následně testovány v různých prostředích a podmínkách, které zahrnovaly chůzi po~rovině, po trávě, do a z kopce, a také chůzi do a ze schodů.
 
@@ -70,7 +71,7 @@ Finální výběr kamery a objektivu byl založen na schopnosti kamer efektivně
 
 Dále byly otestovány různé kombinace filtry pro redukci šumu, detekci hran a prahování. Ve~výsledku byly pro implementaci vybrány 4 filtry: mediánový filtr, Gaussův filtr, morfologický gradient a Otsu prahování.
 
-Algoritmus byl testován při umělém osvětlení i při denním světle. Při rovnoměrném umělém osvětlení byla detekce okrajových čar na dráze spolehlivá. Při denním světle byly dosaženy slušné výsledky, které avšak nelze považovat za ideální.\cite{draha}
+Algoritmus byl testován při umělém osvětlení i při denním světle. Při rovnoměrném umělém osvětlení byla detekce okrajových čar na dráze spolehlivá. Při denním světle byly dosaženy slušné výsledky, které avšak nelze považovat za ideální\cite{draha}.
 
 
 \section{Mechanizmy řízení robotického auta NXP (FREESCALE)}\
@@ -83,6 +84,6 @@ Pro řízení pomocí dat z kamery byl software schopen detekovat okraje dráhy 
 
 Práce rovněž zahrnovala vývoj a integraci různých senzorů, včetně IMU a IR senzorů. IMU~jednotka byla použita k detekci zastavení vozidla, zatímco infračervené senzory sloužily k detekci blízkých objektů a překážek.
 
-Následně bylo robotické auto testováno na soutěži NXP Cup, kde úspěšně zvládlo všechny tři dodatečné disciplíny v kvalifikačním kole.\cite{robot}
+Následně bylo robotické auto testováno na soutěži NXP Cup, kde úspěšně zvládlo všechny tři dodatečné disciplíny v kvalifikačním kole\cite{robot}.
 
 \endinput

@@ -15,7 +15,7 @@ Detailní popis MCU a modulu jsou v podkapitolách \ref{sec:FRDM-K66F}
 a \ref{sec:POLI-TFC}.
 
 Pro komunikaci s platformou Alamak je použit \textbf{WiFi Access Point}, který je připojen k MCU pomocí Ethernet portu. \textbf{Řádková kamera}, která umístěna v přední části platformy,
-se používá pro získání obrazu drahy. Vše je napojeno pomocí baterie typu \textbf{NiMH} o napětí 7.2V.
+se používá pro získání obrazu dráhy. Vše je napojeno pomocí baterie typu \textbf{NiMH} o napětí 7.2V.
 
 Celý model je zobrazen na obrázku \ref{fig:car}.
 \begin{figure}[!h]
@@ -39,45 +39,33 @@ Pro další možnosti konektivity je deska vybavena moduly Bluetooth a RF.
 
 Pro ladění je na platformě přítomno rozhraní \textbf{OpenSDAv2.1}, které podporuje J-Link.
 
-Další užitečné periferie na desce zahrnují trojbarevnou LED, SDHC a digitální MEMS mikrofon.
+Další užitečné periferie na desce zahrnují trojbarevnou LED, SDHC a
+digitální MEMS mikrofon.
 
-Jako \textbf{inerciální měřicí jednotku} (IMU) platforma využívá akcelerometr společně s magnetometrem
-\textbf{FXOS8700CQ} a gyroskop \textbf{FXAS21002}.\cite{frdmk66UserGuide}
-
-FXOS8700CQ je pokročilý 6-osý senzor, který kombinuje funkce 3-osého akcelerometru
-a 3-osého magnetometru do jednoho čipu. Akcelerometr v senzoru FXOS8700CQ má
-nastavitelné rozsahy ±2 g, ±4 g, ±8 g s 14-bitovým rozlišením, zatímco magnetometr
-poskytuje 16-bitové rozlišení s rozsahem ±1200 µT na osu. Pro komunikaci podporuje
-I2C a SPI rozhraní. Má dva piny pro přerušení a podporuje odesílat data rychlosti
-až 800 Hz pro každý senzor a až 400 Hz v hybridnim režimu.
-Tato integrace umožňuje zařízení zachytit komplexní data o svém pohybu a
-orientaci vůči zemskému gravitačnímu a magnetickému poli.\cite{FXOS8700CQ}
-
-FXAS21002 je vysoce výkonný 3-osy senzor, který poskytuje data o úhlové rychlosti
-zrychlení. Tento senzor má nastavitelné rozsahy ±250, ±500, ±1000, a ±2000 stupňů za sekundu
-s 16-bitovým rozlišením. Pro komunikaci podporuje I2C a SPI rozhraní.
-Má dva piny pro přerušení a podporuje odesílat data rychlosti až 800 Hz.
-To umožňuje zařízení detekovat rotace kolem svych os.\cite{FXAS21002}
+Jako \textbf{inerciální měřicí jednotku} (IMU) platforma využívá akcelerometr společně s
+magnetometrem a gyroskop\cite{frdmk66UserGuide}.
 
 Vývojová platforma je znázorněna na obrázku \ref{fig:FRDM-K66F}.
-\begin{figure}[!htbp]
+\begin{figure}[!h]
     \centering
     \includegraphics[width = .5\linewidth]{Figures/FRDM-K66F.png}
     \caption{FRDM-K66F}
     \label{fig:FRDM-K66F}
-    \vspace{-10pt}
+    \vspace{-20pt}
 \end{figure}
 
 \section{POLI-TFC}
 \label{sec:POLI-TFC}\
 
 POLI-TFC shield je rozšiřující deska pro FRDM-K66F, která sjednocuje rozhraní pro
-připojení periferií k vývojové desky. Shield obsahuje 2 konektoru pro PWM motory, 2 servomotoru,
-2 rozhraní pro připojení řádkových kamer, 2 potenciometry, 4 DIP přepínače a 4 LED diody.
-Shield je zobrazen na obrazku \ref{fig:POLI-TFC}.
-\begin{figure}[h]
+připojení periferií k vývojové desky. Shield obsahuje 2 konektoru pro PWM motory,
+2 servomotoru, 2 rozhraní pro připojení řádkových kamer,
+2 potenciometry, 4 DIP přepínače a 4 LED diody.
+Shield je zobrazen na obrázku \ref{fig:POLI-TFC}.
+\begin{figure}[!h]
     \centering
-    \includegraphics[width = .5\linewidth]{Figures/POLI-TFC.png}
+    \includegraphics[width = .4\linewidth]{Figures/POLI-TFC.png}
     \caption{POLI-TFC}
     \label{fig:POLI-TFC}
+    \vspace{-15pt}
 \end{figure}

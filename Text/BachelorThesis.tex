@@ -40,8 +40,11 @@ These selected signal filters are then implemented in combination with suitable 
 \AddAcronym{RAM}{Random Access Memory}
 \AddAcronym{SDHC}{Secure Digital High Capacity}
 \AddAcronym{WiFi}{Wireless Fidelity}
+\AddAcronym{$I^2C$}{Inter-Integrated Circuit}
 
 \newcolumntype{d}[1]{D{,}{,}{#1}}
+\renewcommand{\lstlistlistingname}{Seznam výpisů zdrojového kódu}
+\renewcommand{\lstlistingname}{Výpis}
 
 \begin{document}
 \MakeTitlePages
@@ -52,9 +55,17 @@ These selected signal filters are then implemented in combination with suitable 
 \listoftables
 \clearpage
 
+\lstlistoflistings
+\addcontentsline{toc}{chapter}{\lstlistlistingname}
+\clearpage
+
 \input{Chapters/Introduction.tex}
 \input{Chapters/CarModel.tex}
 \input{Chapters/Theory.tex}
+\input{Chapters/PlatformCommunication.tex}
+\input{Chapters/Sensors.tex}
+\input{Chapters/SensorsCommunication.tex}
+\input{Chapters/PlatformControl.tex}
 
 \printbibliography[title={Seznam použité literatury}]
 \addcontentsline{toc}{chapter}{Seznam použité literatury}
