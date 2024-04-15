@@ -21,9 +21,9 @@ je použitá třída TFC\cite{draha}, která vrací data ve formátu 1D pole typ
 
 Obraz zpracovává v následujících krocích:
 \begin{enumerate}
-	\item Filtrování mediánem;
-	\item Normalizace obrazu;
-	\item Prahování průměrem.
+    \item Filtrování mediánem;
+    \item Normalizace obrazu;
+    \item Prahování průměrem.
 \end{enumerate}
 
 \subsection{Filtrování mediánem}\
@@ -163,7 +163,47 @@ std::vector<Shared::Region> LineTracer::getRegions(const Shared::Image &image, u
 
 \section{Kontrola PWM motorů}\
 
-TBD.
+Pro kontrolu motorů musíme rozlišovat mezi dvěma režimy: zatáčení a jízda rovně.
+Pro rozpoznaní zatáčení slouží algoritmus mediánu historie obrazu.
+Aplikace si uchovává historii zpracovaných záznamů (Regionů) a pro oba
+okraje je vypočítán medián. Pokud se okraje aktuálního řídícího Regionu nachází
+v blízkém okolí vypočteného mediánu, auto se pravděpodobně nachází na rovince a oba motory
+se mohou otáčet na maximální nastavený výkon. Pokud se jeden nebo oba okraje nenachází
+v okolí mediánu, nachází se auto pravděpodobně v zatáčce a je tedy potřeba zpomalit.
 
+Pokud je auto v zatáčce, je potřeba zpomalit motor na straně, kde se nachází okraj.
+Zpomalení implementováno na základě úhlu servomotoru. V jinem případě, když auto je na rovince, oba motory se otáčí na maximální výkon.
+Algoritmus je ve výpisu \ref{lst:getRegions}\cite{robot}.
+\begin{lstlisting}[
+	caption=Algoritmus kontroly PWM motorů\cite{robot},
+	label=lst:controlPWM
+]
+// Core.cpp
+float speed = SPEED;
+data.angle = (data.servoPosition * 5.85f / 200) * PI /
+	                 180.f; // Convert servo to angle
+
+if (!(this->tracer.unchangedLeft_ && this->tracer.unchangedRight_)) {
+    innerSpeed =
+        speed * (1.f - DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
+    outerSpeed =
+        speed * (1.f + DIFF_COEF * (1.50f * tanf(data.angle)) / 2.f * 1.85f);
+
+    if (data.angle > 0.f) {
+        data.rightSpeed = innerSpeed;
+        data.leftSpeed = outerSpeed;
+    } else {
+        data.leftSpeed = innerSpeed;
+        data.rightSpeed = outerSpeed;
+    }
+
+    data.servoPosition *= 1.5f;
+    data.leftSpeed *= 0.75f;
+    data.rightSpeed *= 0.75f;
+} else {
+    data.leftSpeed = speed;
+    data.rightSpeed = speed;
+}
+\end{lstlisting}
 
 \endinput
