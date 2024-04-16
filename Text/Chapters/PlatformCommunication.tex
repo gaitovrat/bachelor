@@ -13,11 +13,22 @@ To umožňuje velmi rychlý přenos dat\cite{UDP}.
 
 Během komunikace vývojová deska se chová jako UDP server a aplikace pro zobrazení dat
 je client. Aplikace pro zobrazení dat je \textbf{CarQt} a zobrazuje data z kamery
-ve 2D formátu  s~historii záznamu. Zobrazuje originalní,
+ve 2D formátu  s~historii záznamu. Zobrazuje originální,
 normalizovány a prahový obraz. Další data
 jsou zobrazeny v číselném formátu. To jsou informace o regionu, PWM motoru, servo motoru
 a senzoru. Zápis číselných dat je implementováno ve formátu \textbf{JSON}
-(JavaScript Object Notation) a originalního obrazu ve formátu \textbf{PNG} (Portable Network Graphics) souboru. CarQt bylo vytvořeno pomocí knihoven Qt a OpenCV.
+(JavaScript Object Notation) a originalního obrazu ve formátu \textbf{PNG}
+(Portable Network Graphics) souboru. CarQt bylo vytvořeno pomocí knihoven Qt a OpenCV.
+Aplikace je zobrazena na obrázku \ref{fig:CarQt}
+\begin{figure}[!h]
+    \vspace{-10pt}
+    \centering
+    \includegraphics[width = .5\linewidth]{Figures/CarQt.png}
+    \caption{CarQt aplikace}
+    \label{fig:CarQt}
+    \vspace{-10pt}
+\end{figure}
+
 
 Pro přenos data se použita struktura \textbf{Data}, která obsahuje originální data z kamery, regiony, PWM motoru, servo motoru a senzoru. Výpis je \ref{lst:data}
 \begin{lstlisting}[caption=structura Data, label=lst:data]
@@ -55,4 +66,5 @@ struct Data {
 \section{RC}\
 
 RC (Radio řízení) bylo použito pro manuální řízení.
+
 \endinput
