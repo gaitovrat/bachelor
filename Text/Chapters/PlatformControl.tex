@@ -1,6 +1,11 @@
 \chapter{Řízení platformy}
 \label{sec:PlatformControl}
-\vspace{-20pt}
+\
+
+Pro řízení platformy bylo použito 2 režimy řízení: automatický,
+na základě algoritmu, a manuální, pomocí RC ovladače.
+Přepínáni mezi režimy bylo implementováno
+pomocí tlačítka na POLI-TFC.
 
 \section{Dráha}
 Testování řízení platformy bylo provedeno na draze ve tvaru osmičky.
@@ -13,11 +18,16 @@ Dráha je na obrázku \ref{fig:Road}
     \label{fig:Road}
 \end{figure}
 
-\section{Rozpoznání dráhy}\
+\section{Automatické řízení}\
+
+Pro automatické řízení byly použity algoritmy rozpoznaní dráhy,
+kontroly servomotoru a PWM~motorů.
+
+\subsection{Rozpoznání dráhy}\
 
 Pro získání obrazu dráhy se používá řádková kamera. Dále v programu
-je použitá třída TFC\cite{draha}, která vrací data ve formátu 1D pole typu uint16\_t
-(16 bitové celá čísla bez znaménka) v intervalu <0, 4095>.
+je použitá třída TFC\cite{draha}, která vrací data ve formátu 1D pole
+typu uint16\_t (16 bitové celá čísla bez znaménka) v intervalu <0;4095>.
 
 Obraz zpracovává v následujících krocích:
 \begin{enumerate}
@@ -26,7 +36,7 @@ Obraz zpracovává v následujících krocích:
     \item Prahování průměrem.
 \end{enumerate}
 
-\subsection{Filtrování mediánem}\
+\subsubsection{Filtrování mediánem}\
 
 Filtrování mediánem je užitečné pro odstranění malých artefaktu v obraze.
 Filtr pracuje s pixelem a jeho okolím, proto potřebné uložit všichni okolní
@@ -51,11 +61,11 @@ void Image::slowMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
 \end{lstlisting}
 
 
-\subsection{Normalizace obrazu}\
+\subsubsection{Normalizace obrazu}\
 
-Pro normalizace obrazu je potřebně najít hodnotu minimalního a maximalního bodu v celém
-obraze. Normalizuje se každý bod z intervalu <min, max> do intervalu
-<0, 255>.
+Pro normalizace obrazu je potřebně najít hodnotu minimalního a maximalního bodu v
+celém obraze. Normalizuje se každý bod z intervalu <min;max>
+do intervalu <0;255>.
 
 Díky normalizace obrazu auto je schopno přizpůsobit k různým světelným podmínkám.
 Algoritmus normalizace je ve výpisu \ref{lst:normalize}\cite{robot}.
@@ -72,7 +82,7 @@ void Image::normalize(RefCImageLine srcImg, RefImageLine dstImg) const {
 }
 \end{lstlisting}
 
-\subsection{Prahování průměrem}\
+\subsubsection{Prahování průměrem}\
 
 Pomocí prahování obraz se převadí do binárního, skládající z pouze dvou hodnot (0 a 1).
 K tomu je nutno určit hodnotu prahu, se kterou se bude srovnávat každý pixel.
@@ -90,9 +100,9 @@ void Image::threshold(RefCImageLine srcImg, RefImageLine dstImg) const {
 }
 \end{lstlisting}
 
-\section{Kontrola servomotoru}\
+\subsection{Kontrola servomotoru}\
 
-Pro kontrolu pozice servomotoru se používá PID regulátor. PID reguluje
+Pro kontrolu pozice servomotoru je použit PID regulátor. PID reguluje
 zařízení tak, aby odchylka byla od nastavené hodnoty co nejmenší. Má 3 složky: proporcionální, integrační, derivativní\cite{PID}.
 
 Pro proporcionální složku se používá rozdíl poměru vzdálenosti čar od okrajů obrazu.
@@ -127,7 +137,7 @@ float Core::calculateDistanceRatio() {
 \end{lstlisting}
 
 Hledaní těch čar implementováno pomocí algoritmu hledání tzv. Regionu.
-Region je v podstatě struktura, která uchovává indexy okrajů oblastí jedné barvy.
+Region je struktura, která uchovává indexy okrajů oblastí jedné barvy.
 Algoritmus hledá regiony v smyčce, která si pamatuje barvu a porovná ji s barvou bodu.
 Pokud barva se změnila, znamená to konec jednoho regionu a začátek nového.
 Algoritmus je ve výpisu \ref{lst:getRegions}\cite{robot}.
@@ -161,18 +171,17 @@ std::vector<Shared::Region> LineTracer::getRegions(const Shared::Image &image, u
 }
 \end{lstlisting}
 
-\section{Kontrola PWM motorů}\
+\subsection{Kontrola PWM motorů}\
 
-Pro kontrolu motorů musíme rozlišovat mezi dvěma režimy: zatáčení a jízda rovně.
+Pro kontrolu motorů musíme rozlišovat dva režimy: zatáčení a jízda rovně.
 Pro rozpoznaní zatáčení slouží algoritmus mediánu historie obrazu.
-Aplikace si uchovává historii zpracovaných záznamů (Regionů) a pro oba
+Aplikace si uchovává historii zpracovaných záznamů~(Regionů) a pro oba
 okraje je vypočítán medián. Pokud se okraje aktuálního řídícího Regionu nachází
-v blízkém okolí vypočteného mediánu, auto se pravděpodobně nachází na rovince a oba motory
-se mohou otáčet na maximální nastavený výkon. Pokud se jeden nebo oba okraje nenachází
-v okolí mediánu, nachází se auto pravděpodobně v zatáčce a je tedy potřeba zpomalit.
-
-Pokud je auto v zatáčce, je potřeba zpomalit motor na straně, kde se nachází okraj.
-Zpomalení implementováno na základě úhlu servomotoru. V jinem případě, když auto je na rovince, oba motory se otáčí na maximální výkon.
+v blízkém okolí vypočteného mediánu, auto se pravděpodobně
+nachází na rovině a oba motory se mohou otáčet na maximální nastavený výkon.
+Pokud jinak, nachází se auto pravděpodobně v zatáčce a je tedy potřeba zpomalit
+motor na straně, kde se nachází okraj.
+Zpomalení implementováno na základě úhlu servomotoru.
 Algoritmus je ve výpisu \ref{lst:getRegions}\cite{robot}.
 \begin{lstlisting}[
 	caption=Algoritmus kontroly PWM motorů\cite{robot},
@@ -205,5 +214,35 @@ if (!(this->tracer.unchangedLeft_ && this->tracer.unchangedRight_)) {
     data.rightSpeed = speed;
 }
 \end{lstlisting}
+
+\section{Manuální řízení}\
+
+Pro manuální řízení byl použit ovladač OPTIC 6 SPORT (obrázek \ref{fig:Joystick}),
+který posílá signál do přijímače Minima 6S.
+Oba pracují na frekvence 2.4 GHz. Ovladač má
+dvě páky. Jedna je použitá pro zvětšení a zmenšení plynu PWM motoru.
+Druhá je použitá pro změnu pozice servomotoru\cite{RC}.
+
+Oba signály jsou přijímány přes kanály CH1 a CH2\cite{RC}.
+Tyto kanály jsou integrovány do modulu POLI-TFC shield,
+kde jsou signály zpracovány programově prostřednictvím třídy TFC\cite{draha}.
+Hodnoty signálů se nacházejí v rozsahu <1000;2000>, které jsou následně
+transformovány do rozsahu <-1;1> pomocí níže uvedeného vzorce:
+
+\begin{equation}
+	\centering
+	y = (x / 100 - 15) / 10,
+\end{equation}
+
+kde $y$ je normalizovaná hodnota a $x$ je hodnota z přijímače. Pak $y$ je násoben
+na maximální hodnotu PWM motorů nebo servomotoru. Výsledek je použit pro
+jejich nastaveni.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width = 0.5\linewidth]{Figures/Joystick.png}
+    \caption{Ovladač OPTIC 6 SPORT.}
+    \label{fig:Joystick}
+\end{figure}
 
 \endinput

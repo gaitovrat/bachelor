@@ -35,7 +35,7 @@ void Recording::save(const QString &path) {
     std::ofstream fout(filepath);
 
     if (!fout.is_open()) {
-        qWarning() << "Unable to open" << filepath;
+        qWarning() << "Unable to open" << filepath.c_str();
         return;
     }
 
