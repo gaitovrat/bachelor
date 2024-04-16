@@ -3,8 +3,6 @@
 \vspace{-20pt}
 \
 
-\section{UDP}\
-
 Během jízdy komunikace s platformou bylo implementováno na základě \textbf{UDP}
 (User Datagram Protocol).  UDP je komunikační protokol,
 který se primárně používá pro časové citlivé informace.
@@ -17,7 +15,7 @@ ve 2D formátu  s~historii záznamu. Zobrazuje originální,
 normalizovány a prahový obraz. Další data
 jsou zobrazeny v číselném formátu. To jsou informace o regionu, PWM motoru, servo motoru
 a senzoru. Zápis číselných dat je implementováno ve formátu \textbf{JSON}
-(JavaScript Object Notation) a originalního obrazu ve formátu \textbf{PNG}
+(JavaScript Object Notation) a originálního obrazu ve formátu \textbf{PNG}
 (Portable Network Graphics) souboru. CarQt bylo vytvořeno pomocí knihoven Qt a OpenCV.
 Aplikace je zobrazena na obrázku \ref{fig:CarQt}
 \begin{figure}[!h]
@@ -61,10 +59,5 @@ struct Data {
     uint8_t mode = Mode::None;
 };
 \end{lstlisting}
-
-
-\section{RC}\
-
-RC (Radio řízení) bylo použito pro manuální řízení.
 
 \endinput
