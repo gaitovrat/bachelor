@@ -1,0 +1,26 @@
+\chapter{Optimalizace rychlosti}
+\label{sec:SpeedOptimization}
+\vspace{-20pt}
+\
+
+Pro optimalizace rychlosti potřebně rozlišovat různé fáze jízdy.
+Na draze, která je popsaná v kapitole \ref{sec:PlatformControl},
+je dvě fáze, rovina a zatáčka. To můžeme rozlišovat na základě
+boční rychlosti, tzn pokud boční rychlost je menši než koeficient,
+jízda po rovinně, v jiném případě jízda v zatáčce.
+
+V zatáčce musíme spočítat takové zpomalení, aby boční rychlost byla co nejblíž
+ke koeficientu. To můžeme udělat na základě formule optimální boční rychlosti:
+\begin{equation}
+v = \sqrt{a_{max} * r},
+\end{equation}
+kde $v$ je optimální zpomalení, $a_{max}$ je maximální boční rychlost a r je
+poloměr zatáčky. Poloměr zatáčky můžeme spočítat na základě bočního zrychlení:
+\begin{equation}
+r = \frac{v}{w},
+\end{equation}
+kde $v$ je rychlost auta a $w$ je boční zrychlení.
+
+V rovině rychlost je konstantní.
+
+\endinput
