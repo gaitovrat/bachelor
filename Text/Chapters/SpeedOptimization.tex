@@ -6,7 +6,7 @@
 Pro optimalizace rychlosti potřebně rozlišovat různé fáze jízdy.
 Na draze, která je popsaná v kapitole \ref{sec:PlatformControl},
 je dvě fáze, rovina a zatáčka. To můžeme rozlišovat na základě
-boční rychlosti, tzn pokud boční rychlost je menši než koeficient,
+boční rychlosti, tzn pokud boční rychlost je menši než optimální boční rychlost,
 jízda po rovinně, v jiném případě jízda v zatáčce.
 
 V zatáčce musíme spočítat takové zpomalení, aby boční rychlost byla co nejblíž
@@ -15,12 +15,29 @@ ke koeficientu. To můžeme udělat na základě formule optimální boční ryc
 v = \sqrt{a_{max} * r},
 \end{equation}
 kde $v$ je optimální zpomalení, $a_{max}$ je maximální boční rychlost a r je
-poloměr zatáčky. Poloměr zatáčky můžeme spočítat na základě bočního zrychlení:
+poloměr zatáčky. Po experimentech pro $a_{max}$ je zvolena hodnota 0,2. Poloměr zatáčky můžeme spočítat na základě bočního zrychlení:
 \begin{equation}
 r = \frac{v}{w},
 \end{equation}
 kde $v$ je rychlost auta a $w$ je boční zrychlení.
 
-V rovině rychlost je konstantní.
+Hodnoty pro boční rychlost a boční zrychlení dostaneme z $y$ ose akcelerometru
+a $z$ ose gyroskopu. Tyto hodnoty před použitím je potřeba zkonvertovat z
+surových hodnot.
+
+Pro konvertování dat z akcelerometru byla použita formule:
+\begin{equation}
+a = \frac{x * k}{x_{max}},
+\end{equation}
+kde $x$ je surová hodnota, $k$ je rozsah akcelerometru a $x_{max}$ je maximální surová hodnota. Pro konfigurace akcelerometru, která je popsaná v kapitole \ref{sec:Sensors},
+k = 4 a maximální hodnota čísla 14 bit je 8191.
+
+Pro konvertování dat z gyroskopu byla použita formule:
+\begin{equation}
+w = x * k * \frac{\pi}{180},
+\end{equation}
+kde $w$ je boční zrychlení, $k$ je citlivost senzoru v stupně za sekundu a $x$
+je surová hodnota. Pro konfigurace gyroskopu, která je popsaná
+v kapitole \ref{sec:Sensors}, k = 0,03125.
 
 \endinput
