@@ -3,7 +3,7 @@
 \vspace{-30pt}
 \
 
-Filtrování signálu je použito pro odstraněni sumu. To je potřeba pro lepší detekce 
+Filtrování signálu je použito pro odstraněni sumu. To je potřeba pro lepší detekce
 fáze auta. Tato sekce popisuje různé filtry typu dolní propust a jejich porovnání.
 
 \section{FIR filtry}\
@@ -13,7 +13,7 @@ hodnoty ze vstupního signálu\cite{FIR}.
 
 \subsection{Klouzavý průměr}\
 
-\textbf{Klouzavý průměr} zprůměruje určitý počet hodnot ze vstupního signálu. 
+\textbf{Klouzavý průměr} zprůměruje určitý počet hodnot ze vstupního signálu.
 Ve tvaru rovnice to~bude:
 \begin{equation}
 y[i] = \frac{1}{M}\sum_{j = 0}^{M - 1}x[i+j],
@@ -21,23 +21,23 @@ y[i] = \frac{1}{M}\sum_{j = 0}^{M - 1}x[i+j],
 kde $y[\,\,]$ je výstupní hodnota, $M$ je počet hodnot a $x[\,\,]$ je vstupní hodnota
 \cite{Filters}.
 
-Implementace tohoto filtru byla zjednodušena tím, že když hodnota součtu vstupních 
-hodnot se uloží, a zároveň počet hodnot bude se rovnat $M$, přidáním nové hodnoty 
-se odečte vstupní hodnota prvního vzorku ze součtu a přičte se hodnota nového. 
+Implementace tohoto filtru byla zjednodušena tím, že když hodnota součtu vstupních
+hodnot se uloží, a zároveň počet hodnot bude se rovnat $M$, přidáním nové hodnoty
+se odečte vstupní hodnota prvního vzorku ze součtu a přičte se hodnota nového.
 Výsledná hodnota se pak vydělí hodnotou~$M$\cite{krokomer}.
 
 Při filtrování signálu byla po experimentech zvolena hodnota M = 8.
 
 \section{IIR filtry}\
 
-\textbf{IIR filtry} jsou filtry s nekoneční impulzní odezvou. Tyto filtry, na rozdíl 
+\textbf{IIR filtry} jsou filtry s nekoneční impulzní odezvou. Tyto filtry, na rozdíl
 od FIR filtrů, používají mechanizmus zpětné vazby, tzn. výstupní hodnoty\cite{IIR}.
 
 Všichni implementované IIR filtry jsou ve tvaru:
 \begin{equation}
 y[n] = \sum_{i = 0}^{j}a_{i}x[n - i] + \sum_{i = 1}^{k}b_{i}y[n - i],
 \end{equation}
-kde $y[\,\,]$ je výstupní hodnota, $x[\,\,]$ je vstupní hodnota a $a_i$ i $b_i$ 
+kde $y[\,\,]$ je výstupní hodnota, $x[\,\,]$ je vstupní hodnota a $a_i$ i $b_i$
 jsou koeficienty.
 
 \subsection{Jednopólová dolní propust}\
@@ -49,7 +49,7 @@ b_1 &= x
 \end{align}
 kde $x$ je hodnota v intervalu <0;1>, která kontroluje silu filtru\cite{Filters}.
 
-Zvolená hodnota $x$ je 0,85. Z toho plynou hodnoty koeficientu $a_0 = 0,15$ a 
+Zvolená hodnota $x$ je 0,85. Z toho plynou hodnoty koeficientu $a_0 = 0,15$ a
 $b_1 = 0,85$.
 
 \subsection{Čtyřstupňová dolní propust}\
@@ -80,8 +80,8 @@ b_2 &= -5.474446E-01 \\
 \section{Testování}\
 
 Všichni filtry byly testovány pomocí algoritmu řízení po draze, který byl popsán
-v kapitole \ref{sec:PlatformControl}. Obrázky \ref{fig:NoFilter} a \ref{fig:filters} 
-zobrazují původní nefiltrovány signál a výstupy jednotlivých filtrů 
+v kapitole \ref{sec:PlatformControl}. Obrázky \ref{fig:NoFilter} a \ref{fig:filters}
+zobrazují původní nefiltrovány signál a výstupy jednotlivých filtrů
 aplikovaných na tento signál.
 
 \begin{figure}[!h]
@@ -103,7 +103,7 @@ aplikovaných na tento signál.
     \label{fig:filters}
 \end{figure}
 
-Po porovnání nejlepší výsledky ukázali filtry jednopólová dolní propust a 
-dvoupólový Čebyševův filtr. Poslední byl použit pro implementaci, 
+Po porovnání nejlepší výsledky ukázali filtry jednopólová dolní propust a
+dvoupólový Čebyševův filtr. Poslední byl použit pro implementaci,
 protože zachovává amplitudu signálu.
 \endinput
