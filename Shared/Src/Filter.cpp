@@ -114,7 +114,7 @@ uint16_t Filter::lowPassChebyshev2pole() {
     float output = 0.f;
 
     if (n <= 0) {
-    	return 0;
+        return 0;
     }
     if (n < 2) {
         return xBuffer[n];
@@ -136,6 +136,9 @@ uint16_t Filter::lowPassChebyshev2pole() {
 uint16_t Filter::lowPassChebyshev4spole() {
     int32_t n = xBuffer.size() - 1;
 
+    if (n <= 0) {
+        return 0;
+    }
     if (n < 4) {
         return xBuffer[n];
     }
