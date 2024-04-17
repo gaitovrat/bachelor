@@ -4,13 +4,13 @@
 \
 
 Pro optimalizace rychlosti potřebně rozlišovat různé fáze jízdy.
-Na draze, která je popsaná v kapitole \ref{sec:PlatformControl},
-je dvě fáze, rovina a zatáčka. To můžeme rozlišovat na základě
-boční rychlosti, tzn pokud boční rychlost je menši než optimální boční rychlost,
-jízda po rovinně, v jiném případě jízda v zatáčce.
+Na draze, která je popsaná v~kapitole \ref{sec:PlatformControl},
+je dvě fáze, rovina a zatáčka. Rozlišujeme to na základě
+boční rychlosti, tzn. pokud boční rychlost je menši než optimální, jedná se o 
+jízdě po rovinně, v jiném případě bude jízda v~zatáčce.
 
 V zatáčce musíme spočítat takové zpomalení, aby boční rychlost byla co nejblíž
-ke koeficientu. To můžeme udělat na základě formule optimální boční rychlosti:
+ke koeficientu. Můžeme to udělat na základě formule optimální boční rychlosti:
 \begin{equation}
 v = \sqrt{a_{max} * r},
 \end{equation}
@@ -21,23 +21,24 @@ r = \frac{v}{w},
 \end{equation}
 kde $v$ je rychlost auta a $w$ je boční zrychlení.
 
-Hodnoty pro boční rychlost a boční zrychlení dostaneme z $y$ ose akcelerometru
-a $z$ ose gyroskopu. Tyto hodnoty před použitím je potřeba zkonvertovat z
-surových hodnot.
+Hodnoty pro boční rychlost a boční zrychlení dostaneme z $y$ osy akcelerometru
+a $z$ osy gyroskopu. Tyto hodnoty před použitím je potřeba zkonvertovat z 
+surových hodnot. 
 
-Pro konvertování dat z akcelerometru byla použita formule:
+Pro konvertování dat z akcelerometru byl použit vzorec:
 \begin{equation}
 a = \frac{x * k}{x_{max}},
 \end{equation}
-kde $x$ je surová hodnota, $k$ je rozsah akcelerometru a $x_{max}$ je maximální surová hodnota. Pro konfigurace akcelerometru, která je popsaná v kapitole \ref{sec:Sensors},
-k = 4 a maximální hodnota čísla 14 bit je 8191.
+kde $x$ je surová hodnota, $k$ je rozsah akcelerometru a $x_{max}$ je maximální surová 
+hodnota. Pro~konfigurace akcelerometru, která je popsaná v kapitole \ref{sec:Sensors},
+byl zvolen koeficient k = 4 a maximální surová hodnota čísla je 8191 (14 bit).
 
-Pro konvertování dat z gyroskopu byla použita formule:
+Pro konvertování dat z gyroskopu byl použit vzorec:
 \begin{equation}
 w = x * k * \frac{\pi}{180},
-\end{equation}
+\end{equation} 
 kde $w$ je boční zrychlení, $k$ je citlivost senzoru v stupně za sekundu a $x$
-je surová hodnota. Pro konfigurace gyroskopu, která je popsaná
-v kapitole \ref{sec:Sensors}, k = 0,03125.
+je surová hodnota. Pro konfigurace gyroskopu, která je popsaná 
+v kapitole \ref{sec:Sensors}, byla použita hodnota  k = 0,03125.
 
 \endinput
