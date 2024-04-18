@@ -3,4 +3,29 @@
 \vspace{-20pt}
 \
 
+Cílem této bakalářské práce bylo určit optimální rychlost jízdy automobilu v různých fázích jeho pohybu.
+
+V práci byly popsány metody řízení automobilu, zahrnující detekci dráhy a řízení motorů včetně 
+servomotorů na základě získaných dat o trase. Součástí práce bylo také porovnání s manuálním řízením a 
+metody přenosu dat v reálném čase. Značná část práce byla věnována senzorům – jejich konfiguraci, výběru 
+a filtraci signálu.
+
+K detekci dráhy během jízdy byly využity tři kroky předzpracování obrazu: filtrování mediánem, 
+normalizace obrazu a prahování pomocí průměrné hodnoty. Pro lepší kontrolu servomotoru byl implementován 
+PID regulátor a rychlost PWM motoru byla optimalizována na základě dat získaných z kamery a senzorů.
+
+Analýza dat ze senzorů ukázala, že magnetometr nelze používat v blízkosti motoru a je nezbytné filtrovat 
+signál. Při filtraci signálu byly nejlepší výsledky dosaženy pomocí jednopólového dolního filtru a 
+dvoupólového Čebyševova filtru. Vzhledem k tomu, že jednopólový dolní filtr není schopen uchovat 
+amplitudu signálu, byl pro finální řešení zvolen dvoupólový Čebyševov filtr.
+
+Pro optimalizaci rychlosti na základě senzorů byl použit výpočet optimální boční rychlosti pro plynulou 
+jízdu zatáčkou bez smyku.
+
+Pro srovnání automatického a manuálního řízení byl navržen a implementován algoritmus prahování 
+k počítání kol na základě dat z gyroskopu.
+
+Implementace a porovnání ukázaly, že řízení na základě vybraných senzorů je rychlejší oproti manuálnímu 
+řízení.
+
 \endinput

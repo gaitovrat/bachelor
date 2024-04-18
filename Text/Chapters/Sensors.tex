@@ -172,4 +172,23 @@ Oba zařízení umožňuje čist data z více registrů najednou. Stačí jen
 začít čtení na první adrese datového registru 0x01. Data se posílají ve formatu
 big endian, což znamená, že nejprve je poslán nejvyšší bajt a poté nejnižší bajt.
 
+\section{Výběr senzoru}\
+
+Pro výběr vhodného senzoru byla analyzována data získaná po jízdě vozidla po dráze, jak je popsáno v kapitole \ref{sec:PlatformControl}. Tato data jsou vizualizována na obrázku \ref{fig:Sensors}.
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width = 0.5\linewidth]{Figures/Sensors.png}
+    \caption{Sensors data.}
+    \label{fig:Sensors}
+\end{figure}
+
+Z analyzovaného obrázku je zřejmé, že otáčení vozidla koresponduje s daty získanými z akcelerometru na 
+ose $y$ a gyroskopu na ose $z$. Nicméně je třeba poznamenat, že data z akcelerometru obsahují významný 
+šum, což vyžaduje implementaci vhodného filtračního algoritmu před dalším zpracováním těchto dat. Dále 
+je třeba zmínit, že data z magnetometru nelze v tomto případě využít, jelikož jsou negativně ovlivněna 
+působením motoru vozidla. Možnost přesunutí senzoru magnetometru na méně náchylné místo, například 
+blíže ke kameře, by byla ideální, avšak v dané konfiguraci vozidla není realizovatelná. Vzhledem k 
+těmto omezením a za účelem optimalizace rychlosti zpracování bude v práci použita kombinace dat pouze z 
+akcelerometru a gyroskopu.
+
 \endinput

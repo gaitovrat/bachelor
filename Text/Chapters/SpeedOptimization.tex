@@ -9,13 +9,15 @@ je dvě fáze, rovina a zatáčka. Rozlišujeme to na základě
 boční rychlosti, tzn. pokud boční rychlost je menši než optimální, jedná se o 
 jízdě po rovinně, v jiném případě bude jízda v~zatáčce.
 
-V zatáčce musíme spočítat takové zpomalení, aby boční rychlost byla co nejblíž
+V zatáčce musíme spočítat takové zpomalení nebo zrychlení, aby boční rychlost byla co nejblíž
 ke koeficientu. Můžeme to udělat na základě formule optimální boční rychlosti:
 \begin{equation}
 v = \sqrt{a_{max} * r},
 \end{equation}
 kde $v$ je optimální zpomalení, $a_{max}$ je maximální boční rychlost a r je
-poloměr zatáčky. Po experimentech pro $a_{max}$ je zvolena hodnota 0,2. Poloměr zatáčky můžeme spočítat na základě bočního zrychlení:
+poloměr zatáčky. Po experimentech pro $a_{max}$ je zvolena hodnota 0,2. 
+Tuto hodnotu optimálního zpomalení používáme i pro výpočet zrychlení. 
+Poloměr zatáčky můžeme spočítat na základě bočního zrychlení:
 \begin{equation}
 r = \frac{v}{w},
 \end{equation}

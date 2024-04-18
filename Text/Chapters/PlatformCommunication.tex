@@ -3,8 +3,11 @@
 \vspace{-20pt}
 \
 
-Během jízdy komunikace s platformou bylo implementováno na základě \textbf{UDP}
-(User Datagram Protocol).  UDP je komunikační protokol,
+V této kapitole je popsán zpusob zobrazení a ukládání dat během jízdy.
+
+Během jízdy je důleŹité posílat data asynchonní, aby nebylo blokování hlavního algoritmu auta.
+Z toho důvodu pro komunikace s platformou bylo použit \textbf{UDP}
+(User Datagram Protocol) protokol.  UDP je komunikační protokol,
 který se primárně používá pro časové citlivé informace.
 Zrychluje komunikaci tím, že před přenosem dat není nutné formálně navazovat spojení.
 To umožňuje velmi rychlý přenos dat\cite{UDP}.
@@ -14,7 +17,7 @@ je client. Aplikace pro zobrazení dat je \textbf{CarQt} a zobrazuje data z kame
 ve 2D formátu  s~historii záznamu. Zobrazuje originální,
 normalizovány a prahový obraz. Další data
 jsou zobrazeny v číselném formátu. To jsou informace o regionu, PWM motoru, servo motoru
-a senzoru. Zápis číselných dat je implementováno ve formátu \textbf{JSON}
+a senzoru. Ukládání číselných dat je implementováno ve formátu \textbf{JSON}
 (JavaScript Object Notation) a originálního obrazu ve formátu \textbf{PNG}
 (Portable Network Graphics) souboru. CarQt bylo vytvořeno pomocí knihoven Qt a OpenCV.
 Aplikace je zobrazena na obrázku \ref{fig:CarQt}
@@ -26,7 +29,7 @@ Aplikace je zobrazena na obrázku \ref{fig:CarQt}
 \end{figure}
 
 
-Pro přenos data se použita struktura \textbf{Data}, která obsahuje originální data z kamery, regiony, PWM motoru, servo motoru a senzoru. Výpis je \ref{lst:data}
+Pro přenos a ukládání dat se použita struktura \textbf{Data}, která obsahuje originální data z kamery, regiony, PWM motoru, servo motoru a senzoru. Výpis je \ref{lst:data}
 \begin{lstlisting}[caption=structura Data, label=lst:data]
 // Data.h
 struct Data {

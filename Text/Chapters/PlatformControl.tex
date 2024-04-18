@@ -2,10 +2,9 @@
 \label{sec:PlatformControl}
 \
 
-Pro řízení platformy bylo použito 2 režimy řízení: automatický,
-na základě algoritmu, a manuální, pomocí RC ovladače.
+V této kapitole je popsán způsob manuálního a automatického řízení.
 Přepínáni mezi režimy bylo implementováno
-pomocí tlačítka na POLI-TFC.
+pomocí tlačítka A na POLI-TFC.
 
 \section{Dráha}
 Testování řízení platformy bylo provedeno na draze ve tvaru osmičky.
@@ -40,7 +39,9 @@ Obraz zpracovává v následujících krocích:
 
 Filtrování mediánem je užitečné pro odstranění malých artefaktu v obraze.
 Filtr pracuje s pixelem a jeho okolím, proto potřebné uložit všichni okolní
-pixely. Algoritmus je ve výpisu \ref{lst:slowMedianBlur}\cite{draha}\cite{robot}.
+pixely. Tento filtr nahrazuje každou hodnotu pixelu mediánem hodnot v určitém 
+okolí tohoto pixelu, což pomáhá zachovat ostré hrany obrazu zatímco redukuje šum
+.Algoritmus je ve výpisu \ref{lst:slowMedianBlur}\cite{draha}\cite{robot}.
 
 \begin{lstlisting}[caption=Filtrování mediánem, label=lst:slowMedianBlur]
 // Image.cpp
@@ -173,7 +174,7 @@ std::vector<Shared::Region> LineTracer::getRegions(const Shared::Image &image, u
 
 \subsection{Kontrola PWM motorů}\
 
-Pro kontrolu motorů musíme rozlišovat dva režimy: zatáčení a jízda rovně.
+Pro kontrolu motorů musíme rozlišovat dvě fáze: zatáčení a jízda rovně.
 Pro rozpoznaní zatáčení slouží algoritmus mediánu historie obrazu.
 Aplikace si uchovává historii zpracovaných záznamů~(Regionů) a pro oba
 okraje je vypočítán medián. Pokud se okraje aktuálního řídícího Regionu nachází
