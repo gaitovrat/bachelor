@@ -2,6 +2,8 @@
 \label{sec:Theory}
 \vspace{-20pt}
 
+V této kapitole bude popsán stav problematiky automatického řízení a pohybových senzorů. Konkretně bude popsaná práce \uv{Krokoměr s mikropočítačem ARM} Šigurda Filipa který používá ve své práce akcelerometry. Následné budou popsaný práci \uv{Autonomní řízení auta - optimalizace detekce dráhy} i \uv{Mechanizmy řízení robotického auta NXP (FREESCALE)}, které popisuje autonomní řízení na základe řádkové kamery a senzorů. Autory jsou Vojtěch Ihn a Richard Zvonek.
+
 \section{Krokoměr s mikropočítačem ARM}\
 
 Tato práce se zabývala vývojem krokoměru s využitím desky NXP FRDM-K64F, která je založená na jádře ARM© Cortex®-M4. Hlavním cílem práce bylo vytvoření krokoměru, který by byl schopen detekovat a počítat kroky uživatele.
@@ -31,7 +33,7 @@ Každé měření bylo doprovázeno dvěma krokoměry:  Xiaomi Mi Band a mobiln�
 
 Dále byly otestovány a porovnány různé filtry pro odstranění šumu z naměřených dat. Použity byly filtry typu dolní propust, a to z důvodu, že normální chůze nepřekračuje rychlost čtyř kroků za sekundu, což znamená, že frekvence vyšší než 4~Hz byly považovány za šum. Filtrace signálu byla prováděna pomoci filtrů s konečnou impulzní odezvou (FIR) a s nekonečnou impulzní odezvou~(IIR).
 
-Po porovnáni filtrů byl jako významný vyhodnocen dvoupólový Čebyševův filtr, který ve srovnání s ostatními je výpočetně méně náročný a odstranil velké množství šumu se zachováním amplitudy signálu. Výsledky aplikace filtrů jsou zobrazeny na obrázku \ref{fig:filtr}.
+Po porovnání filtrů byl jako nejlepší vyhodnocen dvoupólový Čebyševův filtr, který ve srovnání s ostatními je výpočetně méně náročný a odstranil velké množství šumu se zachováním amplitudy signálu. Výsledky aplikace filtrů jsou zobrazeny na obrázku \ref{fig:filtr}.
 
 \begin{figure}[!h]
 	\centering
@@ -69,9 +71,9 @@ Tato práce se zaměřila na zpracování obrazu získaného z řádkové kamery
 
 Finální výběr kamery a objektivu byl založen na schopnosti kamer efektivně detekovat okrajové čáry za různých světelných podmínek.
 
-Dále byly otestovány různé kombinace filtry pro redukci šumu, detekci hran a prahování. Ve~výsledku byly pro implementaci vybrány 4 filtry: mediánový filtr, Gaussův filtr, morfologický gradient a Otsu prahování.
+Dále byly otestovány různé kombinace filtrů pro redukci šumu, detekci hran a prahování. Ve~výsledku byly pro implementaci vybrány 4 filtry: mediánový filtr, Gaussův filtr, morfologický gradient a Otsu prahování.
 
-Algoritmus byl testován při umělém osvětlení i při denním světle. Při rovnoměrném umělém osvětlení byla detekce okrajových čar na dráze spolehlivá. Při denním světle byly dosaženy slušné výsledky, které avšak nelze považovat za ideální\cite{draha}.
+Algoritmus byl testován při umělém osvětlení i při denním světle. Při rovnoměrném umělém osvětlení byla detekce okrajových čar na dráze spolehlivá. Při denním světle byly dosaženy slušné výsledky, které avšak nešlo považovat za ideální\cite{draha}.
 
 
 \section{Mechanizmy řízení robotického auta NXP (FREESCALE)}\

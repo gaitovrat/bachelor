@@ -3,23 +3,34 @@
 \vspace{-20pt}
 \
 
-V této kapitole je popsán zpusob zobrazení a ukládání dat během jízdy.
+V této kapitole je popsán způsob zobrazení a ukládání dat během jízdy.
 
-Během jízdy je důleŹité posílat data asynchonní, aby nebylo blokování hlavního algoritmu auta.
-Z toho důvodu pro komunikace s platformou bylo použit \textbf{UDP}
-(User Datagram Protocol) protokol.  UDP je komunikační protokol,
-který se primárně používá pro časové citlivé informace.
-Zrychluje komunikaci tím, že před přenosem dat není nutné formálně navazovat spojení.
-To umožňuje velmi rychlý přenos dat\cite{UDP}.
+Během jízdy je důležité posílat data asynchronně, aby nebyl  blokován hlavní algoritmu auta.
+Z toho důvodu pro komunikaci s platformou je použit \textbf{UDP}
+(User Datagram Protocol) protokol. UDP je komunikační protokol,
+který se primárně používá pro časově citlivé informace.
+Zrychluje komunikaci tím, že před přenosem dat není nutné formálně navazovat spojení, což umožňuje velmi rychlý přenos dat\cite{UDP}.
 
-Během komunikace vývojová deska se chová jako UDP server a aplikace pro zobrazení dat
-je client. Aplikace pro zobrazení dat je \textbf{CarQt} a zobrazuje data z kamery
-ve 2D formátu  s~historii záznamu. Zobrazuje originální,
-normalizovány a prahový obraz. Další data
+Během komunikace se vývojová deska chová jako UDP server a klient
+pro server je apliakce sloužící k zobrazení dat. Aplikace pro zobrazení dat jsem pojmenoval jako \textbf{CarQt}. CarQt umí zobrazovat: 
+\begin{itemize}
+    \item Originální obraz;
+    \item Normalizovány obraz;
+    \item Prahový obraz.
+\end{itemize}
+
+Další data jsou zobrazeny v číselném formátu. To je informace o:
+\begin{itemize}
+    \item Regiony;
+    \item PWM motor;
+    \item Servo motor;
+    \item Senzory.
+\end{itemize}
+data z kamery ve 2D formátu s~historii záznamu. Zobrazuje originální, normalizovány a prahový obraz. Další data
 jsou zobrazeny v číselném formátu. To jsou informace o regionu, PWM motoru, servo motoru
 a senzoru. Ukládání číselných dat je implementováno ve formátu \textbf{JSON}
 (JavaScript Object Notation) a originálního obrazu ve formátu \textbf{PNG}
-(Portable Network Graphics) souboru. CarQt bylo vytvořeno pomocí knihoven Qt a OpenCV.
+(Portable Network Graphics) souboru. CarQt je napsána pomocí knihoven Qt a OpenCV.
 Aplikace je zobrazena na obrázku \ref{fig:CarQt}
 \begin{figure}[!h]
     \centering
@@ -29,7 +40,7 @@ Aplikace je zobrazena na obrázku \ref{fig:CarQt}
 \end{figure}
 
 
-Pro přenos a ukládání dat se použita struktura \textbf{Data}, která obsahuje originální data z kamery, regiony, PWM motoru, servo motoru a senzoru. Výpis je \ref{lst:data}
+Pro přenos a ukládání dat je použita struktura \textbf{Data}, která obsahuje originální data z kamery, Regionu, PWM motoru, servo motoru a senzoru. Implementovaná struktura Data je ve výpisu \ref{lst:data}
 \begin{lstlisting}[caption=structura Data, label=lst:data]
 // Data.h
 struct Data {

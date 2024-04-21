@@ -3,11 +3,16 @@
 \vspace{-20pt}
 \
 
-Pro optimalizace rychlosti potřebně rozlišovat různé fáze jízdy.
-Na draze, která je popsaná v~kapitole \ref{sec:PlatformControl},
-je dvě fáze, rovina a zatáčka. Rozlišujeme to na základě
+Abychom optimalizovali rychlost je nutné správně rozlišovat různé fáze jízdy.
+Na dráze, která je popsaná v~kapitole \ref{sec:PlatformControl},
+jsou dvě fáze: 
+\begin{enumerate}
+    \item rovina;
+    \item zatáčka.
+\end{enumerate}
+Rozlišujeme to na základě
 boční rychlosti, tzn. pokud boční rychlost je menši než optimální, jedná se o 
-jízdě po rovinně, v jiném případě bude jízda v~zatáčce.
+jízdě po rovinně, v opačném případě bude jízda v~zatáčce.
 
 V zatáčce musíme spočítat takové zpomalení nebo zrychlení, aby boční rychlost byla co nejblíž
 ke koeficientu. Můžeme to udělat na základě formule optimální boční rychlosti:

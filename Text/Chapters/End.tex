@@ -14,7 +14,7 @@ K detekci dráhy během jízdy byly využity tři kroky předzpracování obrazu
 normalizace obrazu a prahování pomocí průměrné hodnoty. Pro lepší kontrolu servomotoru byl implementován 
 PID regulátor a rychlost PWM motoru byla optimalizována na základě dat získaných z kamery a senzorů.
 
-Analýza dat ze senzorů ukázala, že magnetometr nelze používat v blízkosti motoru a je nezbytné filtrovat 
+Analýza dat ze senzorů ukázala, že magnetometr nelze používat v blízkosti motoru a je tak nezbytné filtrovat 
 signál. Při filtraci signálu byly nejlepší výsledky dosaženy pomocí jednopólového dolního filtru a 
 dvoupólového Čebyševova filtru. Vzhledem k tomu, že jednopólový dolní filtr není schopen uchovat 
 amplitudu signálu, byl pro finální řešení zvolen dvoupólový Čebyševov filtr.

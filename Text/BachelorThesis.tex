@@ -17,21 +17,20 @@
 \SubmissionYear{2024}
 \ThesisAssignmentFileName{ThesisAssignment.pdf}
 
-\Acknowledgement{Rád bych na tomto místě poděkoval mému vědoucímu Petru Olivkovi, který mi s prací pomohl, protože bez něho by tato práce nevznikla.}
+\Acknowledgement{Rád bych na tomto místě poděkoval mému vedoucímu Petru Olivkovi, který mi s prací pomohl, protože bez něho by tato práce nevznikla.}
 
 \CzechAbstract{
-Tato práce popisuje ovládání modelu automobilu na základě platformy Alamak a mikrokontroléru FRDM-K66F
-, konkretně korigování rychlosti jízdy pomocí pohybových senzorů.
-Jsou provedeny testy různých senzoru a signálových filtru, ze kterých pak vybraná nejlepší konfigurace.
-Tyto vybrané signálové filtry pak implementovaný v kombinace se vhodnými senzory.
+Tato bakalářská práce popisuje ovládání modelu automobilu založené na platformě Alamak a mikrokontroléru FRDM-K66F, zejména se jedná o korigování rychlosti jízdy pomocí pohybových senzorů.
+Jsou provedeny testy různých senzoru a signálových filtrů, ze kterýchje následně vybraná nejlepší konfigurace.
+Tyto vybrané signálové filtry jsou poté implementovaný s kombinace se vhodnými senzory.
 }
-\CzechKeywords{Automatické regulování rychlosti; Signálové filtry; NXP Cup; FRDM-K66F}
+\CzechKeywords{Automatické regulování rychlosti; Automatické řízení; Manualní řízení; Signálové filtry; FRDM-K66F; FXOS8700CQ; FXAS21002}
 
 \EnglishAbstract{This paper describes the control of a model car based on platform Alamak and
 microcontroller FRDM-K66F, specifically the correction of driving speed using motion sensors.
 Tests of different sensor and signal filters are performed, from which the best configuration is then selected.
 These selected signal filters are then implemented in combination with suitable sensors.}
-\EnglishKeywords{Automatic speed control; Signal filters; NXP Cup; FRDM-K66F}
+\EnglishKeywords{Automatic speed control; Automatic control; Manual control; Signal filters; FRDM-K66F; FXOS8700CQ; FXAS21002}
 
 \AddAcronym{ARM}{Advanced RISC Machine}
 \AddAcronym{GPIO}{General-Purpose Input/Output}
@@ -75,7 +74,7 @@ These selected signal filters are then implemented in combination with suitable 
 \input{Chapters/Sensors.tex}
 \input{Chapters/Filters.tex}
 \input{Chapters/SpeedOptimization.tex}
-\input{Chapters/Experiments.tex}
+\input{Chapters/Testing.tex}
 \input{Chapters/End.tex}
 
 \printbibliography[title={Seznam použité literatury}]
