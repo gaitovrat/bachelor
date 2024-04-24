@@ -20,7 +20,7 @@ tvaru rovnice to~bude:
 y[i] = \frac{1}{M}\sum_{j = 0}^{M - 1}x[i+j],
 \end{equation}
 kde $y[\,\,]$ je výstupní hodnota, $M$ je počet hodnot a $x[\,\,]$ je vstupní
-hodnota\cite{Filters}.
+hodnota \cite{Filters}.
 
 Implementace tohoto filtru byla zjednodušena tím, že když hodnota součtu vstupních
 hodnot se uloží, při vypočtu následující výstupní hodnoty se odečte vstupní hodnota
@@ -33,7 +33,7 @@ Při filtrování signálu byla po experimentech zvolena hodnota M = 8.
 
 \textbf{IIR filtry} jsou filtry s nekonečnou impulzní odezvou. Tyto filtry, na
 rozdíl od FIR filtrů, používají mechanizmus zpětné vazby, tzn. výstupní
-hodnoty\cite{IIR}.
+hodnoty \cite{IIR}.
 
 Všechny implementované IIR filtry jsou ve tvaru:
 \begin{equation}
@@ -49,7 +49,7 @@ Filtr má jen dva koeficienty:
 a_0 &= 1 - x \\
 b_1 &= x
 \end{align}
-kde $x$ je hodnota v intervalu <0;1>, která kontroluje silu filtru\cite{Filters}.
+kde $x$ je hodnota v intervalu <0;1>, která kontroluje silu filtru \cite{Filters}.
 
 Zvolená hodnota $x$ je 0,85. Z toho plynou hodnoty koeficientu $a_0 = 0,15$ a $b_1 =
 0,85$.
@@ -64,7 +64,7 @@ b_2 &= -6x^2 \\
 b_3 &= 4x^3 \\
 b_4 &= -x^4
 \end{align}
-kde $x$ je hodnota v intervalu <0;1>, která kontroluje silu filtru\cite{Filters}.
+kde $x$ je hodnota v intervalu <0;1>, která kontroluje silu filtru \cite{Filters}.
 
 Zvolená hodnota $x$ je 0,6.
 
