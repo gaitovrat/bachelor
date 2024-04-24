@@ -1,8 +1,8 @@
-\chapter{Řízení platformy}
+\chapter{Řízení modelu auta}
 \label{sec:PlatformControl}\
 
 V této kapitole je popsán způsob manuálního a automatického řízení. Pro automatické
-řízení je popsán způsob rozpoznání dráhy a řízení servo i PWM motorů. Pro manuální
+řízení je popsán způsob rozpoznání dráhy a řízení servo i motorů. Pro manuální
 řízení je popsán způsob ovládaní auta pomocí RC ovladače. Přepínáni mezi režimy
 bylo implementováno pomocí tlačítka A na POLI-TFC.
 
@@ -22,9 +22,7 @@ Dráha je zobrazena na obrázku \ref{fig:Road}.
 
 \section{Automatické řízení}\
 
-\textbf{Automatické řízení} se skládá ze dvou častí. První je algoritmus rozpoznání
-drahý pomocí řádkové kamery. Druhá je kontrola PWM motoru a servo motorů na základě
-těchto dat.
+\textbf{Automatické řízení} se skládá ze dvou častí. První je algoritmus rozpoznání drahý pomocí řádkové kamery. Druhá je kontrola motoru a servo na základě těchto dat. Implementace řízení je inspirovaná bakalářskou práce Zvonka Richarda \uv{Mechanizmy řízení robotického auta NXP (FREESCALE)}.
 
 \subsection{Rozpoznání dráhy}\
 
@@ -171,7 +169,7 @@ std::vector<Shared::Region> LineTracer::getRegions(const Shared::Image &image, u
 }
 \end{lstlisting}
 
-\subsection{Řízení PWM motorů}\
+\subsection{PWM řízení motorů}\
 
 U řízení motorů musíme rozlišovat dvě fáze: \textbf{zatáčení} a \textbf{jízdu
 rovně}. Pro rozpoznaní fázi zatáčení je použit algoritmus mediánu historie obrazu.
@@ -212,10 +210,10 @@ if (!(this->tracer.unchangedLeft_ && this->tracer.unchangedRight_)) {
 
 \section{Manuální řízení}\
 
-Pro manuální řízení byl použit \textbf{ovladač OPTIC 6 SPORT} (obrázek
-\ref{fig:Joystick}), který posílá signál do přijímače Minima 6S. Oba pracují na
+Pro manuální řízení byl použit \textbf{vysílač HITEC OPTIC 6 SPORT}.
+Vysílač zobrazen na obrázku \ref{fig:Joystick}. On posílá signál do přijímače Minima 6S. Oba pracují na
 frekvenci 2.4 GHz. Ovladač má dvě páky. Jedna je použitá pro zvětšení a zmenšení
-plynu PWM motoru. Druhá je použitá pro změnu pozice servomotoru \cite{RC}.
+plynu motoru. Druhá je použitá pro změnu pozice servomotoru \cite{RC}.
 
 Oba signály jsou přijímány přes kanály CH1 a CH2 \cite{RC}. Tyto kanály jsou
 integrovány do modulu POLI-TFC shield, kde jsou signály zpracovány programově
@@ -235,7 +233,7 @@ jejich nastavení.
 \begin{figure}[!h]
     \centering
     \includegraphics[width = .5\linewidth]{Figures/Joystick.png}
-    \caption{Ovladač OPTIC 6 SPORT.}
+    \caption{Ovladač HITEC OPTIC 6 SPORT.}
     \label{fig:Joystick}
 \end{figure}
 

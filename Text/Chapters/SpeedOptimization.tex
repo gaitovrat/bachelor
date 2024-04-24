@@ -9,10 +9,10 @@ dráze, která je popsaná v~kapitole \ref{sec:PlatformControl}, jsou dvě fáze
 	\item{zatáčka.}
 \end{itemize}
 
-Rozlišujeme to na základě boční rychlosti, tzn. pokud boční rychlost je menši než
+Rozlišujeme to na základě boční rychlosti, tzn. pokud boční rychlost $a$ je menši než
 optimální, jedná se o jízdě po rovinně, v opačném případě bude jízda v~zatáčce.
 
-V zatáčce musíme spočítat takové zpomalení nebo zrychlení, aby boční rychlost byla
+V zatáčce musíme spočítat takové zpomalení, aby boční rychlost byla
 co nejblíž ke koeficientu. Můžeme to udělat na základě formule optimální boční
 rychlosti:
 \begin{equation}
@@ -20,32 +20,35 @@ v = \sqrt{a_{max} * r},
 \end{equation}
 kde $v$ je optimální zpomalení, $a_{max}$ je maximální boční rychlost a r je poloměr
 zatáčky. Po experimentech pro $a_{max}$ je zvolena hodnota 0,2. Tuto hodnotu
-optimálního zpomalení používáme i pro výpočet zrychlení. Poloměr zatáčky můžeme
-spočítat na základě bočního zrychlení:
+optimálního zpomalení používáme i pro výpočet zrychlení na rovině. Poloměr zatáčky můžeme
+spočítat na základě uhlové rychlosti:
 \begin{equation}
-r = \frac{v}{w},
+r = \frac{v}{\omega},
 \end{equation}
-kde $v$ je rychlost auta a $w$ je boční zrychlení.
+kde $v$ je rychlost auta a $w$ je uhlová rychlost.
 
-Hodnoty pro boční rychlost a boční zrychlení dostaneme z $y$ osy akcelerometru a $z$
-osy gyroskopu. Tyto hodnoty před použitím je potřeba zkonvertovat ze surových
+Hodnoty pro boční zrychlení a uhlovou rychlost dostaneme z $A_y$ a $\Omega_z$. $A_y$ je 
+zobrazena na obrázku \ref{fig:FXOS_Orientation}. $\Omega_z$ je zobrazena na obrázku
+\ref{fig:FXAS_Orientation}.
+Tyto hodnoty před použitím je potřeba zkonvertovat ze surových
 hodnot.
 
-Pro konvertování dat z akcelerometru byl použit vzorec:
+Pro konvertování $A_y$ byl použit vzorec:
 \begin{equation}
-a = \frac{x * k}{x_{max}},
+a = \frac{A_y * k * g}{x_{max}},
 \end{equation}
-kde $x$ je surová hodnota, $k$ je rozsah akcelerometru a $x_{max}$ je maximální
-surová hodnota. Pro~konfigurace akcelerometru, která je popsaná v kapitole
-\ref{sec:Sensors}, byl zvolen koeficient k = 4 a maximální surová hodnota je 8191
-(14 bit).
+kde $a$ je boční zrachlení, $A_y$ je surová hodnota akcelerometru ose y, 
+$k$ je rozsah akcelerometru,  $g$ je konstanta gravitačního zrychlení a $x_{max}$ je  
+maximální 14bitová surová hodnota.  Pro~konfigurace akcelerometru, která je popsaná v kapitole
+\ref{sec:Sensors}, byl zvolen koeficient $k$ = 4, $g$ = 10 a $a_{max}$ je 8191.
 
-Pro konvertování dat z gyroskopu byl použit vzorec:
+Pro konvertování $\Omega_z$ byl použit vzorec:
 \begin{equation}
-w = x * k * \frac{\pi}{180},
+\omega = \Omega_z * k * \frac{\pi}{180},
 \end{equation}
-kde $w$ je boční zrychlení, $k$ je citlivost senzoru ve stupních za sekundu a $x$ je
-surová hodnota. Pro konfiguraci gyroskopu, která je popsaná v kapitole
+kde $\omega$ je uhlová rychlost, $\Omega_z$ je surová hodnota gyroskopu ose z 
+a $k$ je citlivost senzoru ve stupních za sekundu.
+Pro konfiguraci gyroskopu, která je popsaná v kapitole
 \ref{sec:Sensors}, byla použita hodnota k = 0,03125.
 
 \endinput
