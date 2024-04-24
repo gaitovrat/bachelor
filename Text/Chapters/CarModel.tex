@@ -5,14 +5,14 @@
 
 V této kapitole je popsán model automobilu a jeho jednotlivé součásti.
 
-Model automobilu je založen na platformě Alamak, která má \textbf{2 servomotory}
-pro otáčení předních kol a \textbf{2 PWM motory} pro řízení každého zadního kola.
-\textbf{Platforma Alamak} je řízená pomocí \textbf{NXP Freedom K66F}\cite{frdmk66UserGuide} spolu s modulem \textbf{POLI-TFC} přípojeným do GPIO pinů
+Model automobilu je založen na podvozku typu Alamak, která má \textbf{1 servomotory}
+pro řízení a \textbf{2 motory} pro pohon.
+\textbf{Podvozek Alamak} je řízen pomocí \textbf{NXP Freedom K66F}\cite{frdmk66UserGuide} spolu s modulem \textbf{POLI-TFC} přípojeným do GPIO pinů
 MCU. Detailní popis MCU a modulu jsou v podkapitolách \ref{sec:FRDM-K66F}
 a \ref{sec:POLI-TFC}.
 
 Pro manuální řízení je zapojen přijímač RC signálu \textbf{Minima 6S} do pinu
-POLI-TFC shieldu. Přijímač pak přijímá signály z ovladače OPTIC 6 SPORT.
+POLI-TFC shieldu. Přijímač pak přijímá signály z vysílače OPTIC 6 SPORT.
 
 Pro komunikaci s platformou Alamak je použit \textbf{WiFi Access Point}, který je
 připojen k MCU pomocí Ethernet portu. \textbf{Řádková kamera}, která je umístěna
@@ -34,7 +34,7 @@ FRDM-K66F je vývojová platforma od společnosti NXP určená pro MCU řady Kin
 K66~a~K26. Platforma je založena na jádře \textbf{ARM© Cortex®-M4} a využívá model
 \textbf{MK66FN2M0VMD18} s~frekvencí 180 MHz, 2 MB flash paměti a 256 KB RAM.
 
-Konektivitu zajištují 2 micro-B USB porty, 1 ethernetový port a 54 GPIO konektorů.
+Konektivitu zajištují 2 micro-B USB porty, 1 ethernetový port a 54 GPIO pinů.
 GPIO~piny jsou kompatibilní s \textbf{Arduino™ R3}, čímž je poskytnuta široká škála
 možností pro rozšiřující desky. Deska umožňuje bezdrátové možností konektivity
 pomocí modulů Bluetooth a RF.
@@ -61,9 +61,9 @@ Vývojová platforma je znázorněna na obrázku \ref{fig:FRDM-K66F}.
 \section{POLI-TFC}
 \label{sec:POLI-TFC}\
 
-\textbf{POLI-TFC shield} je rozšiřující deska pro FRDM-K66F, která sjednocuje
+\textbf{POLI-TFC shield} je rozšiřující deska pro FRDM-K66F, která rozšiřuje
 rozhraní pro připojení periferií k vývojové desce. Shield obsahuje 2 konektory
-pro PWM motory, 2 servomotory, 2 rozhraní pro připojení řádkových kamer,
+pro motory, 2 servomotory, 2 rozhraní pro připojení řádkových kamer,
 2 potenciometry, 4 DIP přepínače a 4 LED diody. Shield~je zobrazen na obrázku
 \ref{fig:POLI-TFC}.
 \begin{figure}[!h]

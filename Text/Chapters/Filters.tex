@@ -4,8 +4,8 @@
 \
 
 Abychom odstranili šum je zapotřebí odfiltrovat signál. Tím se zásadně zlepší
-detekce fáze auta. Tato sekce popisuje různé filtry typu \uv{dolní propust} a jejich
-porovnání.
+detekce zatáčky. Tato kapitola je inspirovaná bakalářskou práce Šigut Filip \uv{Krokoměr s mikropočítačem ARM} \cite{krokomer}.
+V této práci byly popsány signálové filtry pro filtrování hodnot akcelerometru. Z této práce byly použity filtry, které měly počet tiků menší než 200. Tik je jednotka času, která představuje jeden cyklus časovače. Dále budou popsány FIR i IIR filtry a jejich porovnání.
 
 \section{FIR filtry}\
 
@@ -107,6 +107,6 @@ signál.
 \end{figure}
 
 Po analýze výsledků jsem dospěl k závěru, že nejlepší výsledky ukazují filtry
-jednopolová dolní propust a dvoupólový Čebyševův. Poslední zmíněný byl použit pro
-implementaci kvůli vlastnosti zachování amplitudy signálu.
+jednopólová dolní propust a Čtyřstupňová dolní propust. První zmíněný byl použit pro
+implementaci kvůli nejlepší redukce šumu.
 \endinput
