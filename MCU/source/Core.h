@@ -15,7 +15,11 @@ class Core {
     static constexpr float DERIVATIVE = 8.3f;
     static constexpr float INTEGRAL = 0.5f;
     static constexpr float DIFF_COEF = 1.28f;
+#ifdef NOSENSOR
+    static constexpr uint16_t MAX_SPEED = 220;
+#else
     static constexpr uint16_t MAX_SPEED = 280;
+#endif
     static constexpr uint16_t MIN_SPEED = 200;
     static constexpr uint32_t TRACER_HISTORY_SIZE = 5;
     static constexpr uint32_t SERVO_CENTER = 1500;
@@ -24,7 +28,6 @@ class Core {
 
     TFC tfc;
     Enet enet;
-    IMU imu;
     LineTracer tracer;
 
     Shared::PIDData pidData;
@@ -34,11 +37,12 @@ class Core {
 
     bool previousButtonState;
 
+    IMU imu;
     Shared::Filter gyroFilter;
     Shared::Filter accelFilter;
+    float prevGyro;
 
     int32_t prevServoPosition;
-    float prevGyro;
     float speed;
 
   public:

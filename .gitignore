@@ -11,8 +11,8 @@ build
 # MCUxpresso
 .metadata
 .mcuxpressoide_packages_support
-Debug
-Release
+Debug*
+Release*
 doc
 .settings
 *.launch

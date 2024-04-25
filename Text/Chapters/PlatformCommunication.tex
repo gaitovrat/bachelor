@@ -1,6 +1,5 @@
 \chapter{Komunikace s modelem auta}
 \label{sec:PlatformCommunication}
-\vspace{-20pt}
 \
 
 V této kapitole je popsán způsob zobrazení a ukládání dat během jízdy.
@@ -12,19 +11,13 @@ informace. Zrychluje komunikaci tím, že před přenosem dat není nutné form�
 navazovat spojení, což umožňuje velmi rychlý přenos dat \cite{UDP}.
 
 Během komunikace se vývojová deska chová jako UDP server a klient pro server je
-aplikací sloužící k zobrazení dat. Aplikace pro zobrazení dat jsem pojmenoval jako
+aplikací sloužící k zobrazení dat. Aplikace pro zobrazení dat byla pojmenována jako
 CarQt. \textbf{CarQt} umí zobrazovat originální obraz, normalizovány obraz a
-prahovaný obraz. Informace o Regionech, PWM motorech, servo motorech a senzorech
+prahovaný obraz. Informace o Regionech, PWM~motorech, servo motorech a senzorech
 jsou zobrazeny v číselném formátu. Ukládání číselných dat je implementováno ve
 formátu \textbf{JSON}~(JavaScript Object Notation) a originálního obrazu ve formátu
 \textbf{PNG}~(Portable Network Graphics) souboru. CarQt je napsána pomocí knihoven
 Qt a OpenCV. Aplikace je zobrazena na obrázku \ref{fig:CarQt}.
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width = .7\linewidth]{Figures/CarQt.png}
-    \caption{CarQt aplikace}
-    \label{fig:CarQt}
-\end{figure}
 
 Pro přenos a ukládání dat je použita struktura \textbf{Data}, která obsahuje
 originální data z kamery, Regionu, motoru, servo motoru a senzoru.
@@ -59,5 +52,12 @@ struct Data {
     uint8_t mode = Mode::None;
 };
 \end{lstlisting}
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width = .95\linewidth]{Figures/CarQt.png}
+    \caption{CarQt aplikace}
+    \label{fig:CarQt}
+\end{figure}
 
 \endinput
