@@ -28,7 +28,7 @@ Dráha je zobrazena na obrázku \ref{fig:Road}.
 
 Nejprve bylo zapotřebí získat obraz, který zajišťuje řádková kamera. Pro formát dat
 je použita třída TFC \cite{draha}, která vrací data ve formátu 1D pole typu uint16\_t
-(16bitové celá čísla bez znaménka) v intervalu <0;4095>.
+(16bitové celá čísla bez znaménka) v intervalu <0; 4095>.
 
 Obraz se zpracovává v následujících krocích:
 \begin{enumerate}
@@ -39,7 +39,7 @@ Obraz se zpracovává v následujících krocích:
 
 \subsubsection*{Filtrování mediánem}\
 
-\textbf{Filtrování mediánem}je užitečné pro odstranění malých artefaktů v obraze.
+\textbf{Filtrování mediánem} je užitečné pro odstranění malých artefaktů v obraze.
 Zpracování pixelů probíhá na základě jeho okolních pixelů. Je zapotřebí tak mít
 uloženy všechny pixely. Každá hodnota pixelu je nahrazena mediánem hodnot v určitém
 okolí daného pixelu, což pomáhá zachovat ostré hrany obrazu, zatímco šum je
@@ -67,8 +67,8 @@ void Image::slowMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
 \subsubsection*{Normalizace obrazu}\
 
 \textbf{Normalizace obrazu} probíhá na základě nalezení minimálního a maximálního
-bodu v celém obraze. Každý bod je normalizován v intervalu <min;max> do intervalu
-<0;255>.
+bodu v celém obraze. Každý bod je normalizován v intervalu <min; max> do intervalu
+<0; 255>.
 
 Díky normalizaci obrazu je auto schopno se přizpůsobit k různým  podmínkám. Použitý
 algoritmus normalizace je ve výpisu \ref{lst:normalize} \cite{robot}.
@@ -211,14 +211,14 @@ if (!(this->tracer.unchangedLeft_ && this->tracer.unchangedRight_)) {
 \section{Manuální řízení}\
 
 Pro manuální řízení byl použit \textbf{vysílač HITEC OPTIC 6 SPORT}.
-Vysílač zobrazen na obrázku \ref{fig:Joystick}. On posílá signál do přijímače Minima 6S. Oba pracují na
-frekvenci 2.4 GHz. Ovladač má dvě páky. Jedna je použitá pro zvětšení a zmenšení
+Vysílač zobrazen na~obrázku \ref{fig:Joystick}. OPTIC 6 SPORT posílá signál do přijímače Minima 6S. Oba pracují na
+frekvenci 2,4~GHz. Ovladač má dvě páky. Jedna je použitá pro zvětšení a zmenšení
 plynu motoru. Druhá je použitá pro změnu pozice servomotoru \cite{RC}.
 
 Oba signály jsou přijímány přes kanály CH1 a CH2 \cite{RC}. Tyto kanály jsou
 integrovány do modulu POLI-TFC shield, kde jsou signály zpracovány programově
 prostřednictvím třídy TFC\cite{draha}. Hodnoty signálů se nacházejí v rozsahu
-<1000;2000>, Tyto hodnoty jsou následně transformovány do rozsahu <-1;1> pomocí níže
+<1000; 2000>, Tyto hodnoty jsou následně transformovány do rozsahu <-1; 1> pomocí níže
 uvedeného vzorce:
 
 \begin{equation}

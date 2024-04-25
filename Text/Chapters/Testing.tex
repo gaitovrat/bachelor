@@ -1,22 +1,21 @@
 \chapter{Testování}
 \label{sec:Testing}
-\vspace{-20pt}
 \
 
 V této kapitole je popsáno testování algoritmu optimalizace rychlosti na dráze,
 která je popsaná v kapitole~\ref{sec:PlatformControl}, a porovnána s manuálním
-řízením i řízením bez optimalizace na základe senzoru..
+řízením i řízením bez optimalizace na základe senzoru.
 
-Pro porovnání potřebujeme spočítat za kolik tiku auto projelo jedno kolo. Tik je
-jednotka času, která představuje jeden cyklus časovače. Na to můžeme využít data
-bočního zrychlení, která jsou zobrazena na obrázku \ref{fig:Laps}. Levý obrázek je
-zrychlením automatického řízení a pravý obrázek je zrychlením manuálního řízení.
+Pro porovnání potřebujeme spočítat za kolik tiku auto projelo jedno kolo. Na to můžeme využít data
+úhlové rychlosti, která je zobrazena na obrázku \ref{fig:Laps}.
 
 \begin{figure}[!h]
     \centering
-    \subfloat[Automatické řízení]{\includegraphics[width = .5\textwidth]{Figures/LapAuto.png}\label{fig:LapsAuto}}
-    \subfloat[Manuální řízení]{\includegraphics[width = .5\textwidth]{Figures/LapManual.png}\label{fig:LapsManual}}
-    \caption{Boční zrychlení během experimentů.}
+    \subfloat{\includegraphics[width = .5\textwidth]{Figures/LapAuto.png}\label{fig:LapsAuto}}
+    \subfloat{\includegraphics[width = .5\textwidth]{Figures/LapAutoNoSensors.png}\label{fig:LapsAuto}} \\
+    \subfloat{\includegraphics[width = .5\textwidth]{Figures/LapManual.png}\label{fig:LapsManual}}
+    \captionsetup{justification=centering}
+    \caption{Boční zrychlení během experimentů. Vlevo nahoře: Automatické řízení se senzory. Vpravo nahoře: Automatické řízení bez senzorů. Dolů: Manuální řízení.}
     \label{fig:Laps}
 \end{figure}
 
@@ -28,7 +27,7 @@ byl již zaznamenán polokruh, znamená to, že byl detekován úplný kruh. Alg
 poté zvýší počet detekovaných kol o jednu. Tento proces se opakuje pro každý datový
 bod, čímž algoritmus umožňuje sledování a počítání kol na základě úhlové rychlosti
 zaznamenané gyroskopem. Použitý algoritmus je ve výpisu:
-\begin{lstlisting}[caption = Počet kol, label = lst:countLap]
+\begin{lstlisting}[language = python, caption = Počet kol, label = lst:countLap]
 threshold = 3000
 half_lap_detected = False
 lap_count = 0
@@ -59,5 +58,6 @@ Porovnání automatického s senzory i bez senzoru a manuálního řízení je v
     \label{tab:Comparison}
 \end{table}
 
-Na základě tabulky můžeme vyvodit závěr, že automatické řízení s senzory je rychlejší než automatické řízení bez senzoru. Manuální řízení bylo rychlejší než automatické bez senzoru ale pomalejší než automatické s senzory.
+Na základě tabulky můžeme vyvodit závěr, že automatické řízení bez senzorů je pomalejší než manuální řízení, a zároveň, že automatické řízení se senzory je nejrychlejší.
+
 \endinput

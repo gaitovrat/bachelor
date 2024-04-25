@@ -1,10 +1,9 @@
 \chapter{Senzory}
 \label{sec:Sensors}
-\vspace{-20pt}
 \
 
-Platforma FRDM-K66F obsahuje tři senzory, které tvoří 9osou IMU jednotku. Konkrétně
-NXP~FXOS8700CQ slouží jako akcelerometr i magnetometr a NXP FXAS21002 jako gyroskop.
+Platforma FRDM-K66F obsahuje tři senzory, které tvoří 9osou IMU jednotku.
+NXP FXOS8700CQ slouží jako akcelerometr i magnetometr a NXP FXAS21002 jako gyroskop.
 Tyto~senzory komunikují s platformou pomocí $I^2C$ \cite{frdmk66UserGuide}.
 
 \section{NXP FXOS8700CQ}\
@@ -12,36 +11,28 @@ Tyto~senzory komunikují s platformou pomocí $I^2C$ \cite{frdmk66UserGuide}.
 \textbf{NXP FXOS8700CQ} je pokročilý 6osý senzor, který kombinuje funkce 3osého
 akcelerometru a 3osého magnetometru v jednom čipu. Akcelerometr v senzoru
 FXOS8700CQ má nastavitelné rozsahy ±2 g, ±4 g, ±8 g s 14bitovým rozlišením, zatímco
-magnetometr poskytuje 16bitové rozlišení s rozsahem ±1200 µT na osu. Pro komunikaci
+magnetometr poskytuje 16bitové rozlišení s~rozsahem ±1200 µT na osu. Pro komunikaci
 podporuje $I^2C$ a SPI rozhraní. Má dva piny pro~přerušení a podporuje odesílat data
 rychlosti až 800 Hz pro každý senzor případně 400 Hz v~hybridním režimu.
 Tato~integrace umožňuje zařízení zachytit komplexní data o svém pohybu a orientaci
 vůči zemskému gravitačnímu a magnetickému poli. Orientace akcelerometru a
-magnetometru je na obrázku \ref{fig:FXOS_Orientation} \cite{FXOS8700CQ}.
-
-\begin{figure}[!h]
-	\vspace{-10pt}
-    \centering
-    \includegraphics[width = .45\linewidth]{Figures/FXOS_Orientation.png}
-    \caption{NXP FXOS8700CQ orientace \cite{FXOS8700CQ}.}
-    \label{fig:FXOS_Orientation}
-    \vspace{-10pt}
-\end{figure}
+magnetometru je na~obrázku \ref{fig:FXOS_Orientation} \cite{FXOS8700CQ}.
 
 \section{NXP FXAS21002}\
 
 \textbf{NXP FXAS21002} je vysoce výkonný 3osý senzor, který poskytuje data o úhlové
 rychlosti zrychlení. Tento senzor má nastavitelné rozsahy ±250, ±500, ±1000, a
-±2000 stupňů za sekundu s 16bitovým rozlišením. Pro komunikaci podporuje $I^2C$ a
+±2000 stupňů za sekundu s~16bitovým rozlišením. Pro komunikaci podporuje $I^2C$ a
 SPI rozhraní. Obsahuje dva piny pro~přerušení a podporuje odesílat data rychlosti až
 800 Hz, což umožňuje zařízení detekovat rotace kolem svých os. Orientace gyroskopu
 je zobrazena na obrázku \ref{fig:FXAS_Orientation} \cite{FXAS21002}.
 
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width = .45\linewidth]{Figures/FXAS_Orientation.png}
-    \caption{NXP FXAS21002 orientace \cite{FXAS21002}.}
-    \label{fig:FXAS_Orientation}
+\begin{figure}[ht]
+	\centering
+	\subfloat{\includegraphics[width = 0.45\textwidth]{Figures/FXOS_Orientation.png}\label{fig:FXOS_Orientation}}
+	\hfill
+	\subfloat{\includegraphics[width = 0.45\textwidth]{Figures/FXAS_Orientation.png}\label{fig:FXAS_Orientation}}
+	\caption{NXP FXOS8700CQ orientace \cite{FXOS8700CQ} (vlevo) a NXP FXAS21002 orientace \cite{FXAS21002} (vpravo).}
 \end{figure}
 
 \section{Komunikace se senzory}\
@@ -59,7 +50,7 @@ komunikovat.
 
 Přenos na sběrnice vždy začíná START sekvencí a končí STOP sekvencí, viz. obrázek
 \ref{fig:I2C_FRAME}. Ty~jsou generovány Master zařízením. \textbf{START} sekvence je
-definovaná jako přechod z logické 1 na logickou~0 na SDA, zatímco na SCL je v
+definovaná jako přechod z logické 1 na~logickou 0 na SDA, zatímco na SCL je v
 logické 1. \textbf{STOP} sekvence oproti tomu má jako přechod z logické~0
 na~logickou 1 na SDA, zatímco na SCL je v logické 1. Sběrnice je obsazena od začátku
 START~sekvence až do konce STOP sekvence.

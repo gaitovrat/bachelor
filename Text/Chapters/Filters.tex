@@ -1,10 +1,10 @@
 \chapter{Filtry}
 \label{sec:Filters}
-\vspace{-30pt}
 \
 
 Abychom odstranili šum je zapotřebí odfiltrovat signál. Tím se zásadně zlepší
-detekce zatáčky. Tato kapitola je inspirovaná bakalářskou práce Šigut Filip \uv{Krokoměr s mikropočítačem ARM} \cite{krokomer}.
+detekce zatáčky. Tato kapitola je inspirovaná bakalářskou práce Šiguta Filipa
+\uv{Krokoměr s mikropočítačem ARM}~\cite{krokomer}.
 V této práci byly popsány signálové filtry pro filtrování hodnot akcelerometru. Z této práce byly použity filtry, které měly počet tiků menší než 200. Tik je jednotka času, která představuje jeden cyklus časovače. Dále budou popsány FIR i IIR filtry a jejich porovnání.
 
 \section{FIR filtry}\
@@ -49,7 +49,7 @@ Filtr má jen dva koeficienty:
 a_0 &= 1 - x \\
 b_1 &= x
 \end{align}
-kde $x$ je hodnota v intervalu <0;1>, která kontroluje silu filtru \cite{Filters}.
+kde $x$ je hodnota v intervalu <0; 1>, která kontroluje silu filtru \cite{Filters}.
 
 Zvolená hodnota $x$ je 0,85. Z toho plynou hodnoty koeficientu $a_0 = 0,15$ a $b_1 =
 0,85$.
@@ -64,7 +64,7 @@ b_2 &= -6x^2 \\
 b_3 &= 4x^3 \\
 b_4 &= -x^4
 \end{align}
-kde $x$ je hodnota v intervalu <0;1>, která kontroluje silu filtru \cite{Filters}.
+kde $x$ je hodnota v intervalu <0; 1>, která kontroluje silu filtru \cite{Filters}.
 
 Zvolená hodnota $x$ je 0,6.
 
