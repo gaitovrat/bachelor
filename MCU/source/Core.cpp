@@ -16,7 +16,7 @@
 
 #define MAX_SERVO_CHANGE 2000
 #define OFFSET 115
-#define MAX_ACCEL 0.2f
+#define MAX_ACCEL 1.5f
 
 using namespace MCU;
 
@@ -132,9 +132,7 @@ void Core::drive() {
         bool buttonState = this->tfc.getPushButton(0);
 
         this->enet.check();
-#if 0
 		this->imu.start();
-#endif
         this->tfc.getImage(0, data.line, Shared::Image::LINE_LENGTH);
         this->tfc.setLEDs(1 << this->data.mode);
 
@@ -143,8 +141,8 @@ void Core::drive() {
         this->data.mag = imu.getMag();
 
 #ifndef NOSENSOR
-        data.gyro.z = this->gyroFilter.lowPassChebyshev2pole();
-        data.accel.y = this->accelFilter.lowPassChebyshev2pole() + OFFSET;
+        data.gyro.z = this->gyroFilter.singlePoleRecursive();
+        data.accel.y = this->accelFilter.singlePoleRecursive() + OFFSET;
 #endif
 
         if (this->tfc.getDIPSwitch() & 0x01)
@@ -195,18 +193,14 @@ void Core::update() {
 
 #ifndef NOSENSOR
     gyroZ = (abs(data.gyro.z) * 0.03125f) * (PI / 180.f);
-    accelY = abs(data.accel.y) * (4.f / 8191);
-    if (gyroZ > 0.01) {
-        r = speed / gyroZ;
-
-        if (accelY > MAX_ACCEL) {
-            speed -= sqrt(MAX_ACCEL * r);
-        } else if (accelY < MAX_ACCEL) {
-            speed += sqrt(MAX_ACCEL * r);
-        }
-
-        speed = MIN(MAX(speed, MIN_SPEED), MAX_SPEED);
-    }
+    accelY = abs(data.accel.y) * (4.f / 8191) * 10.f;
+	r = speed / gyroZ;
+	if (accelY > MAX_ACCEL) {
+		speed -= sqrt(MAX_ACCEL * r);
+	} else if (accelY < MAX_ACCEL) {
+		speed += sqrt(MAX_ACCEL * r);
+	}
+	speed = MIN(MAX(speed, MIN_SPEED), MAX_SPEED);
 #endif
 
     data.leftSpeed = speed;
@@ -310,6 +304,8 @@ void Core::manual() {
     tfc.MotorPWMOnOff(true);
     tfc.ServoOnOff(true);
     tfc.RCOnOff(true);
+
+    this->calculateDistanceRatio();
 
     int32_t servo = this->tfc.getRCPulse(0);
     int32_t speed = this->tfc.getRCPulse(1);

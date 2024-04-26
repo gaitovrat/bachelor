@@ -162,20 +162,17 @@ int16_t Image::getDiversity() const { return this->diversity; }
 bool Image::isLowDiversity() const { return this->diversity < LOW_DIVERSITY; }
 
 Image::Image(uint16_t (&rawImage)[LINE_LENGTH]) : Image() {
+	uint16_t blurImage[LINE_LENGTH] = {0};
+	fastMedianBlur(rawImage, blurImage, 1);
+	std::memcpy(rawImage, blurImage, sizeof(rawImage));
+
     this->computeMinMax(rawImage);
-    if (this->diversity < LOW_DIVERSITY) {
-        for (int i = 0; i < LINE_LENGTH; i++) {
-            this->thresholdedImage[i] = COLOR_WHITE;
-            rawImage[i] = COLOR_WHITE_ORIGINAL;
-        }
-    } else {
-        this->cut(rawImage);
+	this->cut(rawImage);
 
-        this->normalize(rawImage, this->thresholdedImage);
+	this->normalize(rawImage, this->thresholdedImage);
 
-        this->threshValue = this->averageThreshold(this->thresholdedImage);
-        this->threshold(this->thresholdedImage, this->thresholdedImage);
-    }
+	this->threshValue = this->averageThreshold(this->thresholdedImage);
+	this->threshold(this->thresholdedImage, this->thresholdedImage);
 }
 
 uint16_t Image::at(uint8_t index, Type type) const {
