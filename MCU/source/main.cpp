@@ -1,12 +1,10 @@
-#include "board.h"
-#include "clock_config.h"
-#include "peripherals.h"
-#include "pin_mux.h"
-
-#include "fsl_sysmpu.h"
-
 #include "Core.h"
 #include "I2C.h"
+#include "board.h"
+#include "clock_config.h"
+#include "fsl_sysmpu.h"
+#include "peripherals.h"
+#include "pin_mux.h"
 
 MCU::Core core;
 

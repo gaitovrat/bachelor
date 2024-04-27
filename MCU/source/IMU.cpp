@@ -1,17 +1,10 @@
-/*
- * IMU.cpp
- *
- *  Created on: Mar 30, 2024
- *      Author: gaito
- */
 #include "IMU.h"
-
-#include "fsl_debug_console.h"
-#include "fsl_i2c.h"
-#include "fsl_port.h"
 
 #include "Core.h"
 #include "I2C.h"
+#include "fsl_debug_console.h"
+#include "fsl_i2c.h"
+#include "fsl_port.h"
 
 static constexpr uint8_t FXOS_CTRL_REG_1 = 0x2AU;
 static constexpr uint8_t FXOS_CTRL_REG_2 = 0x2BU;
@@ -43,62 +36,65 @@ extern Core core;
 extern "C" {
 #endif
 void PORTC_IRQHandler(void) {
-	PORT_ClearPinsInterruptFlags(PORTC, 1U << 13);
+    PORT_ClearPinsInterruptFlags(PORTC, 1U << 13);
 
     Shared::Vec3<int16_t> accel, mag;
-    IMU &imu = core.getIMU();
+    IMU& imu = core.getIMU();
 
-    status_t status = I2C::readRegister(IMU::FXOS_ADDRESS, FXOS_OUT_X_MSB, fxosBuffer, sizeof(fxosBuffer));
+    status_t status = I2C::readRegister(IMU::FXOS_ADDRESS, FXOS_OUT_X_MSB,
+                                        fxosBuffer, sizeof(fxosBuffer));
 
     if (status == kStatus_Success) {
-		accel.x =
-			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[0] << 8) |
-								 static_cast<uint16_t>(fxosBuffer[1])) >> 2;
-		accel.y =
-			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[2] << 8) |
-								 static_cast<uint16_t>(fxosBuffer[3])) >> 2;
-		accel.z =
-			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[4] << 8) |
-								 static_cast<uint16_t>(fxosBuffer[5])) >> 2;
+        accel.x =
+            static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[0] << 8) |
+                                 static_cast<uint16_t>(fxosBuffer[1])) >>
+            2;
+        accel.y =
+            static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[2] << 8) |
+                                 static_cast<uint16_t>(fxosBuffer[3])) >>
+            2;
+        accel.z =
+            static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[4] << 8) |
+                                 static_cast<uint16_t>(fxosBuffer[5])) >>
+            2;
 
-		mag.x =
-			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[6] << 8) |
-								 static_cast<uint16_t>(fxosBuffer[7]));
-		mag.y =
-			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[8] << 8) |
-								 static_cast<uint16_t>(fxosBuffer[9]));
-		mag.z =
-			static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[10] << 8) |
-								 static_cast<uint16_t>(fxosBuffer[11]));
+        mag.x = static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[6] << 8) |
+                                     static_cast<uint16_t>(fxosBuffer[7]));
+        mag.y = static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[8] << 8) |
+                                     static_cast<uint16_t>(fxosBuffer[9]));
+        mag.z =
+            static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[10] << 8) |
+                                 static_cast<uint16_t>(fxosBuffer[11]));
 
-		imu.setAccel(accel);
-		imu.setMag(mag);
+        imu.setAccel(accel);
+        imu.setMag(mag);
 
-		core.getAccelFilter().add(accel.y);
+        core.getAccelFilter().add(accel.y);
     }
 }
 
 void PORTA_IRQHandler(void) {
-	PORT_ClearPinsInterruptFlags(PORTA, 1U << 29);
+    PORT_ClearPinsInterruptFlags(PORTA, 1U << 29);
 
-	Shared::Vec3<int16_t> gyro;
-	IMU& imu = core.getIMU();
+    Shared::Vec3<int16_t> gyro;
+    IMU& imu = core.getIMU();
 
-    status_t status = I2C::readRegister(IMU::FXAS_ADDRESS, FXAS_OUT_X_MSB, fxasBuffer, sizeof(fxasBuffer));
+    status_t status = I2C::readRegister(IMU::FXAS_ADDRESS, FXAS_OUT_X_MSB,
+                                        fxasBuffer, sizeof(fxasBuffer));
 
     if (status == kStatus_Success) {
-		gyro.x =
-			static_cast<int16_t>(static_cast<uint16_t>(fxasBuffer[0] << 8) |
-								 static_cast<uint16_t>(fxasBuffer[1]));
-		gyro.y =
-			static_cast<int16_t>(static_cast<uint16_t>(fxasBuffer[2] << 8) |
-								 static_cast<uint16_t>(fxasBuffer[3]));
-		gyro.z =
-			static_cast<int16_t>(static_cast<uint16_t>(fxasBuffer[4] << 8) |
-								 static_cast<uint16_t>(fxasBuffer[5]));
+        gyro.x =
+            static_cast<int16_t>(static_cast<uint16_t>(fxasBuffer[0] << 8) |
+                                 static_cast<uint16_t>(fxasBuffer[1]));
+        gyro.y =
+            static_cast<int16_t>(static_cast<uint16_t>(fxasBuffer[2] << 8) |
+                                 static_cast<uint16_t>(fxasBuffer[3]));
+        gyro.z =
+            static_cast<int16_t>(static_cast<uint16_t>(fxasBuffer[4] << 8) |
+                                 static_cast<uint16_t>(fxasBuffer[5]));
 
-		imu.setGyro(gyro);
-		core.getGyroFilter().add(gyro.z);
+        imu.setGyro(gyro);
+        core.getGyroFilter().add(gyro.z);
     }
 }
 #if defined(__cplusplus)
@@ -273,12 +269,12 @@ Shared::Vec3<int16_t> IMU::getMag() const { return this->mag; }
 Shared::Vec3<int16_t> IMU::getGyro() const { return this->gyro; }
 
 void IMU::start() {
-	if (started) {
-		return;
-	}
+    if (started) {
+        return;
+    }
 
-	this->startFXOS();
-	this->startFXAS();
+    this->startFXOS();
+    this->startFXAS();
 
     NVIC_EnableIRQ(PORTC_IRQn);
     NVIC_EnableIRQ(PORTA_IRQn);
@@ -286,14 +282,8 @@ void IMU::start() {
     started = true;
 }
 
-void IMU::setAccel(const Shared::Vec3<int16_t>& vec) {
-	this->accel = vec;
-}
+void IMU::setAccel(const Shared::Vec3<int16_t>& vec) { this->accel = vec; }
 
-void IMU::setMag(const Shared::Vec3<int16_t>& vec) {
-	this->mag = vec;
-}
+void IMU::setMag(const Shared::Vec3<int16_t>& vec) { this->mag = vec; }
 
-void IMU::setGyro(const Shared::Vec3<int16_t>& vec) {
-	this->gyro = vec;
-}
+void IMU::setGyro(const Shared::Vec3<int16_t>& vec) { this->gyro = vec; }

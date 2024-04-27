@@ -15,7 +15,7 @@ class SettingsWindow : public QDialog {
 
     Ui::SettingsWindow *ui;
 
-  public:
+public:
     static constexpr const char *FILENAME = "settings.json";
 
     explicit SettingsWindow(QWidget *parent = nullptr);
@@ -24,12 +24,12 @@ class SettingsWindow : public QDialog {
 
     std::optional<Settings> execute();
 
-  public slots:
+public slots:
     void selectRecordDirectory();
 
-  private:
+private:
     Settings getSettings() const;
 };
-} // namespace CarQt
+}  // namespace CarQt
 
-#endif // SETTINGSWINDOW_H
+#endif  // SETTINGSWINDOW_H

@@ -3,7 +3,9 @@
 using namespace CarQt;
 
 UDPClient::UDPClient(const struct Settings::Network &settings, QObject *parent)
-    : port(settings.port), socket(parent), address(settings.pcAddress),
+    : port(settings.port),
+      socket(parent),
+      address(settings.pcAddress),
       targetAddress(settings.mcuAddress) {
     connect(&this->socket, &QUdpSocket::readyRead, this, &UDPClient::read);
 }

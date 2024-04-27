@@ -1,25 +1,23 @@
 #include "Enet.h"
 
-#include <algorithm>
 #include <string.h>
 
+#include <algorithm>
+
+#include "Core.h"
+#include "Shared/Mode.h"
+#include "Shared/Network.h"
+#include "board.h"
 #include "enet_ethernetif.h"
+#include "fsl_enet_mdio.h"
+#include "fsl_phy.h"
+#include "fsl_phyksz8081.h"
 #include "lwip/init.h"
 #include "lwip/netif.h"
 #include "lwip/opt.h"
 #include "lwip/timeouts.h"
 #include "netif/ethernet.h"
-
-#include "board.h"
-#include "fsl_enet_mdio.h"
-#include "fsl_phy.h"
-#include "fsl_phyksz8081.h"
 #include "pin_mux.h"
-
-#include "Shared/Mode.h"
-#include "Shared/Network.h"
-
-#include "Core.h"
 
 static mdio_handle_t MDIO_HANDLE = {.ops = &enet_ops};
 static phy_handle_t PHY_HANDLE = {.phyAddr = BOARD_ENET0_PHY_ADDRESS,
@@ -96,8 +94,7 @@ void Enet::init(const size_t bufferSize, const uint16_t port) {
 }
 
 void Enet::send(const void *pData, const uint32_t len) {
-    if (this->initialized == false)
-        return;
+    if (this->initialized == false) return;
 
     bzero(data[dataIndex], BUFFER_SIZE);
 
@@ -108,11 +105,10 @@ void Enet::send(const void *pData, const uint32_t len) {
 }
 
 bool Enet::check() {
-    if (this->initialized == false)
-        return false;
+    if (this->initialized == false) return false;
 
-    ethernetif_input(&this->netif); // Maybe some unexpected data
-    sys_check_timeouts(); // Handle all system timeouts for all core protocols
+    ethernetif_input(&this->netif);  // Maybe some unexpected data
+    sys_check_timeouts();  // Handle all system timeouts for all core protocols
 
     return true;
 }

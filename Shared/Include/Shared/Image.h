@@ -5,7 +5,7 @@
 
 namespace Shared {
 class Image {
-  public:
+public:
     static constexpr uint8_t LINE_LENGTH = 128u;
     static constexpr uint8_t COLOR_BLACK = 0x00;
     static constexpr uint8_t COLOR_WHITE = 0xff;
@@ -19,14 +19,14 @@ class Image {
     using RefCImageLine = const uint16_t (&)[LINE_LENGTH];
     using ImageLine = uint16_t[LINE_LENGTH];
 
-  protected:
+protected:
     uint16_t thresholdedImage[LINE_LENGTH];
     uint16_t maxValue;
     uint16_t minValue;
     uint16_t threshValue;
     int16_t diversity;
 
-  public:
+public:
     Image();
 
     Image(RefImageLine rawImage);
@@ -45,26 +45,18 @@ class Image {
 
     bool isLowDiversity() const;
 
-  protected:
+protected:
     void computeMinMax(RefCImageLine img);
 
     void cut(RefImageLine srcImg) const;
 
     void normalize(RefCImageLine srcImg, RefImageLine dstImg) const;
 
-    static uint16_t averageThreshold(RefCImageLine srcImg);
+    uint16_t averageThreshold(RefCImageLine srcImg);
 
     void threshold(RefCImageLine srcImg, RefImageLine dstImg) const;
 
-    static void slowMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
-                               int pixels);
-
-    static void slowMedianBlur(RefImageLine srcImg, int pixels);
-
-    static void fastMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
-                               int pixels);
-
-    static void fastMedianBlur(RefImageLine srcImg, int pixels);
+    void fastMedianBlur(RefCImageLine srcImg, RefImageLine dstImg, int pixels);
 };
-} // namespace Shared
+}  // namespace Shared
 #endif

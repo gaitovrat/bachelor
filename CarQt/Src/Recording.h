@@ -1,11 +1,11 @@
 #ifndef RECORDING_H_
 #define RECORDING_H_
 
-#include <chrono>
-#include <vector>
+#include <qstring.h>
 
 #include <QGraphicsView>
-#include <qstring.h>
+#include <chrono>
+#include <vector>
 
 #include "Shared/Data.h"
 
@@ -19,7 +19,7 @@ class Recording {
     std::chrono::time_point<std::chrono::system_clock> start;
     std::vector<Entry> entries;
 
-  public:
+public:
     Recording();
 
     virtual ~Recording() = default;
@@ -28,6 +28,6 @@ class Recording {
 
     void add(const Shared::Data &data);
 };
-} // namespace CarQt
+}  // namespace CarQt
 
-#endif // !RECORDING_H_
+#endif  // !RECORDING_H_

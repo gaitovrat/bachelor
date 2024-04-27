@@ -49,7 +49,7 @@ class Core {
     int32_t prevServoPosition;
     float speed;
 
-  public:
+public:
     Core();
 
     virtual ~Core() = default;
@@ -66,7 +66,7 @@ class Core {
 
     Shared::Filter &getAccelFilter();
 
-  private:
+private:
     void update();
 
     void manual();
@@ -79,6 +79,6 @@ class Core {
 
     uint32_t calculateServoPosition(float ratio);
 };
-} // namespace MCU
+}  // namespace MCU
 
 #endif /* CORE_H_ */

@@ -11,7 +11,8 @@
 #include <cstdint>
 
 namespace Shared {
-template <typename T> struct Vec3 {
+template <typename T>
+struct Vec3 {
     T x, y, z;
 
     Vec3(T x, T y, T z) : x(x), y(y), z(z) {}
@@ -30,6 +31,6 @@ template <typename T> struct Vec3 {
         return *this;
     }
 };
-} // namespace Shared
+}  // namespace Shared
 
 #endif /* VEC_H_ */

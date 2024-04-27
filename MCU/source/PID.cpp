@@ -21,10 +21,10 @@ PID::PID(double *Input, double *Output, double *Setpoint, double Kp, double Ki,
     mySetpoint = Setpoint;
     inAuto = false;
 
-    PID::SetOutputLimits(-1000, 1000); // default output limit corresponds to
-                                       // the frdm k66 pwm limits
+    PID::SetOutputLimits(-1000, 1000);  // default output limit corresponds to
+                                        // the frdm k66 pwm limits
 
-    SampleTime = 10; // default Controller Sample Time is 0.1 seconds
+    SampleTime = 10;  // default Controller Sample Time is 0.1 seconds
 
     PID::SetControllerDirection(ControllerDirection);
     PID::SetTunings(Kp, Ki, Kd, POn);
@@ -54,8 +54,7 @@ PID::PID(Shared::PIDData &pidData, int POn, int ControllerDirection)
  *computed, false when nothing has been done.
  **********************************************************************************/
 bool PID::Compute() {
-    if (!inAuto)
-        return false;
+    if (!inAuto) return false;
     unsigned long now = millis();
     unsigned long timeChange = (now - lastTime);
     if (timeChange >= SampleTime) {
@@ -66,8 +65,7 @@ bool PID::Compute() {
         outputSum += (ki * error);
 
         /*Add Proportional on Measurement, if P_ON_M is specified*/
-        if (!pOnE)
-            outputSum -= kp * dInput;
+        if (!pOnE) outputSum -= kp * dInput;
 
         if (outputSum > outMax)
             outputSum = outMax;
@@ -104,8 +102,7 @@ bool PID::Compute() {
  * be adjusted on the fly during normal operation
  ******************************************************************************/
 void PID::SetTunings(double Kp, double Ki, double Kd, int POn) {
-    if (Kp < 0 || Ki < 0 || Kd < 0)
-        return;
+    if (Kp < 0 || Ki < 0 || Kd < 0) return;
 
     pOn = POn;
     pOnE = POn == P_ON_E;
@@ -154,8 +151,7 @@ void PID::SetSampleTime(int NewSampleTime) {
  *  here.
  **************************************************************************/
 void PID::SetOutputLimits(double Min, double Max) {
-    if (Min >= Max)
-        return;
+    if (Min >= Max) return;
     outMin = Min;
     outMax = Max;
 

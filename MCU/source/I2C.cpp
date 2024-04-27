@@ -1,9 +1,3 @@
-/*
- * I2C.cpp
- *
- *  Created on: Mar 30, 2024
- *      Author: gaito
- */
 #include "I2C.h"
 
 #include "fsl_gpio.h"
@@ -107,20 +101,4 @@ status_t I2C::writeRegister(uint8_t deviceAddress, uint8_t registerAddress,
     masterXfer.flags = kI2C_TransferDefaultFlag;
 
     return I2C_MasterTransferBlocking(I2C0, &masterXfer);
-}
-
-status_t I2C::readNonBlockingRegister(i2c_master_handle_t *handle, uint8_t deviceAddress, uint8_t registerAddress,
-                      uint8_t *buffer, uint32_t size) {
-    i2c_master_transfer_t masterXfer;
-    memset(&masterXfer, 0, sizeof(masterXfer));
-
-    masterXfer.slaveAddress = deviceAddress;
-    masterXfer.direction = kI2C_Read;
-    masterXfer.subaddress = registerAddress;
-    masterXfer.subaddressSize = 1;
-    masterXfer.data = buffer;
-    masterXfer.dataSize = size;
-    masterXfer.flags = kI2C_TransferDefaultFlag;
-
-    return I2C_MasterTransferNonBlocking(I2C0, handle, &masterXfer);
 }

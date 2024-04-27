@@ -12,7 +12,9 @@
 using namespace CarQt;
 
 MainWindow::MainWindow(const QString &name, QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), client(nullptr),
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow),
+      client(nullptr),
       labelConnected(new QLabel("Connected", this)),
       labelTXBytes(new QLabel(
           QString::asprintf(MainWindow::LABEL_TX_FORMAT, 0ll), this)),

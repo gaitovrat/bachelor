@@ -73,22 +73,6 @@ void Image::threshold(RefCImageLine srcImg, RefImageLine dstImg) const {
     }
 }
 
-void Image::fastMedianBlur(RefImageLine srcImg, int pixels) {
-    const int buffSize = pixels * 2 + 1;
-    std::vector<uint16_t> blurBuffer;
-
-    for (int i = pixels; i < LINE_LENGTH - pixels; i += buffSize) {
-        for (int j = -pixels; j <= pixels; j++) {
-            blurBuffer.emplace_back(srcImg[i + j]);
-        }
-
-        for (int j = -pixels; j <= pixels; j++) {
-            srcImg[i + j] = Utils::median(blurBuffer);
-        }
-        blurBuffer.clear();
-    }
-}
-
 void Image::fastMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
                            int pixels) {
     memcpy(dstImg, srcImg, LINE_LENGTH);
@@ -106,40 +90,6 @@ void Image::fastMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
             dstImg[i + j] = blurBuffer.at(pixels + 1);
         }
         blurBuffer.clear();
-    }
-}
-
-void Image::slowMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
-                           int pixels) {
-    memcpy(dstImg, srcImg, LINE_LENGTH);
-    std::vector<uint16_t> blurBuffer;
-
-    for (int i = pixels; i < LINE_LENGTH - pixels; i++) {
-        for (int j = -pixels; j <= pixels; j++) {
-            blurBuffer.emplace_back(srcImg[i - j]);
-        }
-        std::sort(blurBuffer.begin(), blurBuffer.end());
-        dstImg[i] = blurBuffer.at(pixels + 1);
-        blurBuffer.clear();
-    }
-}
-
-void Image::slowMedianBlur(RefImageLine srcImg, int pixels) {
-    std::deque<uint16_t> pixBuffer;
-
-    for (int i = /*0*/ 1; i < LINE_LENGTH; i++) {
-        if (static_cast<int>(pixBuffer.size()) < pixels) {
-            pixBuffer.emplace_back(srcImg[i]);
-            continue;
-        }
-        pixBuffer.emplace_back(srcImg[i]);
-
-        for (int j = -pixels; j <= pixels; j++) {
-            srcImg[i + j] = Utils::median<uint16_t>(
-                std::vector<uint16_t>(pixBuffer.begin(), pixBuffer.end()));
-        }
-        // blurBuffer.clear();
-        pixBuffer.pop_front();
     }
 }
 
@@ -161,18 +111,18 @@ int16_t Image::getDiversity() const { return this->diversity; }
 
 bool Image::isLowDiversity() const { return this->diversity < LOW_DIVERSITY; }
 
-Image::Image(uint16_t (&rawImage)[LINE_LENGTH]) : Image() {
-	uint16_t blurImage[LINE_LENGTH] = {0};
-	fastMedianBlur(rawImage, blurImage, 1);
-	std::memcpy(rawImage, blurImage, sizeof(rawImage));
+Image::Image(RefImageLine rawImage) : Image() {
+    uint16_t blurImage[LINE_LENGTH] = {0};
+    fastMedianBlur(rawImage, blurImage, 1);
+    std::memcpy(rawImage, blurImage, sizeof(rawImage));
 
     this->computeMinMax(rawImage);
-	this->cut(rawImage);
+    this->cut(rawImage);
 
-	this->normalize(rawImage, this->thresholdedImage);
+    this->normalize(rawImage, this->thresholdedImage);
 
-	this->threshValue = this->averageThreshold(this->thresholdedImage);
-	this->threshold(this->thresholdedImage, this->thresholdedImage);
+    this->threshValue = this->averageThreshold(this->thresholdedImage);
+    this->threshold(this->thresholdedImage, this->thresholdedImage);
 }
 
 uint16_t Image::at(uint8_t index, Type type) const {
@@ -181,9 +131,9 @@ uint16_t Image::at(uint8_t index, Type type) const {
     }
 
     switch (type) {
-    case Thresholded:
-        return this->thresholdedImage[index];
-    default:
-        return 0;
+        case Thresholded:
+            return this->thresholdedImage[index];
+        default:
+            return 0;
     }
 }

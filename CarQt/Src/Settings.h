@@ -1,14 +1,13 @@
 #ifndef SETTINGS_H_
 #define SETTINGS_H_
 
-#include <optional>
-
 #include <QSerialPort>
 #include <QUdpSocket>
+#include <optional>
 
 namespace CarQt {
 struct Settings {
-  public:
+public:
     struct Network {
         QHostAddress pcAddress;
         QHostAddress mcuAddress;
@@ -26,6 +25,6 @@ struct Settings {
 
     static Settings load(const char *filename);
 };
-} // namespace CarQt
+}  // namespace CarQt
 
 #endif

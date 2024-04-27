@@ -19,7 +19,8 @@
 #endif
 
 namespace Shared::Utils {
-template <class T> inline T median(std::vector<T> v) {
+template <class T>
+inline T median(std::vector<T> v) {
     size_t n = v.size() / 2;
     std::nth_element(v.begin(), v.begin() + n, v.end());
 
@@ -52,6 +53,6 @@ Json::Value dataToJson(const Shared::Data &data);
 
 std::vector<Shared::Data> jsonToData(const Json::Value &json);
 #endif
-} // namespace Shared::Utils
+}  // namespace Shared::Utils
 
 #endif /* CAR_MATH_H_ */

@@ -32,6 +32,6 @@ struct Region {
 
     bool operator!=(const Region &rhs) const;
 };
-} // namespace Shared
+}  // namespace Shared
 
-#endif // _REGION_H
+#endif  // _REGION_H

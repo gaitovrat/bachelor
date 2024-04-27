@@ -1,7 +1,7 @@
+#include "Image.h"
+
 #include <cstring>
 #include <iostream>
-
-#include "Image.h"
 
 using namespace CarQt;
 
@@ -32,14 +32,14 @@ uint16_t Image::at(const uint8_t index, Type type) const {
     }
 
     switch (type) {
-    case Raw:
-        return rawImage[index];
-    case Normalized:
-        return normalizedImage[index];
-    case Thresholded:
-        return thresholdedImage[index];
-    default:
-        std::cerr << "Unknown image type\n";
-        return 0;
+        case Raw:
+            return rawImage[index];
+        case Normalized:
+            return normalizedImage[index];
+        case Thresholded:
+            return thresholdedImage[index];
+        default:
+            std::cerr << "Unknown image type\n";
+            return 0;
     }
 }

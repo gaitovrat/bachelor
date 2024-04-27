@@ -1,29 +1,20 @@
-/*
- * IMU.h
- *
- *  Created on: Mar 30, 2024
- *      Author: gaito
- */
-
 #ifndef IMU_H_
 #define IMU_H_
 
+#include "Shared/Vec.h"
 #include "fsl_common.h"
 #include "fsl_i2c.h"
 
-#include "Shared/Vec.h"
-
 namespace MCU {
 class IMU {
-  public:
+public:
     enum FXOSRange { G_2 = 0, G_4, G_8 };
     enum FXASRange { DPS_2000 = 0, DPS_1000, DPS_500, DPS_250 };
 
     static constexpr uint8_t FXOS_ADDRESS = 0x1DU;
     static constexpr uint8_t FXAS_ADDRESS = 0x21U;
 
-
-  private:
+private:
     const FXOSRange fxosRange;
     const FXASRange fxasRange;
     Shared::Vec3<int16_t> accel;
@@ -31,7 +22,7 @@ class IMU {
     Shared::Vec3<int16_t> gyro;
     bool started;
 
-  public:
+public:
     IMU(FXOSRange fxosRange = G_4, FXASRange fxasRange = DPS_1000);
 
     virtual ~IMU() = default;
@@ -52,7 +43,7 @@ class IMU {
 
     void start();
 
-  private:
+private:
     status_t initFXOS();
 
     status_t startFXOS();
@@ -62,10 +53,7 @@ class IMU {
     status_t startFXAS();
 
     void initMaster();
-
-    static void callback(I2C_Type *base, i2c_master_handle_t *handle,
-                         status_t status, void *userData);
 };
-} // namespace MCU
+}  // namespace MCU
 
 #endif /* IMU_H_ */

@@ -34,12 +34,12 @@ class MainWindow : public QMainWindow {
     UDPClient *client;
     std::list<Image> images;
 
-  public:
+public:
     explicit MainWindow(const QString &name, QWidget *parent = nullptr);
 
     ~MainWindow() override;
 
-  public slots:
+public slots:
     void update(const Shared::Data &data);
 
     void receivedSize(qint64 size) const;
@@ -52,9 +52,9 @@ class MainWindow : public QMainWindow {
 
     void record();
 
-  private:
+private:
     void updateClient(const Settings &settings);
 };
-} // namespace CarQt
+}  // namespace CarQt
 
-#endif // MAINWINDOW_H
+#endif  // MAINWINDOW_H

@@ -46,9 +46,6 @@ extern "C" void free(void *) {}
  * code size noticeably. Note that this function should not return.
  ******************************************************************/
 namespace __gnu_cxx {
-void __verbose_terminate_handler() {
-    while (1)
-        ;
-}
-} // namespace __gnu_cxx
+void __verbose_terminate_handler() { while (1); }
+}  // namespace __gnu_cxx
 #endif

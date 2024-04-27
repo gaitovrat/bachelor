@@ -25,6 +25,6 @@ struct Image : public Shared::Image {
 
     uint16_t at(uint8_t index, Type type) const override;
 };
-} // namespace CarQt
+}  // namespace CarQt
 
-#endif // CARCONTROL_IMAGE_H
+#endif  // CARCONTROL_IMAGE_H

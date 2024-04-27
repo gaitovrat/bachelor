@@ -1,9 +1,9 @@
 #include "Settings.h"
 
+#include <json/json.h>
+
 #include <fstream>
 #include <optional>
-
-#include <json/json.h>
 
 #include "Shared/Network.h"
 #include "Utils.h"
@@ -12,7 +12,8 @@ using namespace CarQt;
 
 Settings::Network::Network()
     : pcAddress(Utils::ipv4ToString(PC_IP)),
-      mcuAddress(Utils::ipv4ToString(MCU_IP)), port(5000u) {}
+      mcuAddress(Utils::ipv4ToString(MCU_IP)),
+      port(5000u) {}
 
 Settings::Settings() : network(), recordDestination(".") {}
 

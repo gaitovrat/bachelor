@@ -1,9 +1,10 @@
 #ifndef ENET_ENET_H_
 #define ENET_ENET_H_
 
+#include <cstdint>
+
 #include "Shared/Data.h"
 #include "lwip/udp.h"
-#include <cstdint>
 
 namespace MCU {
 class Enet {
@@ -23,7 +24,7 @@ class Enet {
     uint32_t dataLen;
     uint32_t dataIndex;
 
-  public:
+public:
     Enet();
 
     virtual ~Enet() = default;
@@ -34,5 +35,5 @@ class Enet {
 
     bool check();
 };
-} // namespace MCU
+}  // namespace MCU
 #endif /* ENET_ENET_H_ */

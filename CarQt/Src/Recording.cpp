@@ -1,10 +1,10 @@
 #include "Recording.h"
 
-#include <fstream>
-
 #include <json/json.h>
-#include <opencv2/opencv.hpp>
 #include <qdebug.h>
+
+#include <fstream>
+#include <opencv2/opencv.hpp>
 #include <string>
 
 #include "Shared/Utils.h"
