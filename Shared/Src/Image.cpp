@@ -144,11 +144,7 @@ void Image::slowMedianBlur(RefImageLine srcImg, int pixels) {
 }
 
 uint8_t Image::atThresh(uint8_t index) const {
-    if (index >= LINE_LENGTH) {
-        return 0;
-    }
-
-    return static_cast<uint8_t>(this->thresholdedImage[index]);
+    return static_cast<uint8_t>(this->at(index, Type::Thresholded));
 }
 
 uint16_t Image::getMin() const { return this->minValue; }

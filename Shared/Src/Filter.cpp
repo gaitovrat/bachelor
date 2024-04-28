@@ -109,7 +109,7 @@ int16_t Filter::recursiveFourStageLowPass() {
     return static_cast<int16_t>(output);
 }
 
-uint16_t Filter::lowPassChebyshev2pole() {
+int16_t Filter::lowPassChebyshev2pole() {
     int32_t n = xBuffer.size() - 1;
     float output = 0.f;
 
