@@ -4,9 +4,9 @@
 
 V této kapitole je popsáno testování algoritmu optimalizace rychlosti na dráze,
 která je popsaná v kapitole~\ref{sec:PlatformControl}, a porovnána s manuálním
-řízením i řízením bez optimalizace na základe senzoru.
+řízením i řízením bez senzoru.
 
-Pro porovnání potřebujeme spočítat za kolik tiku auto projelo jedno kolo. Na to můžeme využít data
+Pro porovnání potřebujeme spočítat za kolik tiků auto projelo jedno kolo. Na to můžeme využít data
 úhlové rychlosti, která je zobrazena na obrázku \ref{fig:Laps}.
 
 \begin{figure}[!h]
@@ -25,8 +25,9 @@ zároveň nebyl ještě zaznamenán polokruh, algoritmus zaznamená časovou zn�
 jako počátek polokruhu. Polokruh je stav, kdy gyroskop má nejvyšší hodnotu, což z pohledu drahý je jedna ze dvou zatáček. Pokud hodnota úhlové rychlosti klesne pod prahovou hodnotu a
 byl již zaznamenán polokruh, znamená to, že byl detekován úplný kruh. Algoritmus
 poté zvýší počet detekovaných kol o jednu. Tento proces se opakuje pro každý datový
-bod, čímž algoritmus umožňuje sledování a počítání kol na základě úhlové rychlosti
+bod, čímž algoritmus umožňuje sledování a počítání ujetých kol na základě úhlové rychlosti
 zaznamenané gyroskopem. Použitý algoritmus je ve výpisu:
+
 \begin{lstlisting}[language = python, caption = Počet kol, label = lst:countLap]
 threshold = 3000
 half_lap_detected = False

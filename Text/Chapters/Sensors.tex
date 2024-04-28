@@ -12,7 +12,7 @@ Tyto~senzory komunikují s platformou pomocí $I^2C$ \cite{frdmk66UserGuide}.
 akcelerometru a 3osého magnetometru v jednom čipu. Akcelerometr v senzoru
 FXOS8700CQ má nastavitelné rozsahy ±2 g, ±4 g, ±8 g s 14bitovým rozlišením, zatímco
 magnetometr poskytuje 16bitové rozlišení s~rozsahem ±1200 µT na osu. Pro komunikaci
-podporuje $I^2C$ a SPI rozhraní. Má dva piny pro~přerušení a podporuje odesílat data
+podporuje $I^2C$ a $SPI$ rozhraní. Má dva piny pro~přerušení a podporuje odesílat data
 rychlosti až 800 Hz pro každý senzor případně 400 Hz v~hybridním režimu.
 Tato~integrace umožňuje zařízení zachytit komplexní data o svém pohybu a orientaci
 vůči zemskému gravitačnímu a magnetickému poli. Orientace akcelerometru a
@@ -49,7 +49,7 @@ Když je zařízení připojeno k systému, musí být připojeno na zemi, aby m
 komunikovat.
 
 Přenos na sběrnice vždy začíná START sekvencí a končí STOP sekvencí, viz. obrázek
-\ref{fig:I2C_FRAME}. Ty~jsou generovány Master zařízením. \textbf{START} sekvence je
+\ref{fig:I2C_FRAME}. Ty~jsou generovány master zařízením. \textbf{START} sekvence je
 definovaná jako přechod z logické 1 na~logickou 0 na SDA, zatímco na SCL je v
 logické 1. \textbf{STOP} sekvence oproti tomu má jako přechod z logické~0
 na~logickou 1 na SDA, zatímco na SCL je v logické 1. Sběrnice je obsazena od začátku
@@ -62,7 +62,7 @@ master posílá data a slave potvrzuje přijetí ACK~bitem.
 
 Čtení dat se podobá zápisu, po odeslání adresy zařízení, které posílá data, se
 master přepne do~režimu čtení a slave pošle data, která master potvrdí ACK
-bitem\cite{I2C}.
+bitem \cite{I2C}.
 
 \begin{figure}[!h]
     \centering
@@ -73,7 +73,7 @@ bitem\cite{I2C}.
 
 \section{Konfigurace senzorů}\
 
-Konfiguraci senzorů je probíhá posláním dat na jejich adresy. Adresa
+Konfiguraci senzorů je probíhá posláním dat na jejich adresy. Adresy
 jsou:
 \begin{itemize}
     \item NXP FXOS8700CQ - 0x1D;
@@ -113,7 +113,7 @@ XYZ\_DATA\_CFG. Adresa registru a hodnoty jsou v tabulce \ref{tab:FXOS8700CQ}.
     a zapnutí malého šumu.
 
     \item CTRL\_REG2 je použit pro zapnutí automatického režimu spanku, nízkého
-    výkonu ve~spanku a vysokého výkonu v probuzení.
+    výkonu ve~spánku a vysokého výkonu v probuzení.
 
     \item CTRL\_REG4 je použit pro zapnutí data-ready přerušení.
 
@@ -128,7 +128,7 @@ XYZ\_DATA\_CFG. Adresa registru a hodnoty jsou v tabulce \ref{tab:FXOS8700CQ}.
     data z magnetometru.
 
     \item Registr XYZ\_DATA\_CFG je použit pro nastavení rozsahu akcelerometru na ±4
-    g\cite{FXOS8700CQ}.
+    g \cite{FXOS8700CQ}.
 \end{itemize}
 
 \subsection{Konfigurace NXP FXAS21002}\
@@ -189,15 +189,15 @@ viz. v~kapitole \ref{sec:PlatformControl}. Tato data jsou vizualizována na obr�
     \label{fig:Sensors}
 \end{figure}
 
-Z analyzovaného obrázku je zřejmé, že otáčení vozidla koresponduje s daty získanými
+Z obrázku je zřejmé, že otáčení vozidla koresponduje s daty získanými
 z akcelerometru na ose $y$ a gyroskopu na ose $z$. Nicméně je třeba poznamenat, že
 data z akcelerometru obsahují významný šum, což vyžaduje implementaci vhodného
 filtračního algoritmu před dalším zpracováním těchto dat. Dále je třeba zmínit, že
 data z magnetometru nelze v tomto případě využít, jelikož jsou negativně ovlivněna
 působením motorů vozidla. Možnost přesunutí senzoru magnetometru na méně náchylné
-místo myšleno například blíže ke kameře, by bylo ideální, avšak v dané konfiguraci
+místo myšleno například blíže ke kameře by bylo ideální, avšak v dané konfiguraci
 vozidla není proveditelné. Vzhledem k těmto omezením a za účelem optimalizace
-rychlosti zpracování bude v práci použita kombinace dat pouze z akcelerometru a
+rychlosti zpracování bude v~práci použita kombinace dat pouze z akcelerometru a
 gyroskopu.
 
 \endinput

@@ -13,7 +13,7 @@ Rozlišujeme to na základě boční rychlosti, tzn. pokud boční rychlost $a$ 
 optimální, jedná se o jízdě po rovinně, v opačném případě bude jízda v~zatáčce.
 
 V zatáčce musíme spočítat takové zpomalení, aby boční rychlost byla
-co nejblíž ke koeficientu. Můžeme to udělat na základě formule optimální boční
+co nejblíž ke koeficientu. Můžeme to udělat na vzorce optimální boční
 rychlosti:
 \begin{equation}
 v = \sqrt{a_{max} * r},
@@ -21,13 +21,13 @@ v = \sqrt{a_{max} * r},
 kde $v$ je optimální zpomalení, $a_{max}$ je maximální boční rychlost a r je poloměr
 zatáčky. Po experimentech pro $a_{max}$ je zvolena hodnota 2. Tuto hodnotu
 optimálního zpomalení používáme i pro výpočet zrychlení na rovině. Poloměr zatáčky můžeme
-spočítat na základě uhlové rychlosti:
+spočítat na základě úhlové rychlosti:
 \begin{equation}
 r = \frac{v}{\omega},
 \end{equation}
-kde $v$ je rychlost auta a $w$ je uhlová rychlost.
+kde $v$ je rychlost auta a $w$ je úhlová rychlost.
 
-Hodnoty pro boční zrychlení a uhlovou rychlost dostaneme z $A_y$ a $\Omega_z$. $A_y$ je
+Hodnoty pro boční zrychlení a úhlovou rychlost dostaneme z $A_y$ a $\Omega_z$. $A_y$ je
 zobrazena na obrázku \ref{fig:FXOS_Orientation}. $\Omega_z$ je zobrazena na obrázku
 \ref{fig:FXAS_Orientation}.
 Tyto hodnoty před použitím je potřeba zkonvertovat ze surových
@@ -46,7 +46,7 @@ Pro konvertování $\Omega_z$ byl použit vzorec:
 \begin{equation}
 \omega = \Omega_z * k * \frac{\pi}{180},
 \end{equation}
-kde $\omega$ je uhlová rychlost, $\Omega_z$ je surová hodnota gyroskopu ose z
+kde $\omega$ je úhlová rychlost, $\Omega_z$ je surová hodnota gyroskopu ose z
 a $k$ je citlivost senzoru ve stupních za sekundu.
 Pro konfiguraci gyroskopu, která je popsaná v kapitole
 \ref{sec:Sensors}, byla použita hodnota k~=~0,03125.
