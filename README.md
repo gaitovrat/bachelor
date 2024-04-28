@@ -20,14 +20,3 @@ cmake --build build --parallel CarQt
 
 #### Build
 Import all eclipse projects from repo root and build it.
-
-## Dockerfiles
-In repository I have 2 dockerfiles:
-1. Qt.Dockerfile
-2. Tex.Dockerfile
-
-First for CarQt project and second one for Text project.
-To build docker image run command:
-```sh
-docker build -t tag -f filename .
-```
