@@ -20,12 +20,26 @@ class Recording {
     std::vector<Entry> entries;
 
 public:
+    /*
+     * Constructor
+     */
     Recording();
 
+    /*
+     * Destructor
+     */
     virtual ~Recording() = default;
 
+    /*
+     * Save recording to a file
+     * @param path the path to save to
+     */
     void save(const QString &path);
 
+    /*
+     * Add data to the recording
+     * @param data the data to add
+     */
     void add(const Shared::Data &data);
 };
 }  // namespace CarQt

@@ -25,14 +25,34 @@ class Enet {
     uint32_t dataIndex;
 
 public:
+    /*
+     * Constructor
+     */
     Enet();
 
+    /*
+     * Destructor
+     */
     virtual ~Enet() = default;
 
+    /*
+     * Initialize the ENET
+     * @param bufferSize the size of the buffer
+     * @param port the port number
+     */
     void init(const size_t bufferSize, const uint16_t port);
 
+    /*
+     * Send data
+     * @param pData the data to send
+     * @param len the length of the data
+     */
     void send(const void *pData, const uint32_t len);
 
+    /*
+    * Check timeouts and initialization
+    * @return true if the ENET is initialized, false otherwise
+    */
     bool check();
 };
 }  // namespace MCU

@@ -35,24 +35,57 @@ class MainWindow : public QMainWindow {
     std::list<Image> images;
 
 public:
+    /*
+     * Constructor
+     * @param name the name of the window
+     * @param parent the parent widget
+     */
     explicit MainWindow(const QString &name, QWidget *parent = nullptr);
 
+    /*
+     * Destructor
+     */
     ~MainWindow() override;
 
 public slots:
+    /*
+     * Update the data on window
+     * @param data the data to update with
+     */
     void update(const Shared::Data &data);
 
+    /*
+     * Received size
+     * @param size the size received
+     */
     void receivedSize(qint64 size) const;
 
+    /*
+     * Transmit size
+     * @param size the size transmitted
+     */
     void transmitSize(qint64 size) const;
 
+    /*
+    * Open settings window
+    */
     void openPreferences();
 
+    /*
+     * Reconnect to the server
+     */
     void reconnect();
 
+    /*
+     * Record the data
+     */
     void record();
 
 private:
+    /*
+     * Update the client
+     * @param settings the settings to update with
+     */
     void updateClient(const Settings &settings);
 };
 }  // namespace CarQt

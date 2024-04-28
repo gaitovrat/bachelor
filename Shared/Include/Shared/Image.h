@@ -27,35 +27,102 @@ protected:
     int16_t diversity;
 
 public:
+    /*
+     * Constructor
+     */
     Image();
 
+    /*
+     * Constructor
+     * @param rawImage the raw image line
+     */
     Image(RefImageLine rawImage);
 
+    /*
+     * Get pixel at index of type
+     * @param index the index of the pixel
+     * @param type the type of the pixel (Raw, Normalized, Thresholded)
+     * @return the pixel value
+     */
     virtual uint16_t at(uint8_t index, Type type) const;
 
+    /*
+     * Get thresholded pixel at index
+     * @param index the index of the pixel
+     * @return the pixel value
+     */
     uint8_t atThresh(uint8_t index) const;
 
+    /*
+     * Get the minimum value of the image
+     * @return the minimum value
+     */
     uint16_t getMin() const;
 
+    /*
+     * Get the maximum value of the image
+     * @return the minimum value
+     */
     uint16_t getMax() const;
 
+    /*
+     * Get the threshold value of the image
+     * @return the threshold value
+     */
     uint16_t getThreshValue() const;
 
+    /*
+     * Get the diversity of the image
+     * @return the diversity
+     */
     int16_t getDiversity() const;
 
+    /*
+     * Check if the image has low diversity
+     * @return true if the image has low diversity
+     */
     bool isLowDiversity() const;
 
 protected:
+    /*
+     * Compute the min and max values of the image
+     * @param img the image line
+     */
     void computeMinMax(RefCImageLine img);
 
+    /*
+     * Cut the image line
+     * @param srcImg the source image line
+     */
     void cut(RefImageLine srcImg) const;
 
+    /*
+     * Normalize the image line
+     * @param srcImg the source image line
+     * @param dstImg the destination image line
+     */
     void normalize(RefCImageLine srcImg, RefImageLine dstImg) const;
 
+    /*
+     * Compute the average threshold of the image line
+     * @param srcImg the source image line
+     * @return the average threshold
+     */
     uint16_t averageThreshold(RefCImageLine srcImg);
 
+    /*
+     * Threshold the image line
+     * @param srcImg the source image line
+     * @param dstImg the destination image line
+     */
     void threshold(RefCImageLine srcImg, RefImageLine dstImg) const;
 
+    /*
+     * Apply median blur filter to the image line
+     * @param srcImg the source image line
+     * @param dstImg the destination image line
+     * @param pixels the number of pixels to blur
+     */
     void fastMedianBlur(RefCImageLine srcImg, RefImageLine dstImg, int pixels);
 };
 }  // namespace Shared

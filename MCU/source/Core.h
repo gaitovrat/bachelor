@@ -50,34 +50,73 @@ class Core {
     float speed;
 
 public:
+    /*
+     * Constructor
+     */
     Core();
 
+    /*
+     * Destructor
+     */
     virtual ~Core() = default;
 
+    /*
+     * Initialize the Core
+     */
     void init();
 
+    /*
+     * Calibrate MCU
+     */
     void calibrate();
 
+    /*
+     * Run MCU
+     */
     void drive();
 
+    /*
+     * Get the IMU
+     * @return the IMU
+     */
     IMU &getIMU();
 
+    /*
+     * Get the gyro filter
+     */
     Shared::Filter &getGyroFilter();
 
+    /*
+     * Get the accel filter
+     */
     Shared::Filter &getAccelFilter();
 
 private:
+    /*
+     * Update drive in automatic mode
+     */
     void update();
 
+    /*
+     * Update drive in manual mode
+     */
     void manual();
 
+    /*
+     * Reset the Core
+     */
     void reset();
 
+    /*
+     * Send data to PC
+     */
     void send();
 
+    /*
+     * Calculate the distance ratio
+     * @return the distance ratio
+     */
     float calculateDistanceRatio();
-
-    uint32_t calculateServoPosition(float ratio);
 };
 }  // namespace MCU
 

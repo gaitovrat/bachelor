@@ -18,16 +18,33 @@ class SettingsWindow : public QDialog {
 public:
     static constexpr const char *FILENAME = "settings.json";
 
+    /*
+     * Constructor
+     * @param parent the parent widget
+     */
     explicit SettingsWindow(QWidget *parent = nullptr);
 
+    /*
+     * Destructor
+     */
     ~SettingsWindow() override;
 
+    /*
+     * Start the settings window
+     * @return the settings
+     */
     std::optional<Settings> execute();
 
 public slots:
+    /*
+     * Select the record directory
+     */
     void selectRecordDirectory();
 
 private:
+    /*
+     * Get the settings
+     */
     Settings getSettings() const;
 };
 }  // namespace CarQt

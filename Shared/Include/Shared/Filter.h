@@ -41,19 +41,45 @@ class Filter {
     int64_t averageSum;
 
 public:
+    /*
+     * Constructor
+     */
     Filter();
 
+    /*
+     * Add a new value to the filter
+     * @param value the new value to add
+     */
     void add(int16_t value);
 
+    /*
+     * Reset the filter
+     */
     void reset();
 
+    /*
+     * Get the current value of "Moving average" filter
+     * @return the current value of the filter
+     */
     int16_t movingAverage();
 
+    /*
+     * Get the current value of "Single pole recursive" filter
+     * @return the current value of the filter
+     */
     int16_t singlePoleRecursive();
 
+    /*
+     * Get the current value of "Recursive 4 stage low pass" filter
+     * @return the current value of the filter
+     */
     int16_t recursiveFourStageLowPass();
 
-    uint16_t lowPassChebyshev2pole();
+    /*
+     * Get the current value of "Low pass Chebysev" filter
+     * @return the current value of the filter
+     */
+    int16_t lowPassChebyshev2pole();
 };
 }  // namespace Shared
 

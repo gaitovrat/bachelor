@@ -4,6 +4,11 @@
 #include <cstdint>
 
 namespace MCU {
+/*
+ * Calculate led center value
+ * @param pot the potentiometer value
+ * @return the LED value
+ */
 constexpr uint8_t ledCenter(const int pot) {
     if (pot < -5) return 0x01;
 

@@ -13,16 +13,40 @@ struct Image : public Shared::Image {
     ImageLine normalizedImage;
     ImageLine thresholdedImage;
 
+    /*
+     * Constructor
+     */
     Image();
 
+    /*
+     * Constructor
+     * @param rawImage the raw image line
+     */
     explicit Image(RefCImageLine rawImage);
 
+    /*
+     * Constructor
+     * @param rawImage the raw image line
+     */
     explicit Image(RefImageLine rawImage);
 
+    /*
+     * Set the raw image
+     * @param rawImage the raw image line
+     */
     void setRawImage(RefCImageLine rawImage);
 
+    /*
+     * Apply processing to the image
+     */
     void process();
 
+    /*
+     * Get pixel at index of type
+     * @param index the index of the pixel
+     * @param type the type of the pixel (Raw, Normalized, Thresholded)
+     * @return the pixel value
+     */
     uint16_t at(uint8_t index, Type type) const override;
 };
 }  // namespace CarQt
