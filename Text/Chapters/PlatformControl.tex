@@ -1,10 +1,10 @@
 \chapter{Řízení modelu auta}
 \label{sec:PlatformControl}\
 
-V této kapitole je popsán způsob manuálního a automatického řízení. Pro automatické
-řízení je popsán způsob rozpoznání dráhy a řízení servo i motorů. Pro manuální
+V~této kapitole je popsán způsob manuálního a~automatického řízení. Pro automatické
+řízení je popsán způsob rozpoznání dráhy a~řízení servo i~motorů. Pro manuální
 řízení je popsán způsob ovládaní auta pomocí RC ovladače. Přepínáni mezi režimy
-bylo implementováno pomocí tlačítka A na POLI-TFC.
+bylo implementováno pomocí tlačítka A~na POLI-TFC.
 
 \section{Dráha}\
 
@@ -22,15 +22,15 @@ Dráha je zobrazena na obrázku \ref{fig:Road}.
 
 \section{Automatické řízení}\
 
-\textbf{Automatické řízení} se skládá ze dvou častí. První je algoritmus rozpoznání drahý pomocí řádkové kamery. Druhá je kontrola motoru a servo na základě těchto dat. Implementace řízení je inspirovaná bakalářskou práce Zvonka Richarda \uv{Mechanizmy řízení robotického auta NXP (FREESCALE)}.
+\textbf{Automatické řízení} se skládá ze dvou častí. První je algoritmus rozpoznání drahý pomocí řádkové kamery. Druhá je kontrola motoru a~servo na základě těchto dat. Implementace řízení je inspirovaná bakalářskou práce Zvonka Richarda \uv{Mechanizmy řízení robotického auta NXP (FREESCALE)}.
 
 \subsection{Rozpoznání dráhy}\
 
 Nejprve bylo zapotřebí získat obraz, který zajišťuje řádková kamera. Pro formát dat
 je použita třída TFC \cite{draha}, která vrací data ve formátu 1D pole typu uint16\_t
-(16bitové celá čísla bez znaménka) v intervalu <0; 4095>.
+(16bitové celá čísla bez znaménka) v~intervalu <0; 4095>.
 
-Obraz se zpracovává v následujících krocích:
+Obraz se zpracovává v~následujících krocích:
 \begin{enumerate}
     \item Filtrování mediánem;
     \item Normalizace obrazu;
@@ -39,9 +39,9 @@ Obraz se zpracovává v následujících krocích:
 
 \subsubsection*{Filtrování mediánem}\
 
-\textbf{Filtrování mediánem} je užitečné pro odstranění malých artefaktů v obraze.
+\textbf{Filtrování mediánem} je užitečné pro odstranění malých artefaktů v~obraze.
 Zpracování pixelů probíhá na základě jeho okolních pixelů. Je zapotřebí tak mít
-uloženy všechny pixely. Každá hodnota pixelu je nahrazena mediánem hodnot v určitém
+uloženy všechny pixely. Každá hodnota pixelu je nahrazena mediánem hodnot v~určitém
 okolí daného pixelu, což pomáhá zachovat ostré hrany obrazu, zatímco šum je
 redukován. Ukázka použitého algoritmu je ve výpisu \ref{lst:slowMedianBlur} \cite{draha}\cite{robot}.
 
@@ -52,7 +52,7 @@ void Image::slowMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
     memcpy(dstImg, srcImg, LINE_LENGTH);
     std::vector<uint16_t> blurBuffer;
 
-    for (int i = pixels; i < LINE_LENGTH - pixels; i++) {
+    for (int i~= pixels; i~< LINE_LENGTH - pixels; i++) {
         for (int j = -pixels; j <= pixels; j++) {
             blurBuffer.emplace_back(srcImg[i - j]);
         }
@@ -66,16 +66,16 @@ void Image::slowMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
 
 \subsubsection*{Normalizace obrazu}\
 
-\textbf{Normalizace obrazu} probíhá na základě nalezení minimálního a maximálního
-bodu v celém obraze. Každý bod je normalizován v intervalu <min; max> do intervalu
+\textbf{Normalizace obrazu} probíhá na základě nalezení minimálního a~maximálního
+bodu v~celém obraze. Každý bod je normalizován v~intervalu <min; max> do intervalu
 <0; 255>.
 
-Díky normalizaci obrazu je auto schopno se přizpůsobit k různým  podmínkám. Použitý
+Díky normalizaci obrazu je auto schopno se přizpůsobit k~různým  podmínkám. Použitý
 algoritmus normalizace je ve výpisu \ref{lst:normalize} \cite{robot}.
 \begin{lstlisting}[caption = Normalizace obrazu, label = lst:normalize]
 // Image.cpp
 void Image::normalize(RefCImageLine srcImg, RefImageLine dstImg) const {
-    for (int i = 0; i < LINE_LENGTH; i++) {
+    for (int i~= 0; i~< LINE_LENGTH; i++) {
         auto pixel = static_cast<float>(srcImg[i]);
         pixel -= this->minValue;
         pixel *= COLOR_WHITE;
@@ -94,7 +94,7 @@ Ukázku algoritmu je ve výpisu \ref{lst:threshold} \cite{robot}.
 \begin{lstlisting}[caption = Prahování průměrem, label = lst:threshold]
 // Image.cpp
 void Image::threshold(RefCImageLine srcImg, RefImageLine dstImg) const {
-    for (int i = 0; i < LINE_LENGTH; i++) {
+    for (int i~= 0; i~< LINE_LENGTH; i++) {
         if (srcImg[i] < this->threshValue)
             dstImg[i] = COLOR_BLACK;
         else
@@ -139,9 +139,9 @@ float Core::calculateDistanceRatio() {
 
 Hledaní těchto čar je implementováno pomocí algoritmu pod názvem \uv{Hledání
 Regionu}. Region je struktura, která uchovává indexy okrajů oblastí jedné barvy.
-Algoritmus hledá regiony ve smyčce, která si uchovává barvy a porovná je s barvou
-samotného bodu. Jestliže se barva změnila, znamená to konec jednoho regionu a
-začátek nového. Zmíněný algoritmus je zobrazen ve výpisu \ref{lst:getRegions} \cite{robot}.
+Algoritmus hledá regiony ve smyčce, která si uchovává barvy a~porovná je s~barvou
+samotného bodu. Jestliže se barva změnila, znamená to konec jednoho regionu
+a~začátek nového. Zmíněný algoritmus je zobrazen ve výpisu \ref{lst:getRegions} \cite{robot}.
 \begin{lstlisting}[caption = Algoritmus hledání regionu, label = lst:getRegions]
 // LineTracer.cpp
 std::vector<Shared::Region> LineTracer::getRegions(const Shared::Image &image, uint8_t searchLeftIdx, uint8_t searchRightIdx, bool saveToClass ) {
@@ -150,7 +150,7 @@ std::vector<Shared::Region> LineTracer::getRegions(const Shared::Image &image, u
 	uint8_t currentColor = static_cast<uint8_t>(image.atThresh(searchLeftIdx));
 	foundRegions.emplace_back(Shared::Region({searchLeftIdx, searchLeftIdx, currentColor}));
 
-	for (uint8_t i = searchLeftIdx; i <= searchRightIdx; i++) {
+	for (uint8_t i~= searchLeftIdx; i~<= searchRightIdx; i++) {
 		if (currentColor != image.atThresh(i)) {
 			if (foundRegions.size() > MAX_REGIONS_COUNT) {
 				break;
@@ -171,13 +171,13 @@ std::vector<Shared::Region> LineTracer::getRegions(const Shared::Image &image, u
 
 \subsection{PWM řízení motorů}\
 
-U řízení motorů musíme rozlišovat dvě fáze: \textbf{zatáčení} a \textbf{jízdu
+U~řízení motorů musíme rozlišovat dvě fáze: \textbf{zatáčení} a~\textbf{jízdu
 rovně}. Pro rozpoznaní fázi zatáčení je použit algoritmus mediánu historie obrazu.
-Aplikace si uchovává historii zpracovaných záznamů (regionů) a pro oba okraje je
-vypočítán medián. Pokud se okraje aktuálního řídícího regionu nachází v blízkém
-okolí vypočteného mediánu, auto se pravděpodobně nachází na rovině a oba motory se
+Aplikace si uchovává historii zpracovaných záznamů (regionů) a~pro oba okraje je
+vypočítán medián. Pokud se okraje aktuálního řídícího regionu nachází v~blízkém
+okolí vypočteného mediánu, auto se pravděpodobně nachází na rovině a~oba motory se
 mohou otáčet na maximálně nastavený výkon. Pokud jinak, auto se pravděpodobně
-nachází v zatáčce a je tedy potřeba zpomalit motor na straně, kde se nachází okraj.
+nachází v~zatáčce a~je tedy potřeba zpomalit motor na straně, kde se nachází okraj.
 Zpomalení je implementováno na základě úhlu servomotoru. Algoritmus je ve výpisu \ref{lst:getRegions} \cite{robot}.
 \begin{lstlisting}[caption = Algoritmus kontroly PWM motorů\cite{robot}, label = lst:controlPWM]
 // Core.cpp
@@ -212,12 +212,12 @@ if (!(this->tracer.unchangedLeft_ && this->tracer.unchangedRight_)) {
 
 Pro manuální řízení byl použit \textbf{vysílač HITEC OPTIC 6 SPORT}.
 Vysílač je zobrazen na~obrázku \ref{fig:Joystick}. HITEC OPTIC 6 SPORT posílá signál do přijímače Minima 6S. Oba pracují na
-frekvenci 2,4~GHz. Ovladač má dvě páky. Jedna je použitá pro zvětšení a zmenšení
+frekvenci 2,4~GHz. Ovladač má dvě páky. Jedna je použitá pro zvětšení a~zmenšení
 plynu motoru. Druhá je použitá pro změnu pozice servomotoru \cite{RC}.
 
-Oba signály jsou přijímány přes kanály CH1 a CH2 \cite{RC}. Tyto kanály jsou
+Oba signály jsou přijímány přes kanály CH1 a~CH2 \cite{RC}. Tyto kanály jsou
 integrovány do modulu POLI-TFC shield, kde jsou signály zpracovány programově
-prostřednictvím třídy TFC \cite{draha}. Hodnoty signálů se nacházejí v rozsahu
+prostřednictvím třídy TFC \cite{draha}. Hodnoty signálů se nacházejí v~rozsahu
 <1000; 2000>, Tyto hodnoty jsou následně transformovány do rozsahu <-1; 1> pomocí vzorce:
 
 \begin{equation}
@@ -225,7 +225,7 @@ prostřednictvím třídy TFC \cite{draha}. Hodnoty signálů se nacházejí v r
 	y = (x / 100 - 15) / 10,
 \end{equation}
 
-kde $y$ je normalizovaná hodnota a $x$ je hodnota z přijímače. Poté je $y$ násobeno
+kde $y$ je normalizovaná hodnota a~$x$ je hodnota z~přijímače. Poté je $y$ násobeno
 na maximální hodnotu PWM motorů nebo servomotoru. Výsledek je následně použit pro
 jejich nastavení.
 

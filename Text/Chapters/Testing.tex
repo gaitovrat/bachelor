@@ -2,9 +2,9 @@
 \label{sec:Testing}
 \
 
-V této kapitole je popsáno testování algoritmu optimalizace rychlosti na dráze,
-která je popsaná v kapitole~\ref{sec:PlatformControl}, a porovnána s manuálním
-řízením i řízením bez senzoru.
+V~této kapitole je popsáno testování algoritmu optimalizace rychlosti na dráze,
+která je popsaná v~kapitole~\ref{sec:PlatformControl}, a~porovnána s~manuálním
+řízením i~řízením bez senzoru.
 
 Pro porovnání potřebujeme spočítat za kolik tiků auto projelo jedno kolo. Na to můžeme využít data
 úhlové rychlosti, která je zobrazena na obrázku \ref{fig:Laps}.
@@ -31,12 +31,12 @@ Pro porovnání potřebujeme spočítat za kolik tiků auto projelo jedno kolo. 
 \end{figure}
 
 Implementace algoritmu prahování zajišťuje pro každý datový bod hodnotu úhlové
-rychlosti z~gyroskopu na ose z. Pokud tato hodnota překročí prahovou hodnotu, a
-zároveň nebyl ještě zaznamenávaná zatáčka, algoritmus zaznamená časovou známku detekce
-jako počátek zatáčky. Zatáčka je stav, kdy gyroskop má nejvyšší hodnotu, což z pohledu drahý je jedna ze dvou zatáček. Pokud hodnota úhlové rychlosti klesne pod prahovou hodnotu a
-byl již zaznamenávaná zatáčka, znamená to, že byl detekován úplný kruh. Algoritmus
-poté zvýší počet detekovaných kol o jednu. Tento proces se opakuje pro každý datový
-bod, čímž algoritmus umožňuje sledování a počítání ujetých kol na základě úhlové rychlosti
+rychlosti z~gyroskopu na ose z. Pokud tato hodnota překročí prahovou hodnotu,
+a~zároveň nebyl ještě zaznamenávaná zatáčka, algoritmus zaznamená časovou známku detekce
+jako počátek zatáčky. Zatáčka je stav, kdy gyroskop má nejvyšší hodnotu, což z~pohledu drahý je jedna ze dvou zatáček. Pokud hodnota úhlové rychlosti klesne pod prahovou hodnotu
+a~byl již zaznamenávaná zatáčka, znamená to, že byl detekován úplný kruh. Algoritmus
+poté zvýší počet detekovaných kol o~jednu. Tento proces se opakuje pro každý datový
+bod, čímž algoritmus umožňuje sledování a~počítání ujetých kol na základě úhlové rychlosti
 zaznamenané gyroskopem. 
 
 Použitý algoritmus je ve výpisu:
@@ -57,23 +57,23 @@ for data_point in data:
         half_lap_detected = False
 \end{lstlisting}
 
-Porovnání automatického s senzory i bez senzoru a manuálního řízení je v tabulce \ref{tab:Comparison}. Čísla v tabulce jsou počet tiku časovače za jedno kolo.
+Porovnání automatického s~senzory i~bez senzoru a~manuálního řízení je v~tabulce \ref{tab:Comparison}. Čísla v~tabulce jsou počet tiku časovače za jedno kolo.
 \begin{table}[!h]
     \centering
     \begin{tabular}{cccc}
         \hline
         \textbf{Řízení} & \textbf{1 Kolo} & \textbf{2 Kolo} & \textbf{3 Kolo} \\
         \hline
-        Automatické s senzory          & 921       & 906 & 932          \\
+        Automatické s~senzory          & 921       & 906 & 932          \\
         Automatické bez senzoru & 982 & 953 & 963 \\
         Manuální 			  & 1178       & 1085 & 1161           \\
         \hline
     \end{tabular}
-    \caption{Porovnání manuálního a automatického řízení.}
+    \caption{Porovnání manuálního a~automatického řízení.}
     \label{tab:Comparison}
 \end{table}
 
 
-Na základě tabulky můžeme vyvodit závěr, že automatické řízení bez senzorů je rychlejší než manuální řízení, a zároveň, že automatické řízení se senzory je nejrychlejší.
+Na základě tabulky můžeme vyvodit závěr, že automatické řízení bez senzorů je rychlejší než manuální řízení, a~zároveň, že automatické řízení se senzory je nejrychlejší.
 
 \endinput
