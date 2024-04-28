@@ -7,8 +7,7 @@
 using namespace Shared;
 
 Region::Region(uint8_t left, uint8_t right, uint8_t color)
-    : left(std::max(left, MIN_LEFT)),
-      right(std::min(right, MAX_RIGHT)),
+    : left(std::max(left, MIN_LEFT)), right(std::min(right, MAX_RIGHT)),
       color(color) {}
 
 uint8_t Region::size() const { return this->right - this->left; }

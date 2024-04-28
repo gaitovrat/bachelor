@@ -5,7 +5,7 @@
 Abychom odstranili šum je zapotřebí odfiltrovat signál. Tím se zásadně zlepší
 detekce zatáčky. Tato kapitola je inspirovaná bakalářskou práce Šiguta Filipa
 \uv{Krokoměr s mikropočítačem ARM}~\cite{krokomer}.
-V této práci byly popsány signálové filtry pro filtrování hodnot akcelerometru. Z této práce byly použity filtry, které měly počet tiků menší než 200. Tik je jednotka času, která představuje jeden cyklus časovače. Dále budou popsány FIR i IIR filtry a jejich porovnání.
+V této práci byly popsány signálové filtry pro filtrování hodnot akcelerometru. Z této práce byly použity filtry, které měly počet tiků menší než 200 za jedno volání filtrů. Tik je jednotka času, která představuje jeden cyklus časovače. Dále budou popsány FIR i IIR filtry a jejich porovnání.
 
 \section{FIR filtry}\
 
@@ -46,8 +46,10 @@ koeficienty.
 
 Filtr má jen dva koeficienty:
 \begin{align}
+\begin{split}
 a_0 &= 1 - x \\
 b_1 &= x
+\end{split}
 \end{align}
 kde $x$ je hodnota v intervalu <0; 1>, která kontroluje silu filtru \cite{Filters}.
 
@@ -58,11 +60,13 @@ Zvolená hodnota $x$ je 0,85. Z toho plynou hodnoty koeficientu $a_0 = 0,15$ a $
 
 Filtr obsahuje 5 koeficientů:
 \begin{align}
+\begin{split}
 a_0 &= (1 - x)^4 \\
 b_1 &= 4x \\
 b_2 &= -6x^2 \\
 b_3 &= 4x^3 \\
 b_4 &= -x^4
+\end{split}
 \end{align}
 kde $x$ je hodnota v intervalu <0; 1>, která kontroluje silu filtru \cite{Filters}.
 
@@ -73,11 +77,13 @@ Zvolená hodnota $x$ je 0,6.
 Filtr obsahuje 5 koeficientů. Tyto koeficienty jsou z tabulky hodnot pro dvoupólový
 Čebyševův filtr pro frekvence $f_c = 0,075$ \cite{Filters}:
 \begin{align}
+\begin{split}
 a_0 &= 3.869430E-02f \\
 a_1 &= 7.738860E-02f \\
 a_2 &= 3.869430E-02f \\
 b_1 &= 1.392667E+00f \\
 b_2 &= -5.474446E-01 \\
+\end{split}
 \end{align}
 
 \section{Testování}\
@@ -107,6 +113,6 @@ signál.
 \end{figure}
 
 Po analýze výsledků jsem dospěl k závěru, že nejlepší výsledky ukazují filtry
-jednopólová dolní propust a Čtyřstupňová dolní propust. První zmíněný byl použit pro
+\uv{Jednopólová dolní propust} a \uv{Čtyřstupňová dolní propust}. První zmíněný byl použit pro
 implementaci kvůli nejlepší redukce šumu.
 \endinput

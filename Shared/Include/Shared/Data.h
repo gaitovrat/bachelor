@@ -37,6 +37,6 @@ struct Data {
     uint32_t timestamp = 0;
     uint8_t mode = Mode::None;
 };
-}  // namespace Shared
+} // namespace Shared
 
-#endif  // UDPSEND_UDPDATA_H
+#endif // UDPSEND_UDPDATA_H

@@ -28,11 +28,18 @@ SPI rozhraní. Obsahuje dva piny pro~přerušení a podporuje odesílat data ryc
 je zobrazena na obrázku \ref{fig:FXAS_Orientation} \cite{FXAS21002}.
 
 \begin{figure}[ht]
-	\centering
-	\subfloat{\includegraphics[width = 0.45\textwidth]{Figures/FXOS_Orientation.png}\label{fig:FXOS_Orientation}}
-	\hfill
-	\subfloat{\includegraphics[width = 0.45\textwidth]{Figures/FXAS_Orientation.png}\label{fig:FXAS_Orientation}}
-	\caption{NXP FXOS8700CQ orientace \cite{FXOS8700CQ} (vlevo) a NXP FXAS21002 orientace \cite{FXAS21002} (vpravo).}
+    \centering
+	\begin{subfigure}{0.35\textwidth}
+	    \includegraphics[width = \textwidth]{Figures/FXOS_Orientation.png}
+        \label{fig:FXOS_Orientation}
+        \caption{NXP FXOS8700CQ orientace \cite{FXOS8700CQ}.}
+	\end{subfigure}
+    \begin{subfigure}{0.35\textwidth}
+        \includegraphics[width = \textwidth]{Figures/FXAS_Orientation.png}
+        \label{fig:FXAS_Orientation}
+         \caption{NXP FXAS21002 orientace \cite{FXAS21002}.}
+    \end{subfigure}
+	\caption{Orientace senzorů.}
 \end{figure}
 
 \section{Komunikace se senzory}\

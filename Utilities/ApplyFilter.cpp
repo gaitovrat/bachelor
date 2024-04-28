@@ -1,10 +1,10 @@
-#include <json/json.h>
-
 #include <cstdint>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <vector>
+
+#include <json/json.h>
 
 #include "Shared/Data.h"
 #include "Shared/Filter.h"
@@ -12,9 +12,11 @@
 
 enum FilterType {
     MOVING_AVERAGE,
+    WINDOWED_SINC,
     SINGLE_POLE,
     FOUR_STAGE,
     CHEBYSHEV2,
+    CHEBYSHEV4
 };
 
 void apply(std::vector<Shared::Data> data, FilterType type) {
@@ -42,128 +44,176 @@ void apply(std::vector<Shared::Data> data, FilterType type) {
     std::ofstream fout;
 
     switch (type) {
-        case MOVING_AVERAGE:
-            filename = "MovingAverage.json";
-            filterAccelXFunc = [&filterAccelX]() {
-                return filterAccelX.movingAverage();
-            };
-            filterAccelYFunc = [&filterAccelY]() {
-                return filterAccelY.movingAverage();
-            };
-            filterAccelZFunc = [&filterAccelZ]() {
-                return filterAccelZ.movingAverage();
-            };
-            filterMagXFunc = [&filterMagX]() {
-                return filterMagX.movingAverage();
-            };
-            filterMagYFunc = [&filterMagY]() {
-                return filterMagY.movingAverage();
-            };
-            filterMagZFunc = [&filterMagZ]() {
-                return filterMagZ.movingAverage();
-            };
-            filterGyroXFunc = [&filterGyroX]() {
-                return filterGyroX.movingAverage();
-            };
-            filterGyroYFunc = [&filterGyroY]() {
-                return filterGyroY.movingAverage();
-            };
-            filterGyroZFunc = [&filterGyroZ]() {
-                return filterGyroZ.movingAverage();
-            };
-            break;
-        case SINGLE_POLE:
-            filename = "SinglePole.json";
-            filterAccelXFunc = [&filterAccelX]() {
-                return filterAccelX.singlePoleRecursive();
-            };
-            filterAccelYFunc = [&filterAccelY]() {
-                return filterAccelY.singlePoleRecursive();
-            };
-            filterAccelZFunc = [&filterAccelZ]() {
-                return filterAccelZ.singlePoleRecursive();
-            };
-            filterMagXFunc = [&filterMagX]() {
-                return filterMagX.singlePoleRecursive();
-            };
-            filterMagYFunc = [&filterMagY]() {
-                return filterMagY.singlePoleRecursive();
-            };
-            filterMagZFunc = [&filterMagZ]() {
-                return filterMagZ.singlePoleRecursive();
-            };
-            filterGyroXFunc = [&filterGyroX]() {
-                return filterGyroX.singlePoleRecursive();
-            };
-            filterGyroYFunc = [&filterGyroY]() {
-                return filterGyroY.singlePoleRecursive();
-            };
-            filterGyroZFunc = [&filterGyroZ]() {
-                return filterGyroZ.singlePoleRecursive();
-            };
-            break;
-        case FOUR_STAGE:
-            filename = "FourStage.json";
-            filterAccelXFunc = [&filterAccelX]() {
-                return filterAccelX.recursiveFourStageLowPass();
-            };
-            filterAccelYFunc = [&filterAccelY]() {
-                return filterAccelY.recursiveFourStageLowPass();
-            };
-            filterAccelZFunc = [&filterAccelZ]() {
-                return filterAccelZ.recursiveFourStageLowPass();
-            };
-            filterMagXFunc = [&filterMagX]() {
-                return filterMagX.recursiveFourStageLowPass();
-            };
-            filterMagYFunc = [&filterMagY]() {
-                return filterMagY.recursiveFourStageLowPass();
-            };
-            filterMagZFunc = [&filterMagZ]() {
-                return filterMagZ.recursiveFourStageLowPass();
-            };
-            filterGyroXFunc = [&filterGyroX]() {
-                return filterGyroX.recursiveFourStageLowPass();
-            };
-            filterGyroYFunc = [&filterGyroY]() {
-                return filterGyroY.recursiveFourStageLowPass();
-            };
-            filterGyroZFunc = [&filterGyroZ]() {
-                return filterGyroZ.recursiveFourStageLowPass();
-            };
-            break;
-        case CHEBYSHEV2:
-            filename = "Chebyshev2.json";
-            filterAccelXFunc = [&filterAccelX]() {
-                return filterAccelX.lowPassChebyshev2pole();
-            };
-            filterAccelYFunc = [&filterAccelY]() {
-                return filterAccelY.lowPassChebyshev2pole();
-            };
-            filterAccelZFunc = [&filterAccelZ]() {
-                return filterAccelZ.lowPassChebyshev2pole();
-            };
-            filterMagXFunc = [&filterMagX]() {
-                return filterMagX.lowPassChebyshev2pole();
-            };
-            filterMagYFunc = [&filterMagY]() {
-                return filterMagY.lowPassChebyshev2pole();
-            };
-            filterMagZFunc = [&filterMagZ]() {
-                return filterMagZ.lowPassChebyshev2pole();
-            };
-            filterGyroXFunc = [&filterGyroX]() {
-                return filterGyroX.lowPassChebyshev2pole();
-            };
-            filterGyroYFunc = [&filterGyroY]() {
-                return filterGyroY.lowPassChebyshev2pole();
-            };
-            filterGyroZFunc = [&filterGyroZ]() {
-                return filterGyroZ.lowPassChebyshev2pole();
-            };
-            break;
-        default:
-            return;
+    case MOVING_AVERAGE:
+        filename = "MovingAverage.json";
+        filterAccelXFunc = [&filterAccelX]() {
+            return filterAccelX.movingAverage();
+        };
+        filterAccelYFunc = [&filterAccelY]() {
+            return filterAccelY.movingAverage();
+        };
+        filterAccelZFunc = [&filterAccelZ]() {
+            return filterAccelZ.movingAverage();
+        };
+        filterMagXFunc = [&filterMagX]() { return filterMagX.movingAverage(); };
+        filterMagYFunc = [&filterMagY]() { return filterMagY.movingAverage(); };
+        filterMagZFunc = [&filterMagZ]() { return filterMagZ.movingAverage(); };
+        filterGyroXFunc = [&filterGyroX]() {
+            return filterGyroX.movingAverage();
+        };
+        filterGyroYFunc = [&filterGyroY]() {
+            return filterGyroY.movingAverage();
+        };
+        filterGyroZFunc = [&filterGyroZ]() {
+            return filterGyroZ.movingAverage();
+        };
+        break;
+    case WINDOWED_SINC:
+        filename = "WindowedSinc.json";
+        filterAccelXFunc = [&filterAccelX]() {
+            return filterAccelX.windowedSinc();
+        };
+        filterAccelYFunc = [&filterAccelY]() {
+            return filterAccelY.windowedSinc();
+        };
+        filterAccelZFunc = [&filterAccelZ]() {
+            return filterAccelZ.windowedSinc();
+        };
+        filterMagXFunc = [&filterMagX]() { return filterMagX.windowedSinc(); };
+        filterMagYFunc = [&filterMagY]() { return filterMagY.windowedSinc(); };
+        filterMagZFunc = [&filterMagZ]() { return filterMagZ.windowedSinc(); };
+        filterGyroXFunc = [&filterGyroX]() {
+            return filterGyroX.windowedSinc();
+        };
+        filterGyroYFunc = [&filterGyroY]() {
+            return filterGyroY.windowedSinc();
+        };
+        filterGyroZFunc = [&filterGyroZ]() {
+            return filterGyroZ.windowedSinc();
+        };
+        break;
+    case SINGLE_POLE:
+        filename = "SinglePole.json";
+        filterAccelXFunc = [&filterAccelX]() {
+            return filterAccelX.singlePoleRecursive();
+        };
+        filterAccelYFunc = [&filterAccelY]() {
+            return filterAccelY.singlePoleRecursive();
+        };
+        filterAccelZFunc = [&filterAccelZ]() {
+            return filterAccelZ.singlePoleRecursive();
+        };
+        filterMagXFunc = [&filterMagX]() {
+            return filterMagX.singlePoleRecursive();
+        };
+        filterMagYFunc = [&filterMagY]() {
+            return filterMagY.singlePoleRecursive();
+        };
+        filterMagZFunc = [&filterMagZ]() {
+            return filterMagZ.singlePoleRecursive();
+        };
+        filterGyroXFunc = [&filterGyroX]() {
+            return filterGyroX.singlePoleRecursive();
+        };
+        filterGyroYFunc = [&filterGyroY]() {
+            return filterGyroY.singlePoleRecursive();
+        };
+        filterGyroZFunc = [&filterGyroZ]() {
+            return filterGyroZ.singlePoleRecursive();
+        };
+        break;
+    case FOUR_STAGE:
+        filename = "FourStage.json";
+        filterAccelXFunc = [&filterAccelX]() {
+            return filterAccelX.recursiveFourStageLowPass();
+        };
+        filterAccelYFunc = [&filterAccelY]() {
+            return filterAccelY.recursiveFourStageLowPass();
+        };
+        filterAccelZFunc = [&filterAccelZ]() {
+            return filterAccelZ.recursiveFourStageLowPass();
+        };
+        filterMagXFunc = [&filterMagX]() {
+            return filterMagX.recursiveFourStageLowPass();
+        };
+        filterMagYFunc = [&filterMagY]() {
+            return filterMagY.recursiveFourStageLowPass();
+        };
+        filterMagZFunc = [&filterMagZ]() {
+            return filterMagZ.recursiveFourStageLowPass();
+        };
+        filterGyroXFunc = [&filterGyroX]() {
+            return filterGyroX.recursiveFourStageLowPass();
+        };
+        filterGyroYFunc = [&filterGyroY]() {
+            return filterGyroY.recursiveFourStageLowPass();
+        };
+        filterGyroZFunc = [&filterGyroZ]() {
+            return filterGyroZ.recursiveFourStageLowPass();
+        };
+        break;
+    case CHEBYSHEV2:
+        filename = "Chebyshev2.json";
+        filterAccelXFunc = [&filterAccelX]() {
+            return filterAccelX.lowPassChebyshev2pole();
+        };
+        filterAccelYFunc = [&filterAccelY]() {
+            return filterAccelY.lowPassChebyshev2pole();
+        };
+        filterAccelZFunc = [&filterAccelZ]() {
+            return filterAccelZ.lowPassChebyshev2pole();
+        };
+        filterMagXFunc = [&filterMagX]() {
+            return filterMagX.lowPassChebyshev2pole();
+        };
+        filterMagYFunc = [&filterMagY]() {
+            return filterMagY.lowPassChebyshev2pole();
+        };
+        filterMagZFunc = [&filterMagZ]() {
+            return filterMagZ.lowPassChebyshev2pole();
+        };
+        filterGyroXFunc = [&filterGyroX]() {
+            return filterGyroX.lowPassChebyshev2pole();
+        };
+        filterGyroYFunc = [&filterGyroY]() {
+            return filterGyroY.lowPassChebyshev2pole();
+        };
+        filterGyroZFunc = [&filterGyroZ]() {
+            return filterGyroZ.lowPassChebyshev2pole();
+        };
+        break;
+    case CHEBYSHEV4:
+        filename = "Chebyshev4.json";
+        filterAccelXFunc = [&filterAccelX]() {
+            return filterAccelX.lowPassChebyshev4spole();
+        };
+        filterAccelYFunc = [&filterAccelY]() {
+            return filterAccelY.lowPassChebyshev4spole();
+        };
+        filterAccelZFunc = [&filterAccelZ]() {
+            return filterAccelZ.lowPassChebyshev4spole();
+        };
+        filterMagXFunc = [&filterMagX]() {
+            return filterMagX.lowPassChebyshev4spole();
+        };
+        filterMagYFunc = [&filterMagY]() {
+            return filterMagY.lowPassChebyshev4spole();
+        };
+        filterMagZFunc = [&filterMagZ]() {
+            return filterMagZ.lowPassChebyshev4spole();
+        };
+        filterGyroXFunc = [&filterGyroX]() {
+            return filterGyroX.lowPassChebyshev4spole();
+        };
+        filterGyroYFunc = [&filterGyroY]() {
+            return filterGyroY.lowPassChebyshev4spole();
+        };
+        filterGyroZFunc = [&filterGyroZ]() {
+            return filterGyroZ.lowPassChebyshev4spole();
+        };
+        break;
+    default:
+        return;
     }
 
     fout.open(filename);

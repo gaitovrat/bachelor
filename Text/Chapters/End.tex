@@ -16,8 +16,8 @@ servomotoru byl implementován PID regulátor a rychlost PWM motoru byla optimal
 na základě dat získaných z kamery a senzorů.
 
 Analýza dat ze senzorů ukázala, že magnetometr nelze používat v blízkosti motorů a je
-nezbytné filtrovat signál . Při filtraci signálu byly nejlepší výsledky dosaženy
-pomocí jednopólového dolního filtru a dvoupólového Čebyševova filtru. Vzhledem k tomu,
+nezbytné filtrovat signál z akcelerometru. Při filtraci signálu byly nejlepší výsledky dosaženy
+pomocí filtrů \uv{Jednopólová dolní propust} a \uv{Čtyřstupňová dolní propust}. Vzhledem k tomu,
 že jednopólový dolní filtr není schopen uchovat amplitudu signálu, byl pro finální
 řešení zvolen dvoupólový Čebyševov filtr.
 

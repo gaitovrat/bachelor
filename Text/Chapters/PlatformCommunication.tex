@@ -19,8 +19,16 @@ formátu \textbf{JSON}~(JavaScript Object Notation) a originálního obrazu ve f
 \textbf{PNG}~(Portable Network Graphics) souboru. CarQt je napsána pomocí knihoven
 Qt a OpenCV. Aplikace je zobrazena na obrázku \ref{fig:CarQt}.
 
-Pro přenos a ukládání dat je použita struktura \textbf{Data}, která obsahuje
-originální data z kamery, Regionu, motoru, servo motoru a senzoru.
+Pro přenos a ukládání dat je použita struktura \textbf{Data}, která obsahuje:
+\begin{itemize}
+    \item originální data z kamery,
+    \item distance do levé i pravé černé čáry,
+    \item PWM hodnoty motorů,
+    \item pozice a úhel servomotoru,
+    \item orientace senzorů,
+    \item počet regionů.
+\end{itemize}
+Popis co je region je v kapitole \ref{sec:servocontrol}.
 Implementovaná struktura Data je ve výpisu \ref{lst:data}.
 \begin{lstlisting}[caption = Struktura Data, label = lst:data]
 // Data.h

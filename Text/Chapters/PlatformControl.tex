@@ -103,9 +103,9 @@ void Image::threshold(RefCImageLine srcImg, RefImageLine dstImg) const {
 }
 \end{lstlisting}
 
-\subsection{Kontrola servomotoru}\
-
-Pro kontrolu pozice servomotoru je použit \textbf{PID regulátor}. PID reguluje
+\subsection{Řízení servomotoru}\
+\label{sec:servocontrol}
+Pro řízení pozice servomotoru je použit \textbf{PID regulátor}. PID reguluje
 zařízení tak, aby odchylka byla od nastavené hodnoty co nejmenší. Skládá se ze 3
 složek: proporcionální, integrační, derivatiční \cite{PID}.
 
@@ -137,8 +137,8 @@ float Core::calculateDistanceRatio() {
 }
 \end{lstlisting}
 
-Hledaní těchto čar je implementováno pomocí algoritmu pod názvem \uv{hledání
-Regionu}, což je struktura, která uchovává indexy okrajů oblastí jedné barvy.
+Hledaní těchto čar je implementováno pomocí algoritmu pod názvem \uv{Hledání
+Regionu}. Region je struktura, která uchovává indexy okrajů oblastí jedné barvy.
 Algoritmus hledá regiony ve smyčce, která si uchovává barvy a porovná je s barvou
 samotného bodu. Jestliže se barva změnila, znamená to konec jednoho regionu a
 začátek nového. Zmíněný algoritmus je zobrazen ve výpisu \ref{lst:getRegions} \cite{robot}.

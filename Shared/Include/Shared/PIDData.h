@@ -15,29 +15,14 @@ struct PIDData {
     double output;
     double setPoint;
 
-    /*
-     * Constructor
-     * @param p the proportional value
-     * @param i the integral value
-     * @param d the derivative value
-     */
     PIDData(double p, double i, double d);
 
-    /*
-     * Default constructor
-     */
     PIDData();
 
-    /*
-     * Destructor
-     */
     virtual ~PIDData() = default;
 
-    /*
-     * Reset the PID data
-     */
     void reset();
 };
-}  // namespace Shared
+} // namespace Shared
 
-#endif  // UDPSEND_PIDDATA_H
+#endif // UDPSEND_PIDDATA_H

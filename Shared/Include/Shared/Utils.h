@@ -19,13 +19,7 @@
 #endif
 
 namespace Shared::Utils {
-/*
- * Calculate the median of a vector
- * @param v the vector to calculate the median of
- * @return the median of the vector
- */
-template <class T>
-inline T median(std::vector<T> v) {
+template <class T> inline T median(std::vector<T> v) {
     size_t n = v.size() / 2;
     std::nth_element(v.begin(), v.begin() + n, v.end());
 
@@ -37,13 +31,6 @@ inline T median(std::vector<T> v) {
     std::nth_element(v.begin(), v.begin() + n - 1, v.end());
     return static_cast<T>(0.5 * (vn + v[n - 1]));
 }
-
-/*
- * Calculate the power of a number
- * @param base the base number
- * @param exponent the exponent
- * @return the result of the base raised to the exponent
- */ 
 constexpr float pow(const float base, const int exponent) {
     float result = 1.0f;
     if (exponent > 0) {
@@ -59,27 +46,12 @@ constexpr float pow(const float base, const int exponent) {
 }
 
 #ifdef PC
-/*
- * Convert a vector of Data to a Json::Value
- * @param data the vector of Data to convert
- * @return the Json::Value
- */
 Json::Value dataToJson(const std::vector<Shared::Data> &data);
 
-/*
- * Convert a Data to a Json::Value
- * @param data the Data to convert
- * @return the Json::Value
- */
 Json::Value dataToJson(const Shared::Data &data);
 
-/*
- * Convert a Json::Value to a vector of Data
- * @param json the Json::Value to convert
- * @return the vector of Data
- */
 std::vector<Shared::Data> jsonToData(const Json::Value &json);
 #endif
-}  // namespace Shared::Utils
+} // namespace Shared::Utils
 
 #endif /* CAR_MATH_H_ */

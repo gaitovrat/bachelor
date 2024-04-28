@@ -34,53 +34,50 @@ class Filter {
     static constexpr float chebyshev2B1 = 1.392667E+00f;
     static constexpr float chebyshev2B2 = -5.474446E-01;
 
+    // Chebyshev 4 coefficients
+    static constexpr float chebyshev4A0 = 9.726342E-04f;
+    static constexpr float chebyshev4A1 = 3.890537E-03f;
+    static constexpr float chebyshev4A2 = 5.835806E-03f;
+    static constexpr float chebyshev4A3 = 3.890537E-03f;
+    static constexpr float chebyshev4A4 = 9.726342E-04f;
+    static constexpr float chebyshev4B1 = 3.103944E+00f;
+    static constexpr float chebyshev4B2 = -3.774453E+00f;
+    static constexpr float chebyshev4B3 = 2.111238E+00f;
+    static constexpr float chebyshev4B4 = -4.562908E-01f;
+
+#if (FREQUENCY / 2) % 2 == 0
+    float kernel[(FREQUENCY / 2) + 1];
+    static constexpr uint32_t M = FREQUENCY / 2;
+#else
+    float kernel[(FREQUENCY / 2)];
+    static constexpr uint32_t M = (FREQUENCY / 2) - 1;
+#endif
+
     static constexpr uint32_t N = 8;
     std::vector<int16_t> xBuffer;
     std::vector<int16_t> yBuffer;
 
     int64_t averageSum;
 
-public:
-    /*
-     * Constructor
-     */
+  public:
     Filter();
 
-    /*
-     * Add a new value to the filter
-     * @param value the new value to add
-     */
     void add(int16_t value);
 
-    /*
-     * Reset the filter
-     */
     void reset();
 
-    /*
-     * Get the current value of "Moving average" filter
-     * @return the current value of the filter
-     */
     int16_t movingAverage();
 
-    /*
-     * Get the current value of "Single pole recursive" filter
-     * @return the current value of the filter
-     */
+    int16_t windowedSinc();
+
     int16_t singlePoleRecursive();
 
-    /*
-     * Get the current value of "Recursive 4 stage low pass" filter
-     * @return the current value of the filter
-     */
     int16_t recursiveFourStageLowPass();
 
-    /*
-     * Get the current value of "Low pass Chebysev" filter
-     * @return the current value of the filter
-     */
-    int16_t lowPassChebyshev2pole();
+    uint16_t lowPassChebyshev2pole();
+
+    uint16_t lowPassChebyshev4spole();
 };
-}  // namespace Shared
+} // namespace Shared
 
 #endif /* FILTER_H_ */

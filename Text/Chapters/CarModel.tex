@@ -11,7 +11,7 @@ MCU. Detailní popis MCU a modulu jsou v~podkapitolách \ref{sec:FRDM-K66F}
 a \ref{sec:POLI-TFC}.
 
 Pro manuální řízení je zapojen přijímač RC signálu \textbf{Minima 6S} do pinu
-POLI-TFC shieldu. Přijímač pak přijímá signály z vysílače \textbf{OPTIC 6 SPORT}.
+POLI-TFC shieldu. Přijímač pak přijímá signály z vysílače \textbf{Hitec OPTIC 6 SPORT}.
 
 Pro komunikaci s platformou Alamak je použit \textbf{WiFi Access Point}, který je
 připojen k MCU pomocí Ethernet portu. \textbf{Řádková kamera}, která je umístěna
@@ -60,12 +60,20 @@ pro motory, 2 servomotory, 2 rozhraní pro~připojení řádkových kamer,
 2 potenciometry, 4 DIP přepínače a 4 LED diody. Shield~je zobrazen na obrázku
 \ref{fig:POLI-TFC}.
 
-\begin{figure}[ht]
-	\centering
-	\subfloat{\includegraphics[width = 0.45\textwidth]{Figures/FRDM-K66F.png}\label{fig:FRDM-K66F}}
-	\hfill
-	\subfloat{\includegraphics[width = 0.48\textwidth]{Figures/POLI-TFC.png}\label{fig:POLI-TFC}}
-	\caption{Vývojová platforma FRDM-K66F (vlevo) a POLI-TFC shield (vpravo).}
+\begin{figure}[h]
+    \begin{subfigure}{0.45\textwidth}
+        \includegraphics[width=\textwidth]{Figures/FRDM-K66F.png} 
+        \caption{FRDM-K66F}
+        \label{fig:FRDM-K66F}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+    \includegraphics[width=0.9\linewidth, height=6cm]{Figures/POLI-TFC.png}
+    \caption{POLI-TFC}
+    \label{fig:POLI-TFC}
+\end{subfigure}
+
+    \caption{Vývojová platforma FRDM-K66F \ref{fig:FRDM-K66F} a POLI-TFC shield \ref{fig:POLI-TFC}.}
 \end{figure}
 
 \endinput

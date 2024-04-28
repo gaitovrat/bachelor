@@ -52,7 +52,8 @@ Json::Value Utils::dataToJson(const Shared::Data &data) {
 Json::Value Utils::dataToJson(const std::vector<Shared::Data> &data) {
     Json::Value entry;
 
-    for (const auto &el : data) entry.append(Utils::dataToJson(el));
+    for (const auto &el : data)
+        entry.append(Utils::dataToJson(el));
 
     return entry;
 }
