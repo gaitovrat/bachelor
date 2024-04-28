@@ -10,7 +10,7 @@ V této práci byly popsány signálové filtry pro filtrování hodnot akcelero
 \section{FIR filtry}\
 
 \textbf{FIR filtry} jsou filtry s konečnou impulzní odezvou. Tyto filtry používají
-jen hodnoty ze vstupního signálu\cite{FIR}.
+jen hodnoty ze vstupního signálu \cite{FIR}.
 
 \subsection{Klouzavý průměr}\
 
@@ -23,9 +23,9 @@ kde $y[\,\,]$ je výstupní hodnota, $M$ je počet hodnot a $x[\,\,]$ je vstupn�
 hodnota \cite{Filters}.
 
 Implementace tohoto filtru byla zjednodušena tím, že když hodnota součtu vstupních
-hodnot se uloží, při vypočtu následující výstupní hodnoty se odečte vstupní hodnota
+hodnot se uloží, při výpočtu následující výstupní hodnoty se odečte vstupní hodnota
 posledního vzorku a přičte se hodnota nového vzorku. Výsledná hodnota se pak vydělí
-hodnotou~$M$\cite{krokomer}.
+hodnotou~$M$ \cite{krokomer}.
 
 Při filtrování signálu byla po experimentech zvolena hodnota M = 8.
 
@@ -39,7 +39,7 @@ Všechny implementované IIR filtry jsou ve tvaru:
 \begin{equation}
 y[n] = \sum_{i = 0}^{j}a_{i}x[n - i] + \sum_{i = 1}^{k}b_{i}y[n - i],
 \end{equation}
-kde $y[\,\,]$ je výstupní hodnota, $x[\,\,]$ je vstupní hodnota a $a_i$ i $b_i$ jsou
+kde $y$ je výstupní hodnota, $x$ je vstupní hodnota a $a_i$ i $b_i$ jsou
 koeficienty.
 
 \subsection{Jednopólová dolní propust}\
