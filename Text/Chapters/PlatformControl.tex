@@ -51,16 +51,22 @@ redukován. Ukázka použitého algoritmu je ve výpisu \ref{lst:slowMedianBlur}
 \cite{draha}\cite{robot}.
 
 \begin{lstlisting}[caption = Filtrování mediánem, label = lst:slowMedianBlur]
-void Image::slowMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
+void Image::fastMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
                            int pixels) {
     memcpy(dstImg, srcImg, LINE_LENGTH);
+
+    const int buffSize = pixels * 2 + 1;
     std::vector<uint16_t> blurBuffer;
-    for (int i~= pixels; i~< LINE_LENGTH - pixels; i++) {
+
+    for (int i~= ((LINE_LENGTH / 2) % pixels) + pixels;
+         i~< LINE_LENGTH - pixels; i~+= buffSize) {
         for (int j = -pixels; j <= pixels; j++) {
-            blurBuffer.emplace_back(srcImg[i - j]);
+            blurBuffer.emplace_back(srcImg[i + j]);
         }
         std::sort(blurBuffer.begin(), blurBuffer.end());
-        dstImg[i] = blurBuffer.at(pixels + 1);
+        for (int j = -pixels; j <= pixels; j++) {
+            dstImg[i + j] = blurBuffer.at(pixels + 1);
+        }
         blurBuffer.clear();
     }
 }
@@ -102,6 +108,12 @@ void Image::threshold(RefCImageLine srcImg, RefImageLine dstImg) const {
     }
 }
 \end{lstlisting}
+
+Pro získání hodnoty prahu byla použita formule
+\begin{align}
+y = \frac{1}{N} \sum_{i = 0}^{N}x[i],
+\end{align}
+kde y je výsledná hodnota práhu,N je šířka obrazu a~x[i] je hodnota pixelu. Hodnota N je 128, dle rozměru pole získaného z~řádkové kamery. 
 
 \subsection{Řízení servomotoru}\
 \label{sec:servocontrol}

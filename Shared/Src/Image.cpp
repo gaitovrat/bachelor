@@ -73,22 +73,6 @@ void Image::threshold(RefCImageLine srcImg, RefImageLine dstImg) const {
     }
 }
 
-void Image::fastMedianBlur(RefImageLine srcImg, int pixels) {
-    const int buffSize = pixels * 2 + 1;
-    std::vector<uint16_t> blurBuffer;
-
-    for (int i = pixels; i < LINE_LENGTH - pixels; i += buffSize) {
-        for (int j = -pixels; j <= pixels; j++) {
-            blurBuffer.emplace_back(srcImg[i + j]);
-        }
-
-        for (int j = -pixels; j <= pixels; j++) {
-            srcImg[i + j] = Utils::median(blurBuffer);
-        }
-        blurBuffer.clear();
-    }
-}
-
 void Image::fastMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
                            int pixels) {
     memcpy(dstImg, srcImg, LINE_LENGTH);
@@ -109,40 +93,6 @@ void Image::fastMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
     }
 }
 
-void Image::slowMedianBlur(RefCImageLine srcImg, RefImageLine dstImg,
-                           int pixels) {
-    memcpy(dstImg, srcImg, LINE_LENGTH);
-    std::vector<uint16_t> blurBuffer;
-
-    for (int i = pixels; i < LINE_LENGTH - pixels; i++) {
-        for (int j = -pixels; j <= pixels; j++) {
-            blurBuffer.emplace_back(srcImg[i - j]);
-        }
-        std::sort(blurBuffer.begin(), blurBuffer.end());
-        dstImg[i] = blurBuffer.at(pixels + 1);
-        blurBuffer.clear();
-    }
-}
-
-void Image::slowMedianBlur(RefImageLine srcImg, int pixels) {
-    std::deque<uint16_t> pixBuffer;
-
-    for (int i = /*0*/ 1; i < LINE_LENGTH; i++) {
-        if (static_cast<int>(pixBuffer.size()) < pixels) {
-            pixBuffer.emplace_back(srcImg[i]);
-            continue;
-        }
-        pixBuffer.emplace_back(srcImg[i]);
-
-        for (int j = -pixels; j <= pixels; j++) {
-            srcImg[i + j] = Utils::median<uint16_t>(
-                std::vector<uint16_t>(pixBuffer.begin(), pixBuffer.end()));
-        }
-        // blurBuffer.clear();
-        pixBuffer.pop_front();
-    }
-}
-
 uint8_t Image::atThresh(uint8_t index) const {
     return static_cast<uint8_t>(this->at(index, Type::Thresholded));
 }
@@ -157,7 +107,7 @@ int16_t Image::getDiversity() const { return this->diversity; }
 
 bool Image::isLowDiversity() const { return this->diversity < LOW_DIVERSITY; }
 
-Image::Image(uint16_t (&rawImage)[LINE_LENGTH]) : Image() {
+Image::Image(RefImageLine rawImage) : Image() {
     this->computeMinMax(rawImage);
     if (this->diversity < LOW_DIVERSITY) {
         for (int i = 0; i < LINE_LENGTH; i++) {

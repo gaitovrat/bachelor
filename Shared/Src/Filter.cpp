@@ -45,21 +45,6 @@ int16_t Filter::movingAverage() {
     return static_cast<int16_t>(averageSum / (float)size);
 }
 
-int16_t Filter::windowedSinc() {
-    float output = 0;
-    int32_t i = xBuffer.size() - 1;
-
-    if (xBuffer.size() < M) {
-        return xBuffer[i];
-    }
-
-    for (uint32_t j = 0; j < M; ++j) {
-        output += xBuffer[i - j] * kernel[j];
-    }
-
-    return static_cast<int16_t>(output);
-}
-
 void Filter::add(int16_t value) {
     if (xBuffer.size() >= N) {
         averageSum -= xBuffer.front();
@@ -131,28 +116,4 @@ int16_t Filter::lowPassChebyshev2pole() {
     yBuffer[1] = output;
 
     return static_cast<int16_t>(output);
-}
-
-uint16_t Filter::lowPassChebyshev4spole() {
-    int32_t n = xBuffer.size() - 1;
-
-    if (n <= 0) {
-        return 0;
-    }
-    if (n < 4) {
-        return xBuffer[n];
-    }
-
-    float output =
-        chebyshev4A0 * xBuffer[n - 0] + chebyshev4A1 * xBuffer[n - 1] +
-        chebyshev4A2 * xBuffer[n - 2] + chebyshev4A3 * xBuffer[n - 3] +
-        chebyshev4A4 * xBuffer[n - 4] + chebyshev4B1 * yBuffer[0] +
-        chebyshev4B2 * yBuffer[1] + chebyshev4B3 * yBuffer[2] +
-        chebyshev4B4 * yBuffer[3];
-
-    yBuffer.insert(yBuffer.begin(), output);
-    if (yBuffer.size() > 4)
-        yBuffer.pop_back();
-
-    return static_cast<uint16_t>(output);
 }

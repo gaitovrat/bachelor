@@ -15,14 +15,14 @@ CarQt. \textbf{CarQt} umí zobrazovat originální obraz, normalizovány obraz
 a~prahovaný obraz. Informace o~Regionech, PWM~motorech, servo motorech a~senzorech
 jsou zobrazeny v~číselném formátu. Ukládání číselných dat je implementováno ve
 formátu \textbf{JSON} (JavaScript Object Notation) a~originálního obrazu ve formátu
-\textbf{PNG}~(Portable Network Graphics) souboru. CarQt je napsána pomocí knihoven
-Qt a~OpenCV. Aplikace je zobrazena na obrázku \ref{fig:CarQt}.
+\textbf{PNG}~(Portable Network Graphics) souboru. Ukládaní do formátu JSON je napsáno pomocí knihovny JsonCpp. CarQt je napsána pomocí knihoven
+Qt, JsonCpp a~OpenCV. Aplikace je zobrazena na obrázku \ref{fig:CarQt}.
 
 \begin{figure}[!h]
     \centering
     \vspace{-10pt}
     \includegraphics[width = .8\linewidth]{Figures/CarQt.png}
-    \caption{CarQt aplikace}
+    \caption{CarQt aplikace.}
     \label{fig:CarQt}
     \vspace{-15pt}
 \end{figure}
@@ -40,9 +40,7 @@ Pro přenos a~ukládání dat je použita struktura \textbf{Data}, která obsahu
 Popis regionu je v~podkapitole \ref{sec:servocontrol}.
 Implementovaná struktura Data je ve výpisu \ref{lst:data}.
 \begin{lstlisting}[caption = Struktura Data, label = lst:data]
-// Data.h
 struct Data {
-    // Camera data
     uint16_t line[Image::LINE_LENGTH] = {0};
     uint32_t regionsCount = 0;
     uint32_t regionsListSize = 0;
@@ -52,10 +50,8 @@ struct Data {
     bool hasRight = false;
     uint8_t leftDistance = 0;
     uint8_t rightDistance = 0;
-    // Motor data
     int32_t leftSpeed = 0;
     int32_t rightSpeed = 0;
-    // Servo data
     int32_t servoPosition = 0;
     float angle = .0f;
     Vec3<int16_t> accel = {0, 0, 0};
@@ -65,5 +61,13 @@ struct Data {
     uint8_t mode = Mode::None;
 };
 \end{lstlisting}
+
+Praxe ukázala potřebnost nastavení adres pro přenos dat. Proto aplikace umožňuje nastavit adresy počítače i~MCU, port a~cestu pro ukládání dat. Nastavení se ukládají ve formátu JSON. Okno nastavení je zobrazeno na obrázku \ref{fig:CarQtSettings}.
+\begin{figure}
+\centering
+    \includegraphics[width = .5\linewidth]{Figures/SettingsWindow.png}
+\caption{Nastávení aplikace CarQt.}
+\label{fig:CarQtSettings}
+\end{figure}
 
 \endinput

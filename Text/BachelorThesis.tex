@@ -64,6 +64,17 @@ filters; FRDM-K66F; FXOS8700CQ; FXAS21002}
 \newcolumntype{d}[1]{D{,}{,}{#1}}
 \renewcommand{\lstlistlistingname}{Seznam výpisů zdrojového kódu}
 \renewcommand{\lstlistingname}{Výpis}
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
+\AtBeginDocument{
+	\counterwithout{lstlisting}{chapter}
+}
+
+\makeatletter
+\renewcommand{\l@lstlisting}[2]{
+  \@dottedtocline{1}{0em}{1.5em}{#1}{#2}
+}
+\makeatother
 
 \begin{document}
 \MakeTitlePages
