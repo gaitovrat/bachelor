@@ -190,22 +190,20 @@ endian, což znamená, že nejprve je poslán nejvyšší bajt a~poté nejnižš
 
 V~momentě kdy senzor má data k~dispozice, tak vysíla signál přerušení. Signál přerušení se nazývá \uv{Data Ready} dle konfigurace senzorů. 
 
-Senzor NXP FXAS21002 má povolené přerušení na GPIO pinu PTA29. Ten pin je připojen do portu A. Proto přerušení na tomto portu bylo povolené a~priorita přerušeni byla nastavěna na 2.
+Senzor NXP FXAS21002 má povolené přerušení na GPIO pinu PTA29 \cite{frdmk66UserGuide}. Ten pin je připojen do portu A. Proto přerušení na tomto portu bylo povolené a~priorita přerušeni byla nastavěna na 2.
 
-Senzor NXP FXOS8700CQ má povolené přerušení na GPIO pinu PTC13. Ten pin je připojen do portu C. Proto přerušeni na tomto portu bylo povolené a~priorita přerušeni byla nastavěna na 2.
+Senzor NXP FXOS8700CQ má povolené přerušení na GPIO pinu PTC13 \cite{frdmk66UserGuide}. Ten pin je připojen do portu C. Proto přerušeni na tomto portu bylo povolené a~priorita přerušeni byla nastavěna na 2.
 
-Jakmile je přijat signál přerušení, činnost procesoru je pozastavená a~vykonána funkce spojena s~obsluhou přerušení. Tato obsluha čte šest registru pro NXP FXAS21002 i~12 registru pro NXP FXOS8700CQ pomocí $I^2S$ sběrnice pro získání dat ve všech třech osách. Tato data pak se ukládají do struktury Vec3. Tato struktura obsahuje 3 osy x,y a~z~ve formátu int16\_t (16bitové číslo se znaménkem). Implementace takové obsluhy je ve výpisu \ref{lst:interrupt}:
+Jakmile je přijat signál přerušení, činnost procesoru je pozastavená a~vykonána funkce spojena s~obsluhou přerušení. Takové obsluhy jsou dvě, pro port A~a~port C. První obsluha čte šest registru pro NXP FXAS21002 a~druhá 12 registru pro NXP FXOS8700CQ pomocí $I^2S$ sběrnice pro získání dat ve všech třech osách. Tato data pak se ukládají do struktury Vec3. Tato struktura obsahuje 3 osy x,y a~z~ve formátu int16\_t (16bitové číslo se znaménkem). Implementace obsluhy pro port A~je ve výpisu \ref{lst:interruptA} a~pro port C je ve výpísu \ref{lst:interruptC}.
 
-\begin{lstlisting}[caption = Funkce obsluhy přerušení na portu C, label = lst:interrupt]
+\begin{lstlisting}[caption = Funkce obsluhy přerušení na portu A, label = lst:interruptA]
 void PORTA_IRQHandler(void) {
     PORT_ClearPinsInterruptFlags(PORTA, 1U << 29);
-
     Shared::Vec3<int16_t> gyro;
     IMU& imu = core.getIMU();
 
     status_t status = I2C::readRegister(IMU::FXAS_ADDRESS, FXAS_OUT_X_MSB,
                                         fxasBuffer, sizeof(fxasBuffer));
-
     if (status == kStatus_Success) {
         gyro.x =
             static_cast<int16_t>(static_cast<uint16_t>(fxasBuffer[0] << 8) |
@@ -220,6 +218,41 @@ void PORTA_IRQHandler(void) {
         imu.setGyro(gyro);
     }
 }
+\end{lstlisting}
+
+\begin{lstlisting}[caption = Funkce obsluhy přerušení na portu C, label = lst:interruptC]
+void PORTC_IRQHandler(void) {
+    PORT_ClearPinsInterruptFlags(PORTC, 1U << 13);
+    Shared::Vec3<int16_t> accel, mag;
+    IMU& imu = core.getIMU();
+
+    status_t status = I2C::readRegister(IMU::FXOS_ADDRESS, FXOS_OUT_X_MSB,
+                                        fxosBuffer, sizeof(fxosBuffer));
+    if (status == kStatus_Success) {
+        accel.x =
+            static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[0] << 8) |
+                                 static_cast<uint16_t>(fxosBuffer[1])) >>
+            2;
+        accel.y =
+            static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[2] << 8) |
+                                 static_cast<uint16_t>(fxosBuffer[3])) >>
+            2;
+        accel.z =
+            static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[4] << 8) |
+                                 static_cast<uint16_t>(fxosBuffer[5])) >>
+            2;
+
+        mag.x = static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[6] << 8) |
+                                     static_cast<uint16_t>(fxosBuffer[7]));
+        mag.y = static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[8] << 8) |
+                                     static_cast<uint16_t>(fxosBuffer[9]));
+        mag.z =
+            static_cast<int16_t>(static_cast<uint16_t>(fxosBuffer[10] << 8) |
+                                 static_cast<uint16_t>(fxosBuffer[11]));
+
+        imu.setAccel(accel);
+        imu.setMag(mag);
+    }
 \end{lstlisting}
 
 \section{Výběr senzoru}\
