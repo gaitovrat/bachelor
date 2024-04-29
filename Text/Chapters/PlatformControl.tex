@@ -113,7 +113,7 @@ Pro získání hodnoty prahu byla použita formule
 \begin{align}
 y = \frac{1}{N} \sum_{i = 0}^{N}x[i],
 \end{align}
-kde y je výsledná hodnota práhu,N je šířka obrazu a~x[i] je hodnota pixelu. Hodnota N je 128, dle rozměru pole získaného z~řádkové kamery. 
+kde y je výsledná hodnota práhu, N je šířka obrazu a~x[i] je hodnota pixelu. Hodnota N je 128, dle rozměru pole získaného z~řádkové kamery. 
 
 \subsection{Řízení servomotoru}\
 \label{sec:servocontrol}
@@ -125,7 +125,7 @@ složek: proporcionální, integrační, derivatiční~\cite{PID}.
 Pro proporcionální složku se používá rozdíl poměru vzdálenosti čar od okrajů obrazu.
 \begin{lstlisting}[caption = Kalkulace poměru vzdálenosti čar, label = lst:calculateDistanceRatio]
 float Core::calculateDistanceRatio() {
-    this -> tracer.addImage(data.line);
+    this->tracer.addImage(data.line);
     std::pair<uint8_t, uint8_t> distances = tracer.getDistancesPair();
     data.leftDistance = distances.first;
     data.rightDistance = Shared::Image::LINE_LENGTH - distances.second;
