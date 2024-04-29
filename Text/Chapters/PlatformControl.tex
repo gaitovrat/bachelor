@@ -151,7 +151,7 @@ samotného bodu. Jestliže se barva změnila, znamená to konec jednoho regionu
 a~začátek nového. Zmíněný algoritmus je zobrazen ve výpisu \ref{lst:getRegions} 
 \cite{robot}.
 
-\begin{lstlisting}[caption = Algoritmus hledání regionu, label = lst:getRegions]
+\begin{lstlisting}[caption = Algoritmus \uv{Hledání Regionu}, label = lst:getRegions]
 std::vector<Shared::Region> LineTracer::getRegions(const Shared::Image &image, uint8_t searchLeftIdx, uint8_t searchRightIdx, bool saveToClass ) {
 	std::vector<Shared::Region> foundRegions;
 	uint8_t currentColor = static_cast<uint8_t>(image.atThresh(searchLeftIdx));
