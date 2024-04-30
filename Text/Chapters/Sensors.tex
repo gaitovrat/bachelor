@@ -5,7 +5,7 @@ Platforma FRDM-K66F obsahuje tři senzory, které tvoří 9osou IMU jednotku.
 NXP FXOS8700CQ slouží jako akcelerometr i~magnetometr a~NXP FXAS21002 jako gyroskop.
 Tyto senzory komunikují s~platformou pomocí $I^2C$ \cite{frdmk66UserGuide}.
 
-\section{NXP FXOS8700CQ}\
+\section{Akcelerometr a~magnetometr}\
 
 \textbf{NXP FXOS8700CQ} je pokročilý 6osý senzor, který kombinuje funkce 3osého
 akcelerometru a~3osého magnetometru v~jednom čipu. Akcelerometr v~senzoru
@@ -18,7 +18,7 @@ data o~svém pohybu a~orientaci vůči zemskému gravitačnímu a~magnetickému 
 Orientace akcelerometru a~magnetometru je na~obrázku \ref{fig:FXOS_Orientation} 
 \cite{FXOS8700CQ}.
 
-\section{NXP FXAS21002}\
+\section{Gyroskop}\
 
 \textbf{NXP FXAS21002} je vysoce výkonný 3osý senzor, který poskytuje 
 data o~úhlové rychlosti zrychlení. Tento senzor má nastavitelné rozsahy 
@@ -56,14 +56,14 @@ zařízení generuje hodinový signál a~určuje, kdy se data posílají a~přij
 zařízení na sběrnici má svou vlastní adresu, která je 7 bitů dlouhá. Oba vodiče jsou
 aktivní v~logické 0, což znamená, že v~klidovém stavu jsou oba vodiče v~logické 1.
 Když je zařízení připojeno k~systému, musí být připojeno na zemi, aby mohlo
-komunikovat.
+komunikovat \cite{I2C}.
 
 Přenos na sběrnice vždy začíná START sekvencí a~končí STOP sekvencí, viz. obrázek
 \ref{fig:I2C_FRAME}. Ty~jsou generovány master zařízením. \textbf{START} sekvence je
 definovaná jako přechod z~logické 1 na~logickou 0 na SDA, zatímco na SCL je
 v~logické 1. \textbf{STOP} sekvence oproti tomu má jako přechod z~logické~0
 na~logickou 1 na SDA, zatímco na SCL je v~logické 1. Sběrnice je obsazena od začátku
-START~sekvence až do konce STOP sekvence.
+START~sekvence až do konce STOP sekvence \cite{I2C}.
 
 \begin{figure}[!h]
     \centering
@@ -75,7 +75,7 @@ START~sekvence až do konce STOP sekvence.
 Pro zápis dat na sběrnici je nejprve nutné poslat adresu zařízení, které přijímá
 data. Adresa má 7 bitů a~poslední bit je R/W, který určuje, zda se jedná o~zápis
 nebo čtení. Poté jak slave pošle ACK bit (znamení, že je připraven přijmout data),
-master posílá data a~slave potvrzuje přijetí ACK~bitem.
+master posílá data a~slave potvrzuje přijetí ACK~bitem \cite{I2C}.
 
 Čtení dat se podobá zápisu, po odeslání adresy zařízení, které posílá data, se
 master přepne do~režimu čtení a~slave pošle data, která master potvrdí ACK
@@ -83,7 +83,7 @@ bitem \cite{I2C}.
 
 \section{Konfigurace senzorů}\
 
-Konfiguraci senzorů je probíhá posláním dat na jejich adresy. Adresy jsou:
+Konfiguraci senzorů je probíhá posláním dat na jejich adresy. Adresy jsou \cite{frdmk66UserGuide}:
 \begin{itemize}
     \item NXP FXOS8700CQ - 0x1D;
     \item NXP FXAS21002 - 0x21.
@@ -98,22 +98,22 @@ Pro nastavení NXP FXOS8700CQ bylo nastaveny následující registry:
     Pro jakékoliv změny v~registrech je nutné přepnout senzor do standby režimu.
     Pokud všechny registry byly nastaveny, je možné přepnout senzor do active
     režimu, a~dále tento registr použit pro nastavení frekvence vzorkování na 50 Hz
-    a~zapnutí malého šumu.
+    a~zapnutí malého šumu \cite{FXOS8700CQ}.
 
     \item CTRL\_REG2 je použit pro zapnutí automatického režimu spanku, nízkého
-    výkonu ve~spánku a~vysokého výkonu v~probuzení.
+    výkonu ve~spánku a~vysokého výkonu v~probuzení \cite{FXOS8700CQ}.
 
-    \item CTRL\_REG4 je použit pro zapnutí data-ready přerušení.
+    \item CTRL\_REG4 je použit pro zapnutí data-ready přerušení \cite{FXOS8700CQ}.
 
-    \item CTRL\_REG5 je použit pro nastavení pinu přerušení na INT2.
+    \item CTRL\_REG5 je použit pro nastavení pinu přerušení na INT2 \cite{FXOS8700CQ}.
 
     \item M\_CTRL\_REG1 je použit pro zapnutí hybridního režimu,jednorázového
     magnetického resetu a~nastavení oversample ratio na 7. V~hybridním režimu je
-    možné získat data z~akcelerometru a~magnetometru současně.
+    možné získat data z~akcelerometru a~magnetometru současně \cite{FXOS8700CQ}.
 
     \item M\_CTRL\_REG2 je použit pro zapnutí automatického hybridního režimu
     inkrementu adresy. Co znamená, že po přečtení dat z~akcelerometru se začíná čist
-    data z~magnetometru.
+    data z~magnetometru \cite{FXOS8700CQ}.
 
     \item Registr XYZ\_DATA\_CFG je použit pro nastavení rozsahu akcelerometru na ±4
     g \cite{FXOS8700CQ}.
@@ -136,7 +136,7 @@ Adresy a~hodnoty registrů jsou v~tabulce \ref{tab:FXOS8700CQ}.
         0x0E            & XYZ\_DATA\_CFG   & 0x01             \\
         \hline
     \end{tabular}
-    \caption{Konfigurace NXP FXOS8700CQ\cite{FXOS8700CQ}.}
+    \caption{Konfigurace NXP FXOS8700CQ.}
     \label{tab:FXOS8700CQ}
 \end{table}
 
@@ -171,20 +171,21 @@ Adresy a~hodnoty registrů jsou v~tabulce \ref{tab:FXAS21002}.
         0x14            & CTRL\_REG2       & 0x0C             \\
         \hline
     \end{tabular}
-    \caption{Konfigurace NXP FXAS21002 \cite{FXAS21002}.}
+    \caption{Konfigurace NXP FXAS21002.}
     \label{tab:FXAS21002}
 \end{table}
 
 \section{Čtení dat ze senzorů}\
+
 Všechny senzory ukládají hodnoty do 6 registrů. Akcelerometr ukládá informace
 o~naměřeném zrychlení do registrů 0x01 až 0x06. Gyroskop ukládá informace 
 o~naměřeném úhlovém zrychlení do~registrů 0x01 až 0x06. Magnetometr ukládá 
 informace o~naměřeném magnetickém poli do registrů 0x33 až 0x38. Zde jsou 
-uložené data pro osy X, Y a~Z.
+uložené data pro osy X, Y a~Z~\cite{FXAS21002}\cite{FXOS8700CQ}.
 
 Obě zařízení umožňují číst data z~více registrů najednou. Pro získání dat stačí jen
 začít čtení na první adrese datového registru 0x01. Data se posílají ve formátu big
-endian, což znamená, že nejprve je poslán nejvyšší bajt a~poté nejnižší bajt.
+endian, což znamená, že nejprve je poslán nejvyšší bajt a~poté nejnižší bajt \cite{FXAS21002}\cite{FXOS8700CQ}.
 
 \section{Ukládání dat senzorů}\
 
@@ -199,12 +200,12 @@ Senzor NXP FXOS8700CQ má povolené přerušení na GPIO pinu PTC13
 
 Jakmile je přijat signál přerušení, činnost procesoru je pozastavená. Následně se vykoná funkce spojená s~obsluhou přerušení. Takové obsluhy jsou dvě, pro port A~a~port C. 
 První obsluha čte šest registru pro NXP FXAS21002 a~druhá 12 registru pro NXP 
-FXOS8700CQ pomocí $I^2S$ sběrnice pro získání dat ve všech třech osách. Tato data 
+FXOS8700CQ pomocí $I^2S$ sběrnice pro~získání dat ve všech třech osách. Tato data 
 pak se ukládají do struktury Vec3, která obsahuje 3 osy x,y a~z~ve formátu 
 int16\_t (16bitové číslo se znaménkem). Implementace obsluhy pro port A~je ve výpisu 
 \ref{lst:interruptA} a~pro port C je \ref{lst:interruptC}.
 
-\begin{lstlisting}[caption = Funkce obsluhy přerušení na portu A, label = lst:interruptA]
+\begin{lstlisting}[caption = Funkce obsluhy přerušení na portu A., label = lst:interruptA]
 void PORTA_IRQHandler(void) {
     PORT_ClearPinsInterruptFlags(PORTA, 1U << 29);
     Shared::Vec3<int16_t> gyro;
@@ -228,7 +229,7 @@ void PORTA_IRQHandler(void) {
 }
 \end{lstlisting}
 
-\begin{lstlisting}[caption = Funkce obsluhy přerušení na portu C, label = lst:interruptC]
+\begin{lstlisting}[caption = Funkce obsluhy přerušení na portu C., label = lst:interruptC]
 void PORTC_IRQHandler(void) {
     PORT_ClearPinsInterruptFlags(PORTC, 1U << 13);
     Shared::Vec3<int16_t> accel, mag;
