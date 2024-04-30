@@ -188,24 +188,21 @@ endian, což znamená, že nejprve je poslán nejvyšší bajt a~poté nejnižš
 
 \section{Ukládání dat senzorů}\
 
-V~momentě kdy senzor má data k~dispozice, vysílá signál přerušení. 
+V~momentě kdy senzor má data k~dispozici, vysílá signál přerušení. 
 Signál přerušení se nazývá \uv{Data Ready} dle konfigurace senzorů. 
 
 Senzor NXP FXAS21002 má povolené přerušení na GPIO pinu PTA29 
-\cite{frdmk66UserGuide}. Ten pin je připojen do portu A. Proto přerušení na tomto 
-portu bylo povolené a~priorita přerušeni byla nastavěna na~2.
+\cite{frdmk66UserGuide}. Tento pin je připojen do portu A. Přerušení na tomto portu bylo povolené a~priorita byla nastavěna na~2.
 
 Senzor NXP FXOS8700CQ má povolené přerušení na GPIO pinu PTC13 
-\cite{frdmk66UserGuide}. Ten pin je připojen do portu C. Proto přerušeni na tomto 
-portu bylo povolené a~priorita přerušeni byla nastavěna na~2.
+\cite{frdmk66UserGuide}. Tento pin je připojen do portu C. Přerušení na tomto portu bylo povolené a~priorita byla nastavěna na~2.
 
-Jakmile je přijat signál přerušení, činnost procesoru je pozastavená a~vykonána 
-funkce spojena s~obsluhou přerušení. Takové obsluhy jsou dvě, pro port A~a~port C. 
+Jakmile je přijat signál přerušení, činnost procesoru je pozastavená. Následně se vykoná funkce spojená s~obsluhou přerušení. Takové obsluhy jsou dvě, pro port A~a~port C. 
 První obsluha čte šest registru pro NXP FXAS21002 a~druhá 12 registru pro NXP 
 FXOS8700CQ pomocí $I^2S$ sběrnice pro získání dat ve všech třech osách. Tato data 
-pak se ukládají do struktury Vec3. Tato struktura obsahuje 3 osy x,y a~z~ve formátu 
+pak se ukládají do struktury Vec3, která obsahuje 3 osy x,y a~z~ve formátu 
 int16\_t (16bitové číslo se znaménkem). Implementace obsluhy pro port A~je ve výpisu 
-\ref{lst:interruptA} a~pro port C je ve výpísu \ref{lst:interruptC}.
+\ref{lst:interruptA} a~pro port C je \ref{lst:interruptC}.
 
 \begin{lstlisting}[caption = Funkce obsluhy přerušení na portu A, label = lst:interruptA]
 void PORTA_IRQHandler(void) {
@@ -269,7 +266,7 @@ void PORTC_IRQHandler(void) {
 \section{Výběr senzoru}\
 
 Pro výběr vhodného senzoru byla analyzována data získaná po jízdě vozidla po dráze,
-viz. v~kapitole \ref{sec:PlatformControl}. Tato data jsou vizualizována na obrázku
+viz v~kapitole \ref{sec:PlatformControl}. Tato data jsou vizualizována na obrázku
 \ref{fig:Sensors}.
 \begin{figure}[!h]
     \centering
