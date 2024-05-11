@@ -68,30 +68,6 @@ void apply(std::vector<Shared::Data> data, FilterType type) {
             return filterGyroZ.movingAverage();
         };
         break;
-    case WINDOWED_SINC:
-        filename = "WindowedSinc.json";
-        filterAccelXFunc = [&filterAccelX]() {
-            return filterAccelX.windowedSinc();
-        };
-        filterAccelYFunc = [&filterAccelY]() {
-            return filterAccelY.windowedSinc();
-        };
-        filterAccelZFunc = [&filterAccelZ]() {
-            return filterAccelZ.windowedSinc();
-        };
-        filterMagXFunc = [&filterMagX]() { return filterMagX.windowedSinc(); };
-        filterMagYFunc = [&filterMagY]() { return filterMagY.windowedSinc(); };
-        filterMagZFunc = [&filterMagZ]() { return filterMagZ.windowedSinc(); };
-        filterGyroXFunc = [&filterGyroX]() {
-            return filterGyroX.windowedSinc();
-        };
-        filterGyroYFunc = [&filterGyroY]() {
-            return filterGyroY.windowedSinc();
-        };
-        filterGyroZFunc = [&filterGyroZ]() {
-            return filterGyroZ.windowedSinc();
-        };
-        break;
     case SINGLE_POLE:
         filename = "SinglePole.json";
         filterAccelXFunc = [&filterAccelX]() {
@@ -180,36 +156,6 @@ void apply(std::vector<Shared::Data> data, FilterType type) {
         };
         filterGyroZFunc = [&filterGyroZ]() {
             return filterGyroZ.lowPassChebyshev2pole();
-        };
-        break;
-    case CHEBYSHEV4:
-        filename = "Chebyshev4.json";
-        filterAccelXFunc = [&filterAccelX]() {
-            return filterAccelX.lowPassChebyshev4spole();
-        };
-        filterAccelYFunc = [&filterAccelY]() {
-            return filterAccelY.lowPassChebyshev4spole();
-        };
-        filterAccelZFunc = [&filterAccelZ]() {
-            return filterAccelZ.lowPassChebyshev4spole();
-        };
-        filterMagXFunc = [&filterMagX]() {
-            return filterMagX.lowPassChebyshev4spole();
-        };
-        filterMagYFunc = [&filterMagY]() {
-            return filterMagY.lowPassChebyshev4spole();
-        };
-        filterMagZFunc = [&filterMagZ]() {
-            return filterMagZ.lowPassChebyshev4spole();
-        };
-        filterGyroXFunc = [&filterGyroX]() {
-            return filterGyroX.lowPassChebyshev4spole();
-        };
-        filterGyroYFunc = [&filterGyroY]() {
-            return filterGyroY.lowPassChebyshev4spole();
-        };
-        filterGyroZFunc = [&filterGyroZ]() {
-            return filterGyroZ.lowPassChebyshev4spole();
         };
         break;
     default:
