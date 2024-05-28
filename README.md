@@ -1,22 +1,11 @@
 # Bachelor
-Monorepository for bachelor work
+Bachelor thesis, written in LaTex.
 
-## Setup
-### CarQt
-#### Dependencies
-1. Cmake == 3.28
-2. Qt >= 6.4
-3. OpenCV 4.x
-
-#### Build
+## Build
+You can create pdf using these build steps:
 ```sh
-cmake -S . -B build
-cmake --build build --parallel CarQt
+pdflatex BachelorThesis.tex
+biber BachelorThesis
+pdflatex BachelorThesis.tex
+pdflatex BachelorThesis.tex
 ```
-
-### MCU
-#### Dependencies
-1. MCUxpresso IDE
-
-#### Build
-Import all eclipse projects from repo root and build it.
