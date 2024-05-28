@@ -162,7 +162,7 @@ void Core::drive() {
             this->reset();
         }
 
-        this->data.timestamp = HW_TFC_TimeStamp;
+        this->data.timestamp = getMs();
         this->previousButtonState = buttonState;
     }
 }
