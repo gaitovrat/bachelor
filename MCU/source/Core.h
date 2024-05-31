@@ -15,19 +15,12 @@ class Core {
     static constexpr float DERIVATIVE = 8.3f;
     static constexpr float INTEGRAL = 0.5f;
     static constexpr float DIFF_COEF = 1.28f;
-#ifdef NOSENSOR
-    static constexpr uint16_t MAX_SPEED = 230;
-#else
-    static constexpr uint16_t MAX_SPEED = 260;
-#endif
+    static constexpr uint16_t MAX_SPEED = 300;
     static constexpr uint16_t MIN_SPEED = 230;
     static constexpr uint32_t TRACER_HISTORY_SIZE = 5;
     static constexpr uint32_t SERVO_CENTER = 1500;
-#ifdef NOSENSOR
-    static constexpr uint32_t SERVO_LR = 750;
-#else
+    static constexpr uint32_t SERVO_LR_NS = 750;
     static constexpr uint32_t SERVO_LR = 1000;
-#endif
     static constexpr uint32_t PWM_STEP = 10;
 
     TFC tfc;

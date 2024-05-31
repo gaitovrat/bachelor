@@ -50,3 +50,5 @@ venv
 # CLion
 .idea
 cmake-build-debug
+
+settings.json

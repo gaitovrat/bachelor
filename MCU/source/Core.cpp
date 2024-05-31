@@ -35,8 +35,6 @@ void Core::init() {
     PRINTF("Init TFC...\r\n");
     tfc.InitAll();
     tfc.InitRC();
-    tfc.setServoCalibration(0, SERVO_CENTER, SERVO_LR);
-    tfc.setPWMMax(MAX_SPEED);
     tfc.setLEDs(0b1111);
 
     PRINTF("Init ENET...\r\n");
@@ -127,7 +125,9 @@ void Core::calibrate() {
 }
 
 void Core::drive() {
-    if (HW_TFC_TimeStamp != this->data.timestamp) {
+	static uint32_t frame = HW_TFC_TimeStamp;
+
+    if (HW_TFC_TimeStamp != frame) {
         bool buttonState = this->tfc.getPushButton(0);
 
         this->enet.check();
@@ -135,20 +135,29 @@ void Core::drive() {
         this->tfc.getImage(0, data.line, Shared::Image::LINE_LENGTH);
         this->tfc.setLEDs(1 << this->data.mode);
 
+        if (this->data.mode == Shared::Mode::Auto_NR) {
+			tfc.setServoCalibration(0, SERVO_CENTER, SERVO_LR_NS);
+			tfc.setPWMMax(MIN_SPEED);
+        } else {
+        	tfc.setServoCalibration(0, SERVO_CENTER, SERVO_LR);
+			tfc.setPWMMax(MAX_SPEED);
+        }
+
         this->data.accel = imu.getAccel();
         this->data.gyro = imu.getGyro();
         this->data.mag = imu.getMag();
 
-#ifndef NOSENSOR
         data.gyro.z = this->gyroFilter.singlePoleRecursive();
         data.accel.y = this->accelFilter.singlePoleRecursive() + OFFSET;
-#endif
 
         if (this->tfc.getDIPSwitch() & 0x01)
             this->calibrate();
         else if (this->data.mode == Shared::Mode::Manual) {
             this->manual();
-        } else if (this->data.mode == Shared::Mode::Auto) {
+        } else if (
+        		this->data.mode == Shared::Mode::Auto
+				|| this->data.mode == Shared::Mode::Auto_NR
+		) {
             this->update();
         } else {
             this->reset();
@@ -158,20 +167,19 @@ void Core::drive() {
         this->tfc.setServo_i(0, this->data.servoPosition);
         this->tfc.setMotorPWM_i(-this->data.leftSpeed, -this->data.rightSpeed);
         if (previousButtonState && !buttonState) {
-            this->data.mode = (this->data.mode + 1) % 3;
+            this->data.mode = (this->data.mode + 1) % 4;
             this->reset();
         }
 
         this->data.timestamp = getMs();
         this->previousButtonState = buttonState;
+        frame = HW_TFC_TimeStamp;
     }
 }
 
 void Core::update() {
     float ratio, innerSpeed, outerSpeed;
-#ifndef NOSENSOR
     float accelY, gyroZ, r;
-#endif
 
     tfc.MotorPWMOnOff(true);
     tfc.ServoOnOff(true);
@@ -190,17 +198,19 @@ void Core::update() {
         tracer.reset();
     }
 
-#ifndef NOSENSOR
-    gyroZ = (abs(data.gyro.z) * 0.03125f) * (PI / 180.f);
-    accelY = abs(data.accel.y) * (4.f / 8191) * 10.f;
-    r = speed / gyroZ;
-    if (accelY > MAX_ACCEL) {
-        speed -= sqrt(MAX_ACCEL * r);
-    } else if (accelY < MAX_ACCEL) {
-        speed += sqrt(MAX_ACCEL * r);
+    if (this->data.mode == Shared::Mode::Auto) {
+		gyroZ = (abs(data.gyro.z) * 0.03125f) * (PI / 180.f);
+		accelY = abs(data.accel.y) * (4.f / 8191) * 10.f;
+		r = speed / gyroZ;
+		if (accelY > MAX_ACCEL) {
+			speed -= sqrt(MAX_ACCEL * r);
+		} else if (accelY < MAX_ACCEL) {
+			speed += sqrt(MAX_ACCEL * r);
+		}
+		speed = MIN(MAX(speed, MIN_SPEED), MAX_SPEED);
+    } else {
+    	speed = MIN_SPEED;
     }
-    speed = MIN(MAX(speed, MIN_SPEED), MAX_SPEED);
-#endif
 
     data.leftSpeed = speed;
     data.rightSpeed = speed;
